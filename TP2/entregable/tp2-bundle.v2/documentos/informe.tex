@@ -72,8 +72,13 @@ En el presente trabajo se describe la problemática de procesar información de 
 
 %\normalsize
 \section{Objetivos generales}
+El objetivo de este Trabajo Práctico es mostrar las variaciones en la performance que pueden ocurrir al utilizar instrucciones SIMD cuando se manejan grandes volúmenes de datos que requieren un procesamiento similar, en comparación con implementaciones que no lo utilizan.
 
+Para ello se realizarán distintos experimentos sobre tres filtros de foto, Blur, Merge y HSL, tanto en código assembler, que aproveche las instrucciones SSE brindadas para los procesadores de arquitectura Intel, .... sigue esto, lo dejo por aca por ahoraAAAAAAAAAAAAAAAAAA.
 
+El primer filtro, Cropflip, se utilizará para testear performance al utilizar los registros XMM para transferir grandes cantidades de información de un lugar de la RAM a otro.
+
+El segundo, tercer y cuarto filtro, se centrarán en testear la variación de performance al utilizar instrucciones SIMD, no sólo para transferir grandes volúmenes de datos sino también para procesarlos en forma paralela, es decir, realizar diversos cálculos (sumas, multiplicaciones, divisiones) tanto en representación de enteros como punto flotante.
 \newpage
 \section{Preámbulo}
 
