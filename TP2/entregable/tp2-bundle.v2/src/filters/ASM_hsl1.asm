@@ -1,4 +1,4 @@
-; ************************************************************************* ;
+	; ************************************************************************* ;
 ; Organizacion del Computador II                                            ;
 ;                                                                           ;
 ;   Implementacion de la funcion HSL 1                                      ;
@@ -35,9 +35,12 @@ ASM_hsl1:
   push rbx
   push r12
   push r13
-  push r14                             ;contador filas
-  push r15                             ;contador columnas
-  
+  push r14                             
+  push r15                             
+  sub rsp, 8
+
+  xor r14                              ;contador filas
+  xor r15                              ;contador columnas
   mov qword r12, rdi                   ;respaldo ancho en pixels
   mov qword r13, rsi                   ;respaldo alto
   mov qword rbx, rdx                   ;respaldo puntero a la imagen
@@ -61,7 +64,7 @@ ASM_hsl1:
        ciclocolumnas:
             cmp r12, r15               ;termine con la fila?
             jz .avanzo
-            mov rdi, [rbx]
+            mov rdi, rbx
             pxor xmm0, xmm0
             call rgbTOhsl              ;xmm0 = pi_l | pi_s | pi_h | pi_A
             
@@ -77,41 +80,147 @@ ASM_hsl1:
             cvtps2dq xmm0, xmm0        ;xmm0 = pi_l + ll | pi_s + ss | pi_h + hh | pi_A   (como ints, para comparar)
             movdqu xmm5, xmm0
 
+          
+            ;COMPARACIONES SOBRE H
             ;h + hh = 360?
-            .h:
             pcmpeqd xmm5, [mascara3]   ;pi_h+hh = 360? todo lo demas quede en 0 probablemente
-            jz .resto360
+            movdqu xmm6, xmm5          
+            pand xmm6, [mascara0]      ; xmm6 = 0 | 0 | h+hh = 360? | 0
             ;h + hh > 360?
             movdqu xmm5, xmm0
-            pmcpgtd xmm5, [mascara3]   ;pi_h+hh > 360?
-            jz .resto360
+            pcmpgtd xmm5, [mascara3]   ;pi_h+hh > 360?
+            movdqu xmm7, xmm5          
+            pand xmm7, [mascara0]      ; xmm7 = 0 | 0 | h+hh > 360? | 0
             ;h + hh = 0?
             movdqu xmm5, xmm0
             pcmpeqd xmm5, [mascara8]   ;pi_h+hh = 0?
+            movdqu xmm8, xmm5          
+            pand xmm8, [mascara0]      ; xmm8 = 0 | 0 | h+hh= 0? | 0
             jz .sumo360
             ;h + hh > 0?
             movdqu xmm5, xmm0
-            pmcpgtd xmm5, [mascara8]   ;pi_h+hh > 0?
-            jz .sumo360
+            pcmpgtd xmm5, [mascara8]   ;pi_h+hh > 0?
+            movdqu xmm9, xmm5          
+            pand xmm9, [mascara0]      ; xmm9 = 0 | 0 | h+hh>0? | 0
+            
+            ;PARA SABER SI h+hh <0 me fijo si h+hh>0 y si h+hh=0, los sumo y despues hago un pnand para negar, si da 1s es que es menor, sino era o mayor o igual
+            ;PARA SABER SI h+hh >= 360 me fijo si h+hh=360 y si h+hh>360, hago pxor entre eso y me fijo si da 1s es que es alguna de las dos opciones sino es menor
+            pxor xmm6, xmm7
+            pand xmm6, [mascara0]          ;CREO QUE NO ES NECESARIO 
+            pand xmm6, [mascara3]      ;xmm6 = 0 | 0 | 360 si h+hh>=360, 0 sino | 0
+            pxor xmm8, xmm9               
+            pnand xmm8, xmm8
+            pand xmm8, [mascara0]      ;xmm8 = 0 | 0 | h+hh<0? | 0
+            pand xmm8, [mascara3]      ;xmm8 = 0 | 0 | 360 si h+hh<0, 0 sino | 0
             movdqu xmm5, xmm0          ;queda pi_h + hh
-
-            .resto360
-             movdqu xmm5,xmm0  
-             psubd xmm5, [mascara3]    ;pi_h+hh - 360
-             jmp .s
-           
-            .sumo360
-             movdqu xmm5,xmm0
-             paddd xmm5, [mascara3]    ;pi_h+hh+360
-             jmp .s
             
-            .s:
+            ;AHORA APLICO LOS CAMBIOS A h
+            psubd xmm0, xmm6           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh - 360 si pi_h+hh>=360, pi_h+hh sino | pi_A
+            paddd xmm0, xmm8           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh +360 si pi_h+hh<0, pi_h+hh sino | pi_A
+
+            ;ACLARO QUE SOLO PUEDE PASAR 1 CASO DE LOS 2 ANTERIORES, osea que o hago +360 o -360 o queda pi_h+hh
+
+            ;COMPARACIONES SOBRE S
+            ;s+ss = 1?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara4]
+            movdqu xmm6, xmm5
+            pand xmm6, [mascara1]      ;xmm6 = 0 | s+ss = 1? | 0 | 0
+            ;s+ss > 1?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara4]
+            movdqu xmm7, xmm5
+            pand xmm7, [mascara1]      ;xmm7 = 0 | s+ss>1? | 0 | 0
+            ;s+ss = 0?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara6]
+            movdqu xmm8, xmm5
+            pand xmm8, [mascara1]      ;xmm8 = 0 | s+ss=0? | 0 | 0
+            ;s+ss > 0?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara6]
+            movdqu xmm9, xmm5
+            pand xmm9, [mascara1]      ;xmm9 = 0 | s+ss>0? | 0 | 0
+
+            ;EL PROCEDIMIENTO ES BASICAMENTE IGUAL QUE PARA H+HH PERO CON OTROS VALORES
+            
+            pxor xmm6, xmm7
+            pand xmm6, [mascara4]      ;xmm6 = 0 | 1 si pi_s+ss >= 1, 0 sino | 0 | 0
+            pxor xmm8, xmm9
+            ;pnand xmm8, xmm8           ;xmm8 = 0 | 1s si s+ss<0 0s sino | 0 | 0
+            movdqu xmm10, xmm0
+            pand xmm8, xmm10           ;xmm8 = 0 | pi_s+ss si s+ss>=0, 0 sino | 0 | 0         
+            pand xmm10, [mascara6]     ;xmm10 = pi_l + ll | 0 | pi_h+hh | pi_A
+            pxor xmm10, xmm6           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 sino | 0 | 0
+            pxor xmm10, xmm8           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | pi_h + hh | pi_A
+            pand xmm10, [mascara1]     ;xmm10 = 0 | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | 0 | 0
+            
+            ;APLICO CAMBIOS
+            pxor xmm0, xmm10
+
+            ;COMPARACIONES SOBRE L
+            ;l+ll = 1?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara5]
+            movdqu xmm6, xmm5
+            pand xmm6, [mascara2]      ;xmm6 = l+ll=1? | 0 | 0 | 0
+            ;l+ll > 1?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara5]
+            movdqu xmm7, xmm5
+            pand xmm7, [mascara2]      ;xmm7 = l+ll>1? | 0 | 0 | 0
+            ;l+ll = 0?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara7]
+            movdqu xmm8, xmm5
+            pand xmm8, [mascara2]      ;xmm8 = l+ll=0? | 0 | 0 | 0
+            ;l+ll > 0?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara7]
+            movdqu xmm9, xmm5
+            pand xmm9, [mascara2]      ;xmm9 = l+ll>0? | 0 | 0 | 0
+            
+            pxor xmm6, xmm7
+            pand xmm6, [mascara5]      ;xmm6 = 1 si pi_l+ll>= 1, 0 sino | 0 | 0 | 0
+            pxor xmm8, xmm9             ;xmm8 = 1s si pi_l+11>=0, 0s sino | 0 | 0 | 0
+            ;pnand xmm8, xmm8           ;xmm8 = 1s si pi_l+ll<0, 0s sino | 0 | 0 | 0
+            movdqu xmm10, xmm0
+            pand xmm8, xmm10           ;xmm8 = pi_l+ll si l+ll>=0, 0 sino | 0 | 0 | 0
+            pand xmm10, [mascara7]     ;xmm10 = 0 | pi_s+ss | pi_h+hh | pi_A
+            pxor xmm10, xmm6           ;xmm10 = 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
+            pxor xmm10, xmm8           ;xmm10 = pi_l+ll si l+ll>=0, 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
+            pand xmm10, [mascara2]
+
+            ;APLICO CAMBIOS
+            pxor xmm0, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE XMM0
+            cvtdq2ps xmm0, xmm0        ;paso a float para pasarlo como parametro a hslTOrgb
+            mov rdi, rdx               ;paso direccion del pixel
+            call hslTOrgb              
            
+            ;ACA YA TERMINE DE PROCESAR ESE PIXEL Y SE INSERTA EN LA IMAGEN
+
+            add rbx, 4                 ;paso al pixel siguiente
+            inc r15                    ;procese un pixel mas
             
 
-
-       
-     
+            .avanzo:
+              inc r14
+              jmp .ciclofilas
+            
+            
+            
+          
+            
+ 
+            
+ .fin:
+  add rsp, 8
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbx
+  pop rbp
   ret
   
 
