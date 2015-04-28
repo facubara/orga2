@@ -16,8 +16,13 @@ mascara6: dd 0x0, 0x0, 0x0, 4.0
 mascara7: dd 0x0, 0x0, 360, 0x0
 mascara8: dd 2.0, 0x0, 0x0, 0x0
 mascara9: dd 1.0, 0x0, 0x0, 0x0
-;mascara10; dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
-;mascara10: dd 0xFFFFFFFF, 0x0, 0x0, 0x0
+mascara10: dd 0x0,0x0,0xFFFFFFFF,0x0
+mascara11: dd 0x0,0xFFFFFFFF,0x0,0x0
+mascara12: dd 0xFFFFFFFF,0x0,0x0,0x0
+mascara13: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
+mascara14: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
+mascara15: dd 0,1,0,0
+mascara16; dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 section .text
 ; void ASM_hsl2(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl2
@@ -44,11 +49,11 @@ ASM_hsl2:
   xor r14, r14
   xor r15, r15
   movdqu xmm15, xmm0
-  pand xmm15, [mascara0]                  ;xmm15 = 0 | 0 | 0 | hh
+  pand xmm15, [mascara10]                  ;xmm15 = 0 | 0 | hh | 0
   movdqu xmm14, xmm1
-  pand xmm14, [mascara0]                  ;xmm14 = 0 | 0 | 0 | ss
+  pand xmm14, [mascara11]                  ;xmm14 = 0 | ss | 0 | 0
   movdqu xmm13, xmm2 
-  pand xmm13, [mascara0]                  ;xmm13 = 0 | 0 | 0 | ll
+  pand xmm13, [mascara12]                  ;xmm13 = ll | 0 | 0 | 0
   movq rbx, rdx                           ;respaldo imagen
  
    .ciclofilas:
@@ -191,6 +196,132 @@ ASM_hsl2:
             
             ;PIXEL 1 PASADO A HSL
 
+            ; h 
+            addps xmm1, xmm15           ;xmm0 = pi_l | pi_s | pi_h + hh | pi_A                         
+            ; s
+            addps xmm1, xmm14           ;xmm0 = pi_l | pi_s + ss | pi_h + hh | pi_A
+            ; l
+            addps xmm1, xmm13           ;xmm0 = pi_l + ll | pi_s + ss | pi_h + hh | pi_A   (como floats)
+
+            cvtps2dq xmm0, xmm0         ;xmm0 = pi_l + ll | pi_s + ss | pi_h + hh | pi_A   (como ints, para comparar)
+            movdqu xmm5, xmm0
+
+          
+
+          
+            ;COMPARACIONES SOBRE H
+            ;h + hh = 360?
+            pcmpeqd xmm5, [mascara7]   ;pi_h+hh = 360? todo lo demas quede en 0 probablemente
+            movdqu xmm6, xmm5          
+            pand xmm6, [mascara10]      ; xmm6 = 0 | 0 | h+hh = 360? | 0
+            ;h + hh > 360?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara7]   ;pi_h+hh > 360?
+            movdqu xmm7, xmm5          
+            pand xmm7, [mascara10]      ; xmm7 = 0 | 0 | h+hh > 360? | 0
+            ;h + hh = 0?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara14]   ;pi_h+hh = 0?
+            movdqu xmm8, xmm5          
+            pand xmm8, [mascara10]      ; xmm8 = 0 | 0 | h+hh= 0? | 0
+            ;jz .sumo360
+            ;h + hh > 0?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara14]   ;pi_h+hh > 0?
+            movdqu xmm9, xmm5          
+            pand xmm9, [mascara10]      ; xmm9 = 0 | 0 | h+hh>0? | 0
+            
+            ;PARA SABER SI h+hh <0 me fijo si h+hh>0 y si h+hh=0, los sumo y despues hago un pnand para negar, si da 1s es que es menor, sino era o mayor o igual
+            ;PARA SABER SI h+hh >= 360 me fijo si h+hh=360 y si h+hh>360, hago pxor entre eso y me fijo si da 1s es que es alguna de las dos opciones sino es menor
+            pxor xmm6, xmm7
+            pand xmm6, [mascara10]          ;CREO QUE NO ES NECESARIO 
+            pand xmm6, [mascara7]      ;xmm6 = 0 | 0 | 360 si h+hh>=360, 0 sino | 0
+            pxor xmm8, xmm9               
+            pandn xmm8, xmm8
+            pand xmm8, [mascara10]      ;xmm8 = 0 | 0 | h+hh<0? | 0
+            pand xmm8, [mascara7]      ;xmm8 = 0 | 0 | 360 si h+hh<0, 0 sino | 0
+            movdqu xmm5, xmm0          ;queda pi_h + hh
+            
+            ;AHORA APLICO LOS CAMBIOS A h
+            psubd xmm0, xmm6           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh - 360 si pi_h+hh>=360, pi_h+hh sino | pi_A
+            paddd xmm0, xmm8           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh +360 si pi_h+hh<0, pi_h+hh sino | pi_A
+
+            ;ACLARO QUE SOLO PUEDE PASAR 1 CASO DE LOS 2 ANTERIORES, osea que o hago +360 o -360 o queda pi_h+hh
+
+            ;COMPARACIONES SOBRE S
+            ;s+ss = 1?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara15]
+            movdqu xmm6, xmm5
+            pand xmm6, [mascara11]      ;xmm6 = 0 | s+ss = 1? | 0 | 0
+            ;s+ss > 1?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara15]
+            movdqu xmm7, xmm5
+            pand xmm7, [mascara11]      ;xmm7 = 0 | s+ss>1? | 0 | 0
+            ;s+ss = 0?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara6]
+            movdqu xmm8, xmm5
+            pand xmm8, [mascara11]      ;xmm8 = 0 | s+ss=0? | 0 | 0
+            ;s+ss > 0?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara6]
+            movdqu xmm9, xmm5
+            pand xmm9, [mascara11]      ;xmm9 = 0 | s+ss>0? | 0 | 0
+
+            ;EL PROCEDIMIENTO ES BASICAMENTE IGUAL QUE PARA H+HH PERO CON OTROS VALORES
+            
+            pxor xmm6, xmm7
+            pand xmm6, [mascara15]      ;xmm6 = 0 | 1 si pi_s+ss >= 1, 0 sino | 0 | 0
+            pxor xmm8, xmm9
+            ;pnand xmm8, xmm8           ;xmm8 = 0 | 1s si s+ss<0 0s sino | 0 | 0
+            movdqu xmm10, xmm0
+            pand xmm8, xmm10           ;xmm8 = 0 | pi_s+ss si s+ss>=0, 0 sino | 0 | 0         
+            pand xmm10, [mascara13]     ;xmm10 = pi_l + ll | 0 | pi_h+hh | pi_A
+            pxor xmm10, xmm6           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 sino | 0 | 0
+            pxor xmm10, xmm8           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | pi_h + hh | pi_A
+            pand xmm10, [mascara11]     ;xmm10 = 0 | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | 0 | 0
+            
+            ;APLICO CAMBIOS
+            pxor xmm0, xmm10
+
+            ;COMPARACIONES SOBRE L
+            ;l+ll = 1?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara9]
+            movdqu xmm6, xmm5
+            pand xmm6, [mascara12]      ;xmm6 = l+ll=1? | 0 | 0 | 0
+            ;l+ll > 1?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara9]
+            movdqu xmm7, xmm5
+            pand xmm7, [mascara12]      ;xmm7 = l+ll>1? | 0 | 0 | 0
+            ;l+ll = 0?
+            movdqu xmm5, xmm0
+            pcmpeqd xmm5, [mascara16]
+            movdqu xmm8, xmm5
+            pand xmm8, [mascara12]      ;xmm8 = l+ll=0? | 0 | 0 | 0
+            ;l+ll > 0?
+            movdqu xmm5, xmm0
+            pcmpgtd xmm5, [mascara16]
+            movdqu xmm9, xmm5
+            pand xmm9, [mascara12]      ;xmm9 = l+ll>0? | 0 | 0 | 0
+            
+            pxor xmm6, xmm7
+            pand xmm6, [mascara9]      ;xmm6 = 1 si pi_l+ll>= 1, 0 sino | 0 | 0 | 0
+            pxor xmm8, xmm9             ;xmm8 = 1s si pi_l+11>=0, 0s sino | 0 | 0 | 0
+            ;pnand xmm8, xmm8           ;xmm8 = 1s si pi_l+ll<0, 0s sino | 0 | 0 | 0
+            movdqu xmm10, xmm0
+            pand xmm8, xmm10           ;xmm8 = pi_l+ll si l+ll>=0, 0 sino | 0 | 0 | 0
+            pand xmm10, [mascara16]     ;xmm10 = 0 | pi_s+ss | pi_h+hh | pi_A
+            pxor xmm10, xmm6           ;xmm10 = 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
+            pxor xmm10, xmm8           ;xmm10 = pi_l+ll si l+ll>=0, 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
+            pand xmm10, [mascara12]
+
+            ;APLICO CAMBIOS
+            pxor xmm0, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE XMM0
+            cvtdq2ps xmm0, xmm0        ;paso a float para pasarlo como parametro a hslTOrgb
 
 
  
