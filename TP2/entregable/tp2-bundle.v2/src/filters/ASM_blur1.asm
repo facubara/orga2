@@ -4,7 +4,7 @@
 ;   Implementacion de la funcion Blur 1                                     ;
 ;                                                                           ;
 ; ************************************************************************* ;
-
+extern malloc
 section .data
 constante: times 4 dd 9
 section .text
@@ -54,7 +54,7 @@ ASM_blur1:
     cmp r15, r9               ;termine de copiar?
     jz .fincopia
     mov byte r14, [rdx]
-    mov byte [rax], r14
+    mov byte [rax], r14b
     inc r15                           ;copio lo que estaba en la imagen
     inc rdx
     inc rax
@@ -88,7 +88,8 @@ ASM_blur1:
 
         ;MOVD MUEVE EXACTAMENTE 4 BYTES, OSEA UN PIXEL A LA PARTE BAJA DE XMM0
                                 ; PROCESO P1
-				movd xmm1,xmm0
+				;movd xmm1,xmm0
+                                movd xmm1, [rcx]
 				punpcklbw xmm1,xmm15
 				punpcklwd xmm1,xmm15
 				;cvtdq2ps xmm1,xmm1			; xmm1 = p1_b | p1_g | p1_r | p1_a  (como floats)
@@ -170,7 +171,7 @@ ASM_blur1:
                                 movd xmm9,[r11]
 				punpcklbw xmm5,xmm15
 				punpcklwd xmm5,xmm15
-				,cvtdq2ps xmm5,xmm5			; xmm5 = componentes del px de (i+1,j+1) (como floats)
+				;cvtdq2ps xmm5,xmm5	  ;xmm5 = componentes del px de (i+1,j+1) (como floats)
 				;cvttps2dq xmm5,xmm5			; paso a int truncado
 				
 
@@ -207,20 +208,20 @@ ASM_blur1:
                          movd [rdx], xmm1
                          pxor xmm1, xmm1
                          pxor xmm0, xmm0
-                       .avanzocol
+                       .avanzocol:
                          add rdx, 4                       ;copie 1 pixel mas a la original
                          add rcx, 4                       ;copie 1 pixel mas de la copia
                          inc r9
                          cmp r10, r9                      ;termine con la fila?
                          jz .avanzofila
                          jmp .ciclocolumna
-                       .avanzofila
+                       .avanzofila:
                          inc r12 
                          jmp .ciclofila
                          
                            
 
-.fin
+.fin:
   pop r15
   pop r14
   pop r13

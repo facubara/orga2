@@ -141,6 +141,7 @@ ASM_merge2:
             inc r14
             jmp .ciclofilas
 
+  .fin:
   pop r15
   pop r14
   pop r13

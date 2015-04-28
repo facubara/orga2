@@ -8,15 +8,15 @@ extern rgbTOhsl
 extern hslTOrgb
 
 section .data
-mascara0: db 0,0,0,0,0,0,0,0,F,F,F,F,0,0,0,0
-mascara1: db 0,0,0,0,F,F,F,F,0,0,0,0,0,0,0,0
-mascara2: db F,F,F,F,0,0,0,0,0,0,0,0,0,0,0,0
+mascara0: dd 0x0,0x0,0xFFFFFFFF,0x0
+mascara1: dd 0x0,0xFFFFFFFF,0x0,0x0
+mascara2: dd 0xFFFFFFFF,0x0,0x0,0x0
 mascara3: dd 0,0,360,0
 mascara4: dd 0,1,0,0
 mascara5: dd 1,0,0,0
-mascara6: db F,F,F,F,0,0,0,0,F,F,F,F,F,F,F,F
-mascara7: db 0,0,0,0,F,F,F,F,F,F,F,F,F,F,F,F
-mascara8: db F,F,F,F,F,F,F,F,0,0,0,0,F,F,F,F
+mascara6: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
+mascara7: dd 0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
+mascara8: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
 ; void ASM_hsl1(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl1
 ASM_hsl1:
@@ -39,8 +39,8 @@ ASM_hsl1:
   push r15                             
   sub rsp, 8
 
-  xor r14                              ;contador filas
-  xor r15                              ;contador columnas
+  xor r14, r14                              ;contador filas
+  xor r15, r15                              ;contador columnas
   mov qword r12, rdi                   ;respaldo ancho en pixels
   mov qword r13, rsi                   ;respaldo alto
   mov qword rbx, rdx                   ;respaldo puntero a la imagen
@@ -56,12 +56,12 @@ ASM_hsl1:
   cvtdq2ps xmm13, xmm13                ;xmm13 = 1 | 0 | 0 | 0      (en floats)
   
 
-  ciclofilas:
+  .ciclofilas:
      cmp r14,r13                       ;termine?
-     jz .fin
+     jz .fin	
      xor r15, r15                      ;reseteo contador columnas
           
-       ciclocolumnas:
+       .ciclocolumnas:
             cmp r12, r15               ;termine con la fila?
             jz .avanzo
             mov rdi, rbx
@@ -96,7 +96,7 @@ ASM_hsl1:
             pcmpeqd xmm5, [mascara8]   ;pi_h+hh = 0?
             movdqu xmm8, xmm5          
             pand xmm8, [mascara0]      ; xmm8 = 0 | 0 | h+hh= 0? | 0
-            jz .sumo360
+            ;jz .sumo360
             ;h + hh > 0?
             movdqu xmm5, xmm0
             pcmpgtd xmm5, [mascara8]   ;pi_h+hh > 0?
@@ -109,7 +109,7 @@ ASM_hsl1:
             pand xmm6, [mascara0]          ;CREO QUE NO ES NECESARIO 
             pand xmm6, [mascara3]      ;xmm6 = 0 | 0 | 360 si h+hh>=360, 0 sino | 0
             pxor xmm8, xmm9               
-            pnand xmm8, xmm8
+            pandn xmm8, xmm8
             pand xmm8, [mascara0]      ;xmm8 = 0 | 0 | h+hh<0? | 0
             pand xmm8, [mascara3]      ;xmm8 = 0 | 0 | 360 si h+hh<0, 0 sino | 0
             movdqu xmm5, xmm0          ;queda pi_h + hh
@@ -213,7 +213,7 @@ ASM_hsl1:
             
  
             
- .fin:
+.fin:
   add rsp, 8
   pop r15
   pop r14

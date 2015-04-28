@@ -8,7 +8,8 @@
 section .data
 align 16
 constante1: times 4 dd 1
-
+mascara: db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF
+mascara1: dd 0, 0, 0, 1
 section .text
 
 ; void ASM_merge1(uint32_t w, uint32_t h, uint8_t* data1, uint8_t* data2, float value)
@@ -29,9 +30,10 @@ ASM_merge1:
   ;rcx = src2
   ;xmm0 = value
   pxor xmm13, xmm13
-  movd xmm13, xmm0                      ;xmm13 = 0 | 0 | 0 | value
+  movdqu xmm13, xmm0                      ;xmm13 = 0 | 0 | 0 | value
+  pand xmm13, [mascara]
   shufps xmm13, xmm13, 1h              ;xmm13 = value | value | value | 0
-  paddd xmm13, 1                       ;xmm13 = value | value | value | 1
+  paddd xmm13, [mascara1]                       ;xmm13 = value | value | value | 1
   ;shufps xmm0, xmm0, 0h                 ;xmm0 = value | value | value | value
   movdqu xmm0, xmm13
   mov r12, rdi              ;cant pixels por fila
@@ -45,11 +47,11 @@ ASM_merge1:
   cvtdq2ps xmm14, xmm14                    ;paso a float
   subps xmm14, xmm0                       ;xmm14 = 1 - value | 1 - value | 1 - value | 0 (en floats)
   
-  .ciclofilas
+  .ciclofilas:
    cmp r14, r13
    jz .fin
    xor r15, r15                         ;reseto pixels por fila     
-        .ciclocolumnas
+        .ciclocolumnas:
           ;SRC1
           movdqu xmm1, [r8]                   ; xmm1 = src1(i,j+0)| src1(i,j+1) | src1(i,j+2) | src1(i,j+3)
           
@@ -155,10 +157,11 @@ ASM_merge1:
           jmp .ciclocolumnas
           
 
-          .cambiofila
+          .cambiofila:
             inc r14
             jmp .ciclofilas
 
+  .fin:
   pop r15
   pop r14
   pop r13

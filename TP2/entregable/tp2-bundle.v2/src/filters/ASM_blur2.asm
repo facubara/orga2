@@ -4,6 +4,7 @@
 ;   Implementacion de la funcion Blur 2                                     ;
 ;                                                                           ;
 ; ************************************************************************* ;
+extern malloc
 section .data
 constante: times 4 dd 9
 section .text
@@ -55,7 +56,7 @@ ASM_blur2:
     cmp r15, r9               ;termine de copiar?
     jz .fincopia
     mov byte r14, [rdx]
-    mov byte [rax], r14
+    mov byte [rax], r14b
     inc r15                           ;copio lo que estaba en la imagen
     inc rdx
     inc rax
@@ -530,7 +531,7 @@ ASM_blur2:
                          ;TODO YA PROCESADO COMO SE DEBE
                          ;EMPAQUETO
 
-                       .empaqueto
+                       .empaqueto:
                          packusdw xmm1, xmm2
                          packusdw xmm3, xmm4
                          packusdw xmm1, xmm3
@@ -544,13 +545,13 @@ ASM_blur2:
                          cmp r10, rbx                     ;termine con la fila?
                          jz .avanzofila
                          jmp .ciclocolumna
-                       .avanzofila
+                       .avanzofila:
                          inc r12 
                          jmp .ciclofila
                          
                            
 
-.fin
+.fin:
   add rsp, 8
   pop r15
   pop r14
