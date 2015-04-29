@@ -5,6 +5,7 @@
 ;                                                                           ;
 ; ************************************************************************* ;
 extern malloc
+extern free
 section .data
 constante: times 4 dd 9
 section .text
@@ -70,7 +71,7 @@ ASM_blur1:
     mov qword r11, r9                ;voy a usar r11 para moverme por src
     movdqu xmm14, [constante]         ;xmm14 = 9 | 9 | 9 | 9 
     cvtdq2ps xmm14, xmm14             ;xmm14 = 9 | 9 | 9 | 9 (en float)
- 
+    mov rax, rcx                      ;guardo puntero a la imagen copia para hacer free despues
   .ciclofila:
      cmp r12, 2          ;fila < 2?
      jl .avanzofila
@@ -84,7 +85,7 @@ ASM_blur1:
       jl .avanzocol      ;dejo el pixel como estaba
       cmp r13, r10       ;columna >= tamaño col -2 ?
       jge .avanzocol     ;dejo el pixel como estaba
-      movd xmm0, [rcx]
+      ;movd xmm0, [rcx]
 
         ;MOVD MUEVE EXACTAMENTE 4 BYTES, OSEA UN PIXEL A LA PARTE BAJA DE XMM0
                                 ; PROCESO P1
@@ -222,6 +223,8 @@ ASM_blur1:
                            
 
 .fin:
+  mov qword rdi, rax
+  call free                    ;libero la memoria de la imagen copia
   pop r15
   pop r14
   pop r13

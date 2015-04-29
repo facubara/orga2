@@ -1,0 +1,22 @@
+1) respaldo los registros importantes
+2) creo una copia de la imagen (porque sino se terminan pisando valores y no queda como tiene que quedar)
+3) me guardo cant columnas -2 y cant filas -2 para saber si estoy en casos borde
+4) entro a ciclo fila
+
+       5) me fijo si estoy en una fila borde, si es asi la salteo
+       6) Si no, entro a ciclo columna
+             7)me fijo si estoy en caso borde, si es asi avanzo de pixel / columna
+             8) Si no, uso movd para levantar 4 bytes de la imagen copia (1 pixel) y lo pongo en el dword de la parte baja de xmm1
+             9) desempaqueto de manera que quede xmm1 = p_b | p_g | p_r | p_a (separo las componentes)
+             10) agarro los 8 pixels vecinos, para esto me muevo en rcx restando o sumando el tamaño de la fila (si sumo la fila bajo si resto subo), y sumando o restando por 4 bytes (1 pixel)
+             11) desempaqueto los vecinos para tener en distintos xmm sus componentes separadas como xmm1
+             12) sumo las componentes de los pixels de la matriz (el pixel que veo y sus vecinos)
+             13) convierto a float la suma
+             14) divido por 9
+             15) paso a int otra vez
+             16) coloco el pixel en la imagen original
+             17) avanzo 4 bytes en la imagen en ambas imagenes (copia y original)
+             18) aumento contador de pixels en 1
+             19) comparo si termine con la fila, si es asi paso a la fila siguiente, sino vuelvo a ciclar
+     20) en ciclo fila me fijo si termine de procesar todas las filas, si es asi me voy a FIN y termine
+     21) EN FIN LIBERO LA MEMORIA DE LA IMAGEN COPIA

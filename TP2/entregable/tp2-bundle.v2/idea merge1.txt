@@ -1,0 +1,8 @@
+Como la componente A de la imagen parametro1 tiene que quedar igual busco la manera de que cuando armo las mascaras se cancelen ciertos valores para que se sume 0 / se reste 0 a la componente A, asi queda igual.
+
+armo las mascaras correspondientes para poder calcular 1 - value y value ( xmm13 = value | value | value | 1) y (xmm14 = 1 - value | 1 - value | 1 - value | 0).
+Lo demás es bastante estándar. Ciclo las filas hasta que se me termine la imagen. Ciclo las columnas, y cuando termino una columna paso a la fila siguiente.
+
+Lo que hago es tomar 4 pixels de cada imagen (y desempaqueto de manera de que para cada pixel tenga 1 registro xmm distinto), parametro1 y parametro2. Para cada par de pixels (p1 de parametro1 y p1 de parametro2 y asi...) hago las multiplicaciones como indica el enunciado y sumo los 2 pixels. Cuando tengo los resultados de las operaciones de los 4 pixels, empaqueto para que entren en un registro xmm y lo inserto en la imagen.
+
+ACA las operaciones son en floats

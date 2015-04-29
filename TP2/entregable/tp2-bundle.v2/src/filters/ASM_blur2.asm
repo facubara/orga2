@@ -72,6 +72,7 @@ ASM_blur2:
    ;sub r10, 8                           ;cantidad de bytes por fila - 8 para saber si estoy en el borde
     mov qword r11, r9                ;voy a usar r11 para moverme por src
     movdqu xmm14, [constante]
+    mov rax, rcx
  
   .ciclofila:
      cmp r12, 2          ;fila < 2?
@@ -552,6 +553,8 @@ ASM_blur2:
                            
 
 .fin:
+  mov qword rdi, rax
+  call free                    ;libero la memoria de la imagen copia
   add rsp, 8
   pop r15
   pop r14

@@ -1,0 +1,1 @@
+misma idea que merge1 pero al principio agarro el value que me pasan como parametro y lo convierto a int
