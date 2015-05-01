@@ -24,6 +24,7 @@ mascara14: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
 mascara15: dd 0,1,0,0
 mascara16; dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 mascara17: dd 0x0, 0x0, 0x0, -1.0
+mascara18: dd 255.0, 255.0, 255.0, 0
 section .text
 ; void ASM_hsl2(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl2
@@ -43,12 +44,13 @@ ASM_hsl2:
   push r13
   push r14
   push r15
+  add rsp, 8
   
   pxor xmm12, xmm12              
-  xor r12, r12                            ;contador filas
-  xor r13, r13                            ;contador columnas
-  xor r14, r14
-  xor r15, r15
+  mov r12, rdi                            ;cantidad pixels por fila
+  xor r13, r13                            ;contador filas
+  mov r14, rsi                            ; r14 = cantidad filas
+  xor r15, r15                            ;contador columnas
   movdqu xmm15, xmm0
   pand xmm15, [mascara10]                  ;xmm15 = 0 | 0 | hh | 0
   movdqu xmm14, xmm1
@@ -214,7 +216,7 @@ ASM_hsl2:
 
             ;APLICO CAMBIOS
             pxor xmm12, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE XMM12
-            cvtdq2ps xmm12, xmm12        ;paso a float para pasarlo como parametro a hslTOrgb
+            cvtdq2ps xmm12, xmm12        ;paso a float para pasarlo como parametro a hslArgb
 
             
             ;ACA TERMINE CON EL PIXEL 1 LE FALTA PASAR A RGB NADA MAS
@@ -345,14 +347,44 @@ ASM_hsl2:
             pand xmm10, [mascara12]
 
             ;APLICO CAMBIOS
-            pxor xmm1, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE XMM12
-            cvtdq2ps xmm1, xmm1        ;paso a float para pasarlo como parametro a hslTOrgb
+            pxor xmm1, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE PIXEL 2
+            cvtdq2ps xmm1, xmm1        ;paso a float para pasarlo como parametro a hslArgb
+            call hslArgb               ;xmm11 = el pixel 2 que pase como parametro ahora en RGB
+            movdqu xmm1, xmm12         ; xmm1 = p1_l | p1_s | p1_h | p1_a
+            movdqu xmm12, xmm11        ; xmm12 = p2_b | p2_g | p2_r | p2_a
+            call hslArgb               ;xmm11 = pixel 1 que pase como parametro ahora en RGB
+            
+            ;EMPAQUETO
+            pxor xmm1, xmm1
+            packusdw xmm11, xmm12
+            packuswb xmm11, xmm1
+            ;en xmm11 = 0 | 0 | p2 | p1  ya procesados y todo bonito
+            ;INSERTO
+            movq [rbx], xmm11
+            
+            add r15, 2               ;procese 2 pixels
+            add rbx, 2               ;me muevo 2 pixels en la imagen
+            jmp .ciclocolumnas
+
+
+           .avanzo:
+               inc r13              ;procese 1 fila mas
+               jmp .ciclofilas
+
+            
             
             
 
  
 
 .fin:
+  sub rsp, 8
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbx
+  pop rbp
   ret
   
 
@@ -532,10 +564,95 @@ hslArgb:
         roundps xmm8, xmm7, 1      ;xmm7 = 0 | 0 | 0 | (p1_h / 60.0) /2.0 redondeado hacia abajo (el 1 indica redondeo hacia abajo)
         subps xmm5, xmm8           ;xmm5 = 0 | 0 | 0 | fmod( p1_h / 60.0, 2.0)
         addps xmm5, [mascara17]    ;xmm5 = 0 | 0 | 0 | fmod( p1_h / 60.0, 2.0) -1.0
+        ;FALTA ALGO PARA FMOD TENDRIA QUE SER p1_h/60 - p1_h/60/2 * p1_h/60
         movdqu xmm8, [mascara9]
         psrldq xmm8, 12            ;xmm8 = 0 | 0 | 0 | 1.0
         subps xmm8, xmm5           ;xmm8 = 0 | 0 | 0 | 1.0 - fmod( p1_h / 60.0, 2.0) -1.0
+        mulps xmm8, xmm6           ;xmm8 = 0 | 0 | 0 | X
         
+        ;CALCULO M
+
+        movdqu xmm5, xmm6          ; xmm5 = 0 | 0 | 0 | C
+        divps xmm5, [mascara5]     ; xmm5 = 0 | 0 | 0 | C/2
+        subps xmm2, xmm5           ; xmm2 = 0 | 0 | 0 | M
+
+        ;xmm6 = 0 | 0 | 0 | C   xmm8 = 0 | 0 | 0 | X    xmm2 = 0 | 0 | 0 | M
+        ;XMMS LIBRES : xmm5, xmm3, xmm7, xmm10, xmm11
+        pslldq xmm8; 4             ; xmm8 = 0 | 0 | X | 0
+        pxor xmm8, xmm6            ; xmm8 = 0 | 0 | X | C
+
+        ;AHORA xmm6 ESTA LIBRE
+
+        shufps xmm4, xmm4, 0h      ; xmm4 = h | h | h | h         para las comparaciones
+        movdqu xmm9, [mascara1]    ; xmm9 = 0 | 0 | 0 | 60.0   para ir sumando
+        shufps xmm9, xmm9, 0h      ; xmm9 = 60.0 | 60.0 | 60.0 | 60.0
+        pxor xmm10, xmm10          ; xmm10 = 0 | 0 | 0 | 0
+        cmpps xmm10, xmm4, 010b     ; xmm10 = 0<= h? | 0<= h? | 0<= h? | 0<=h?
+        
+        ;VOY A USAR XMM11 PARA GUARDAR EL RESULTADO DE TODAS ESTAS COMPARACIONES
+        ;CREO QUE POR COMO LO HAGO NO SE PISAN LOS VALORES
+        ; P = p_b | p_g | p_r | p_a
+        ;si 0<=h <60 P = X | 0 | C | 0
+        shufps xmm6, xmm8, 01100010b        ; 01 es pongo X, 10 es pongo 0, 00 es pongo C y 10 es pongo 0
+        pand xmm10, xmm6                    ; si 0<= h entonces xmm10 = X | 0 | C | 0, sino xmm10 = 0 | 0 | 0 | 0
+        movdqu xmm11, xmm10                 ; pongo resultado en xmm11
+        ;si 60<=h P = C | 0 | X | 0
+        ;pxor xmm10, xmm10                   ; xmm10 = 0 | 0 | 0 | 0
+        ;addps xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        cmpps xmm10, xmm4, 010b             ; xmm10 = 60.0 <= h? | 60.0 <= h? | 60.0 <= h? | 60.0 <= h?
+        shufps xmm6, xmm8, 00100110b        ; 00 es pongo C, 10 es pongo 0, 01 es pongo X, 10 es pongo 0
+        pand xmm10, xmm6                    ; si 60.0<= h entonces xmm10 = C | 0 | X | 0 sino xmm10 = 0 | 0 | 0 | 0
+        pxor xmm11, xmm10                   ; acumulo res
+        ;si 120<=h P = C | X | 0 | 0        
+        movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        adpps xmm10, xmm9                    ; xmm10 = 120.0 | 120.0 | 120.0 | 120.0
+        ;movdqu xmm10, xmm9                   ; xmm10 = 120.0 | 120.0 | 120.0 | 120.0
+        cmpps xmm10, xmm4, 010b              ; xmm10 = 120<= h? | 120<= h? | 120<= h? | 120<= h?
+        shufps xmm6, xmm8, 00011010b         ; 00 es pongo C, 01 es pongo X, 10 es pongo 0, 10 es pongo
+        pand xmm10, xmm6                     ; si 120.0 <= h entonces xmm10 = C | X | 0 | 0, sino 0s
+        pxor xmm11, xmm10                    ; acumulo res
+        ;si 180<=h P = X | C | 0 | 0
+        movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        addps xmm10, xmm9
+        addps xmm10, xmm9                    ; xmm10 = 180.0 | 180.0 | 180.0 | 180.0
+        cmpps xmm10, xmm4, 010b              ; xmm10 = 180.0 <= h? | 180.0 <= h? | 180.0 <= h? | 180.0 <= h?
+        shufps xmm6, xmm8, 01001010b         ; 01 es pongo X, 00 es pongo C, 10 es pongo 0, 10 es pongo 0
+        pand xmm10, xmm6                     ; si 180.0 <= h entonces xmm10 = X | C | 0 | 0, sino 0s
+        pxor xmm11, xmm10                    ; acumulo res
+        ;si 240<=h P = 0 | C | X | 0
+        movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        addps xmm10, xmm9
+        addps xmm10, xmm9
+        addps xmm10, xmm9                    ; xmm10 = 240.0 | 240.0 | 240.0 | 240.0
+        cmpps xmm10, xmm4, 010b              ; xmm10 = 240.0<=h? | 240.0<=h? | 240.0<=h? | 240.0<=h?
+        shufps xmm6, xmm8, 10000110          ; 10 es pongo 0, 00 es pongo C, 01 es pongo X, 10 es pongo 0
+        pand xmm10, xmm6                     ; si 240.0 <=h entonces xmm10 = 0 | C | X | 0, sino 0s
+        pxor xmm11, xmm10                    ; acumulo res
+        ;si 300<=h P = 0 | X | C | 0
+        movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
+        addps xmm10, xmm9
+        addps xmm10, xmm9 
+        addps xmm10, xmm9
+        addps xmm10, xmm9                    ; xmm10 = 300.0 | 300.0 | 300.0 | 300.0
+        cmmps xmm10, xmm4, 010b              ; xmm10 = 300.0<=h? | 300.0<=h? | 300.0<=h? | 300.0<=h?
+        shufps xmm6, xmm8, 10010010          ; 10 es pongo 0, 01 es pongo X, 00 es pongo C, 10 es pongo 0
+        pand xmm10, xmm6                     ; si 300.0 <= h entonces xmm10 = 0 | X | C | 0 sino 0s
+        pxor xmm11, xmm10                    ; acumulo res
+
+        ;ACA YA TENGO EN XMM11 CASI RGB, me falta a cada componente sumarle M y multiplicar por 255
+        shufps xmm2, xmm2, 01h                ; xmm2 = M | M | M | 0   ACA CONFIO UN POQUITO EN QUE LO DEJA ASI
+        addps xmm11, xmm2                    ; xmm11 = b+m | g+m | r+m | 0
+        mulps xmm11, [mascara18]             ; xmm11 = (b+m)*255 | (g+m)*255 | (r+m)*255 | 0
+        cvtps2dq xmm11, xmm11                ; xmm11 = p_b | p_g | p_r | 0
+        pxor xmm11, xmm12                    ; xmm11 = p_b | p_g | p_r | p_a
+        
+        ;TERMINE DE PASAR A RGB
+
+ret
+        
+        
+          
 
 
 
