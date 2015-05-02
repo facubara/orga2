@@ -63,25 +63,25 @@ ASM_blur1:
   .fincopia:                         ;tengo en rcx el puntero a la nueva imagen copiada
     mov qword rdx, r11               ;reestablezco el puntero en el inicio de la imagen original
     mov qword rsi, r8                ;reestablezco cantidad de filas
-    sub r8, 2                    ;filas -2 para saber si estoy en borde despues
+    sub r8, 1                    ;filas -2 para saber si estoy en borde despues
     mov qword r9, rdi 
     shl r9, 2                     ;cantidad de bytes por fila, suponiendo que venia en pixels
     mov qword r10, r9
-    sub r10, 2                           ;cantidad de bytes por fila - 2 para saber si estoy en el borde
+    sub r10, 1                          ;cantidad de bytes por fila - 2 para saber si estoy en el borde
     mov qword r11, r9                ;voy a usar r11 para moverme por src
     movdqu xmm14, [constante]         ;xmm14 = 9 | 9 | 9 | 9 
     cvtdq2ps xmm14, xmm14             ;xmm14 = 9 | 9 | 9 | 9 (en float)
     mov rax, rcx                      ;guardo puntero a la imagen copia para hacer free despues
   .ciclofila:
-     cmp r12, 2          ;fila < 2?
+     cmp r12, 1         ;fila < 2?
      jl .avanzofila
      cmp r12, r8         ;fila >= cantfilas - 2?
      jge .avanzofila 
-     xor r9, r9          ;reseto contador columnas
+     xor r13, r13          ;reseto contador columnas
      cmp r12, rsi
      jz .fin
   .ciclocolumna:
-      cmp r13, 2         ;columna <2?
+      cmp r13, 1         ;columna <2?
       jl .avanzocol      ;dejo el pixel como estaba
       cmp r13, r10       ;columna >= tamaño col -2 ?
       jge .avanzocol     ;dejo el pixel como estaba
@@ -212,7 +212,7 @@ ASM_blur1:
                        .avanzocol:
                          add rdx, 4                       ;copie 1 pixel mas a la original
                          add rcx, 4                       ;copie 1 pixel mas de la copia
-                         inc r9
+                         inc r13
                          cmp r10, r9                      ;termine con la fila?
                          jz .avanzofila
                          jmp .ciclocolumna

@@ -83,7 +83,7 @@ ASM_blur2:
      cmp r12, rsi
      jz .fin
   .ciclocolumna:
-      movdqu xmm0, [rcx]
+      movdqu xmm0, [rcx] 
       cmp rbx, 2         ;columna <2?
       jl .dosalfinal      ;dejo los 2 primeros pixels como estaban
       cmp rbx, r10       ;columna >= tamaño col -2 ?
