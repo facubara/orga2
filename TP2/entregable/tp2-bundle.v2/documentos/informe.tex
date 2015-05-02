@@ -74,11 +74,11 @@ En el presente trabajo se describe la problemática de procesar información de 
 \section{Objetivos generales}
 El objetivo de este Trabajo Práctico es mostrar las variaciones en la performance que pueden ocurrir al utilizar instrucciones SIMD cuando se manejan grandes volúmenes de datos que requieren un procesamiento similar, en comparación con implementaciones que no lo utilizan.
 
-Para ello se realizarán distintos experimentos sobre tres filtros de foto, Blur, Merge y HSL, tanto en código assembler, que aproveche las instrucciones SSE brindadas para los procesadores de arquitectura Intel, .... sigue esto, lo dejo por aca por ahoraAAAAAAAAAAAAAAAAAA.
+Para ello se realizarán distintos experimentos sobre tres filtros de foto, Blur, Merge y HSL, tanto en código assembler, que aproveche las instrucciones SSE brindadas para los procesadores de arquitectura Intel, como en código C compilado con gcc, al que se le aplicará el grado de optimización grados de optimización -O3.
 
-El primer filtro, Cropflip, se utilizará para testear performance al utilizar los registros XMM para transferir grandes cantidades de información de un lugar de la RAM a otro.
+FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
 
-El segundo, tercer y cuarto filtro, se centrarán en testear la variación de performance al utilizar instrucciones SIMD, no sólo para transferir grandes volúmenes de datos sino también para procesarlos en forma paralela, es decir, realizar diversos cálculos (sumas, multiplicaciones, divisiones) tanto en representación de enteros como punto flotante.
+
 \newpage
 \section{Preámbulo}
 
@@ -95,6 +95,8 @@ El segundo, tercer y cuarto filtro, se centrarán en testear la variación de pe
 
 \section{Blur}
 
+\subsection{Idea de las implementaciones}
+
 \subsection{Diferencias de performance en Blur}
 
 
@@ -107,9 +109,7 @@ El segundo, tercer y cuarto filtro, se centrarán en testear la variación de pe
 \newpage
 \section{Merge}
 
-\subsection{Idea general del algoritmo}
-
-
+\subsection{Idea de las implementaciones}
 
 \subsection{Diferencias de performance en Merge}
 
@@ -123,9 +123,7 @@ El segundo, tercer y cuarto filtro, se centrarán en testear la variación de pe
 
 \section{HSL}
 
-\subsection{Idea general del algoritmo}
-
-
+\subsection{Idea de las implementaciones}
 
 \subsection{Diferencias de performance en HSL}
 
