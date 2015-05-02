@@ -101,11 +101,10 @@ ASM_blur2:
       .dosalprincipio:
 
            mov qword r14, 2      ;seteo caso 
-           movdqu xmm3, xmm0     ;xmm3 = p4 | p3 | p2 | p1
-           punpckhbw xmm3, xmm15 ; xmm3 = p4_b | p4_g | p4_r | p4_a | p3_b | p3_g | p3_r | p3_a
+           ;movdqu xmm3, xmm0     ;xmm3 = p4 | p3 | p2 | p1
+           ;punpckhbw xmm3, xmm15 ; xmm3 = p4_b | p4_g | p4_r | p4_a | p3_b | p3_g | p3_r | p3_a            ESTO ACA NO TIENE SENTIDO PORQUE DESPUES LO PISO
         
            ;dejo pixel 3 y 4 como estaban
-           jmp .primeros
                                .primeros:
                                 ; PROCESO P1,P2
 				movdqu xmm1,xmm0                       ;xmm1 = p4 | p3 | p2 | p1
@@ -194,7 +193,9 @@ ASM_blur2:
                                 divps xmm1, xmm14                ;divido por 9
                                 cvtps2dq xmm1, xmm1              ;paso a int
 
-
+                                movdqu xmm3, xmm0     ;xmm3 = p4 | p3 | p2 | p1
+                                punpckhbw xmm3, xmm15 ; xmm3 = p4_b | p4_g | p4_r | p4_a | p3_b | p3_g | p3_r | p3_a
+                                ;SI NO ESTOY EN EL CASO 2 AL PRINCIPIO ENTONCES XMM3 SE PISA DESPUES
                                 cmp qword r14, 2
                                 jz .empaqueto
 
