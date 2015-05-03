@@ -37,15 +37,15 @@ ASM_merge2:
   pxor xmm12, xmm12
   pand xmm0, [mascarafloat] ; xmm0 = 0 | 0 | 0 | value
   movd eax, xmm0            ;eax = value            seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
-  shrd rax, 23              ;eax = exponente        000000000000000000000000eeeeeeee
+  shr rax, 23              ;eax = exponente        000000000000000000000000eeeeeeee
   mov qword r10, 150        ;r10 = 150
   mov ebx, 150
   sub ebx, eax              ;eax = 150 - exponente = "k"
-  shld rbx, 23              ;ebx = 
-  shld r10, 23              ;r10 = 150 en la posicion del exponente de un float en ieee754
+  shl rbx, 23              ;ebx = 
+  shl r10, 23              ;r10 = 150 en la posicion del exponente de un float en ieee754
   movdqu xmm13, xmm0        
   pand xmm13, [mascaraexp]    ; xmm13 = mantisa del float en el ultimo dword osea saco exponente
-  movd xmm12, r10             ; xmm12 = 150 en el lugar del exponente del primer dword
+  movd xmm12, r10d             ; xmm12 = 150 en el lugar del exponente del primer dword
   pxor xmm13, xmm12           ;el float con la misma mantisa que value pero exponente 150, osea 150-127 = 23
   cvtps2dq xmm13, xmm13       ;value como int
   mov r9d, ebx                ;r9 = k
@@ -62,7 +62,7 @@ ASM_merge2:
    
 .finshift: 
   ;r10 = 2^k
-  movd xmm12, r10           ;xmm12 = 0 | 0 | 0 | 2^k
+  movd xmm12, r10d           ;xmm12 = 0 | 0 | 0 | 2^k
   psub xmm12, xmm13         ;xmm12 =  0 | 0 | 0 | 2^k - value  (como ints)
   pshufd xmm12, xmm12, 0h   ;xmm12 = 2^k - value | 2^k - value | 2^k - value | 2^k - value (como ints)
   pand xmm12, [mascaraA]    ;xmm12 = 2^k - value | 2^k - value | 2^k - value | 0 (como ints)
@@ -79,11 +79,11 @@ ASM_merge2:
   pxor xmm15, xmm15
 
   
-  .ciclofilas
+  .ciclofilas:
    cmp r14, r13
    jz .fin
    xor r15, r15                         ;reseto pixels por fila     
-        .ciclocolumnas
+        .ciclocolumnas:
           ;SRC1
           movdqu xmm1, [r8]                     ; xmm1 = src1(i,j+0)| src1(i,j+1) | src1(i,j+2) | src1(i,j+3)
           
@@ -197,7 +197,7 @@ ASM_merge2:
           jmp .ciclocolumnas
           
 
-          .cambiofila
+          .cambiofila:
             inc r14
             jmp .ciclofilas
 
