@@ -11,7 +11,7 @@ mascara1: dd 0x0, 0x0, 0x0, 60.0
 mascara2: dd 0x0, 0x0, 0x0, 510
 mascara3: dd 255.0001, 0x0, 0x0, 0x0
 mascara4: dd 0x0, 0x0, 0x0, 6.0
-mascara5; dd 0x0, 0x0, 0x0, 2.0
+mascara5: dd 0x0, 0x0, 0x0, 2.0
 mascara6: dd 0x0, 0x0, 0x0, 4.0
 mascara7: dd 0x0, 0x0, 360, 0x0
 mascara8: dd 2.0, 0x0, 0x0, 0x0
@@ -22,7 +22,7 @@ mascara12: dd 0xFFFFFFFF,0x0,0x0,0x0
 mascara13: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
 mascara14: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
 mascara15: dd 0,1,0,0
-mascara16; dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+mascara16: dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 mascara17: dd 0x0, 0x0, 0x0, -1.0
 mascara18: dd 255.0, 255.0, 255.0, 0
 section .text
@@ -57,7 +57,7 @@ ASM_hsl2:
   pand xmm14, [mascara11]                  ;xmm14 = 0 | ss | 0 | 0
   movdqu xmm13, xmm2 
   pand xmm13, [mascara12]                  ;xmm13 = ll | 0 | 0 | 0
-  movq rbx, rdx                           ;respaldo imagen
+  mov rbx, rdx                           ;respaldo imagen
  
    .ciclofilas:
      cmp r14,r13                       ;termine?
@@ -415,13 +415,13 @@ rgbAhsl:
 
             movdqu xmm7, xmm5
             psubd xmm7, xmm6                  ; xmm7 = 0 | 0 | 0 | d = max(b,g,r) - min(b,g,r)
-            cvtdq2ps xmm7 xmm7                ; xmm7 = 0 | 0 | 0 | d (en floats)
+            cvtdq2ps xmm7, xmm7                ; xmm7 = 0 | 0 | 0 | d (en floats)
 
             ;CALCULO H
           
             ;G-B
             movdqu xmm8, xmm3
-            psubd, xmm8, xmm4                 ; xmm8 = 0 | 0 | 0 | g-b
+            psubd xmm8, xmm4                 ; xmm8 = 0 | 0 | 0 | g-b
             cvtdq2ps xmm8, xmm8               ; xmm8 = 0 | 0 | 0 | g-b (en floats)
             divps xmm8, xmm7                  ; xmm8 = 0 | 0 | 0 | (g-b)/d
             addps xmm8, [mascara4]            ; xmm8 = 0 | 0 | 0 | (g-b)/d + 6
@@ -429,7 +429,7 @@ rgbAhsl:
 
             ;B-R
             movdqu xmm9, xmm4
-            psubd, xmm9, xmm2                 ; xmm9 = 0 | 0 | 0 | b-r
+            psubd xmm9, xmm2                 ; xmm9 = 0 | 0 | 0 | b-r
             cvtdq2ps xmm9, xmm9               ; xmm9 = 0 | 0 | 0 | b-r (en floats)
             divps xmm9, xmm7                  ; xmm9 = 0 | 0 | 0 | (b-r)/d
             addps xmm9, [mascara5]            ; xmm9 = 0 | 0 | 0 | (b-r)/d + 2
@@ -437,7 +437,7 @@ rgbAhsl:
 
             ;R-G
             movdqu xmm10, xmm2
-            psubd, xmm10, xmm3                 ; xmm10 = 0 | 0 | 0 | r-g
+            psubd xmm10, xmm3                 ; xmm10 = 0 | 0 | 0 | r-g
             cvtdq2ps xmm10, xmm10              ; xmm10 = 0 | 0 | 0 | r-g (en floats)
             divps xmm10, xmm7                  ; xmm10 = 0 | 0 | 0 | (r-g)/d
             addps xmm10, [mascara6]            ; xmm10 = 0 | 0 | 0 | (r-g)/d + 4
@@ -448,7 +448,7 @@ rgbAhsl:
             pand xmm8, xmm11                   ; xmm8 = 0 | 0 | 0 | ((g-b)/d + 6) * 60 SI MAX = R SINO 0
 
             movdqu xmm11, xmm5
-            pcmeqd xmm11, xmm3                 ; xmm11 = 0 | 0 | 0 | max= g?
+            pcmpeqd xmm11, xmm3                 ; xmm11 = 0 | 0 | 0 | max= g?
             pand xmm9, xmm11                   ; xmm9 = 0 | 0 | 0 | ((b-r)/d + 2) * 60 SI MAX = G SINO 0
 
             movdqu xmm11, xmm5
@@ -578,7 +578,7 @@ hslArgb:
 
         ;xmm6 = 0 | 0 | 0 | C   xmm8 = 0 | 0 | 0 | X    xmm2 = 0 | 0 | 0 | M
         ;XMMS LIBRES : xmm5, xmm3, xmm7, xmm10, xmm11
-        pslldq xmm8; 4             ; xmm8 = 0 | 0 | X | 0
+        pslldq xmm8, 4             ; xmm8 = 0 | 0 | X | 0
         pxor xmm8, xmm6            ; xmm8 = 0 | 0 | X | C
 
         ;AHORA xmm6 ESTA LIBRE
@@ -606,7 +606,7 @@ hslArgb:
         pxor xmm11, xmm10                   ; acumulo res
         ;si 120<=h P = C | X | 0 | 0        
         movdqu xmm10, xmm9                   ; xmm10 = 60.0 | 60.0 | 60.0 | 60.0
-        adpps xmm10, xmm9                    ; xmm10 = 120.0 | 120.0 | 120.0 | 120.0
+        addps xmm10, xmm9                    ; xmm10 = 120.0 | 120.0 | 120.0 | 120.0
         ;movdqu xmm10, xmm9                   ; xmm10 = 120.0 | 120.0 | 120.0 | 120.0
         cmpps xmm10, xmm4, 010b              ; xmm10 = 120<= h? | 120<= h? | 120<= h? | 120<= h?
         shufps xmm6, xmm8, 00011010b         ; 00 es pongo C, 01 es pongo X, 10 es pongo 0, 10 es pongo
@@ -626,7 +626,7 @@ hslArgb:
         addps xmm10, xmm9
         addps xmm10, xmm9                    ; xmm10 = 240.0 | 240.0 | 240.0 | 240.0
         cmpps xmm10, xmm4, 010b              ; xmm10 = 240.0<=h? | 240.0<=h? | 240.0<=h? | 240.0<=h?
-        shufps xmm6, xmm8, 10000110          ; 10 es pongo 0, 00 es pongo C, 01 es pongo X, 10 es pongo 0
+        shufps xmm6, xmm8, 10000110b          ; 10 es pongo 0, 00 es pongo C, 01 es pongo X, 10 es pongo 0
         pand xmm10, xmm6                     ; si 240.0 <=h entonces xmm10 = 0 | C | X | 0, sino 0s
         pxor xmm11, xmm10                    ; acumulo res
         ;si 300<=h P = 0 | X | C | 0
@@ -635,8 +635,8 @@ hslArgb:
         addps xmm10, xmm9 
         addps xmm10, xmm9
         addps xmm10, xmm9                    ; xmm10 = 300.0 | 300.0 | 300.0 | 300.0
-        cmmps xmm10, xmm4, 010b              ; xmm10 = 300.0<=h? | 300.0<=h? | 300.0<=h? | 300.0<=h?
-        shufps xmm6, xmm8, 10010010          ; 10 es pongo 0, 01 es pongo X, 00 es pongo C, 10 es pongo 0
+        cmpss xmm10, xmm4, 010b              ; xmm10 = 300.0<=h? | 300.0<=h? | 300.0<=h? | 300.0<=h?
+        shufps xmm6, xmm8, 10010010b          ; 10 es pongo 0, 01 es pongo X, 00 es pongo C, 10 es pongo 0
         pand xmm10, xmm6                     ; si 300.0 <= h entonces xmm10 = 0 | X | C | 0 sino 0s
         pxor xmm11, xmm10                    ; acumulo res
 

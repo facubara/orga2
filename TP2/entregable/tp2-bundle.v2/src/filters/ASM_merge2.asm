@@ -39,11 +39,11 @@ ASM_merge2:
   movdqu xmm14, [constante1]              ;xmm14 = 1 | 1 | 1 | 1
   psubd xmm14, xmm0                       ;xmm14 = 1 - value | 1 - value | 1 - value | 1 - value (en ints)
   
-  .ciclofilas
+  .ciclofilas:
    cmp r14, r13
    jz .fin
    xor r15, r15                         ;reseto pixels por fila     
-        .ciclocolumnas
+        .ciclocolumnas:
           ;SRC1
           movdqu xmm1, [r8]                     ; xmm1 = src1(i,j+0)| src1(i,j+1) | src1(i,j+2) | src1(i,j+3)
           
@@ -137,7 +137,7 @@ ASM_merge2:
           jmp .ciclocolumnas
           
 
-          .cambiofila
+          .cambiofila:
             inc r14
             jmp .ciclofilas
 

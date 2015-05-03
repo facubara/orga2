@@ -5,6 +5,7 @@
 ;                                                                           ;
 ; ************************************************************************* ;
 extern malloc
+extern free
 section .data
 constante: times 4 dd 9
 section .text
