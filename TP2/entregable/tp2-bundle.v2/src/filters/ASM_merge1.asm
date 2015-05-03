@@ -8,7 +8,7 @@
 section .data
 align 16
 constante1: times 4 dd 1
-mascara: 0xFFFFFFFF, 0x0, 0x0, 0x0
+mascara: dd 0xFFFFFFFF, 0x0, 0x0, 0x0
 mascara1: dd 1.0, 0, 0, 0
 section .text
 
