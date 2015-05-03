@@ -8,7 +8,7 @@
 section .data
 align 16
 constante1: times 4 dd 1
-mascara: db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF
+mascara: 0xFFFFFFFF, 0x0, 0x0, 0x0
 mascara1: dd 0, 0, 0, 1.0
 section .text
 
@@ -151,10 +151,11 @@ ASM_merge1:
 
           movdqu [r8], xmm2                     ;coloco
           add r15, 4                            ;copie 4 pixels mas
-          cmp r12, r15                          ;termine con la fila?
-          jz .cambiofila
           add r8, 16                            ;me muevo en src1
           add r9, 16                            ;me muevo en src2
+          cmp r12, r15                          ;termine con la fila?
+          jz .cambiofila
+     
           jmp .ciclocolumnas
           
 
