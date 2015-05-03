@@ -9,7 +9,7 @@ section .data
 align 16
 constante1: times 4 dd 1
 mascara: db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF
-mascara1: dd 0, 0, 0, 1
+mascara1: dd 0, 0, 0, 1.0
 section .text
 
 ; void ASM_merge1(uint32_t w, uint32_t h, uint8_t* data1, uint8_t* data2, float value)
@@ -33,19 +33,20 @@ ASM_merge1:
   movdqu xmm13, xmm0                      ;xmm13 = 0 | 0 | 0 | value
   pand xmm13, [mascara]
   shufps xmm13, xmm13, 1h              ;xmm13 = value | value | value | 0
-  paddd xmm13, [mascara1]                       ;xmm13 = value | value | value | 1
+  addps xmm13, [mascara1]              ;xmm13 = value | value | value | 1.0       (floats)
   ;shufps xmm0, xmm0, 0h                 ;xmm0 = value | value | value | value
-  movdqu xmm0, xmm13
+  movdqu xmm0, xmm13                   ;xmm0 = value | value | value | 1.0
   mov r12, rdi              ;cant pixels por fila
   mov r13, rsi              ;r13 = cant filas
   xor r14, r14              ;contador filas
   xor r15, r15              ;contador pixels
-  mov r8, rdx
-  mov r9, rcx
+  mov r8, rdx               ;imagen 1
+  mov r9, rcx               ;imagen 2
   pxor xmm15, xmm15
-  movdqu xmm14, [constante1]              ;xmm14 = 1 | 1 | 1 | 1
-  cvtdq2ps xmm14, xmm14                    ;paso a float
-  subps xmm14, xmm0                       ;xmm14 = 1 - value | 1 - value | 1 - value | 0 (en floats)
+  movdqu xmm14, [mascara1]              ;xmm14 = 0 | 0 | 0 | 1.0
+  shufps xmm14, xmm14, 0h               ;xmm14 = 1.0 | 1.0 | 1.0 | 1.0    (floats)
+  ;cvtdq2ps xmm14, xmm14                    ;paso a float
+  subps xmm14, xmm0                       ;xmm14 = 1.0 - value | 1.0 - value | 1.0 - value | 0 (en floats)
   
   .ciclofilas:
    cmp r14, r13
