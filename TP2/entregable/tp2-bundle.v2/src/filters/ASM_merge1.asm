@@ -9,7 +9,7 @@ section .data
 align 16
 constante1: times 4 dd 1
 mascara: 0xFFFFFFFF, 0x0, 0x0, 0x0
-mascara1: dd 0, 0, 0, 1.0
+mascara1: dd 1.0, 0, 0, 0
 section .text
 
 ; void ASM_merge1(uint32_t w, uint32_t h, uint8_t* data1, uint8_t* data2, float value)
