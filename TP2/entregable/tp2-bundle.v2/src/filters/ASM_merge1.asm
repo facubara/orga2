@@ -67,21 +67,21 @@ ASM_merge1:
 
           movdqu xmm3,xmm1
 	  punpcklbw xmm3,xmm15
-	  punpcklwd xmm3,xmm15
+	  punpckhwd xmm3,xmm15
 	  cvtdq2ps xmm3,xmm3			; xmm3 = p2_b | p2_g | p2_r | p2_a  (como floats)
 
           ;PIXEL src1 3
 
           movdqu xmm4,xmm1
-	  punpcklbw xmm4,xmm15
+	  punpckhbw xmm4,xmm15
 	  punpcklwd xmm4,xmm15
 	  cvtdq2ps xmm4,xmm4			; xmm4 = p3_b | p3_g | p3_r | p3_a  (como floats)
 
           ;PIXEL src1 4
 
           movdqu xmm5,xmm1
-	  punpcklbw xmm5,xmm15
-	  punpcklwd xmm5,xmm15
+	  punpckhbw xmm5,xmm15
+	  punpckhwd xmm5,xmm15
 	  cvtdq2ps xmm5,xmm5			; xmm5 = p4_b | p4_g | p4_r | p4_a  (como floats)
 
           ;SRC2
@@ -99,21 +99,21 @@ ASM_merge1:
 
           movdqu xmm8,xmm6
 	  punpcklbw xmm8,xmm15
-	  punpcklwd xmm8,xmm15
+	  punpckhwd xmm8,xmm15
 	  cvtdq2ps xmm8,xmm8			; xmm8 = p2_b | p2_g | p2_r | p2_a  (como floats)
 
           ;PIXEL src2 3
 
           movdqu xmm9,xmm6
-	  punpcklbw xmm9,xmm15
+	  punpckhbw xmm9,xmm15
 	  punpcklwd xmm9,xmm15
 	  cvtdq2ps xmm9,xmm9			; xmm9 = p3_b | p3_g | p3_r | p3_a  (como floats)
 
           ;PIXEL src2 4
 
           movdqu xmm10,xmm6
-	  punpcklbw xmm10,xmm15
-	  punpcklwd xmm10,xmm15
+	  punpckhbw xmm10,xmm15
+	  punpckhwd xmm10,xmm15
 	  cvtdq2ps xmm10,xmm10			; xmm10 = p4_b | p4_g | p4_r | p4_a  (como floats)
 
           ;HASTA ACA TENGO TODO ARMADITO
