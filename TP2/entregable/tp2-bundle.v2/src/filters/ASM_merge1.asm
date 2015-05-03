@@ -136,10 +136,10 @@ ASM_merge1:
           ;LA COMPONENTE A SE MANTIENE IGUAL QUE EN M1, PORQUE 1 - 1 = 0
           ;PASO A INT
 
-          cvtps2dq xmm2, xmm2                   ;xmm2 en int
-          cvtps2dq xmm3, xmm3                   ;xmm3 en int
-          cvtps2dq xmm4, xmm4                   ;xmm4 en int
-          cvtps2dq xmm5, xmm5                   ;xmm5 en int
+          cvttps2dq xmm2, xmm2                   ;xmm2 en int
+          cvttps2dq xmm3, xmm3                   ;xmm3 en int
+          cvttps2dq xmm4, xmm4                   ;xmm4 en int
+          cvttps2dq xmm5, xmm5                   ;xmm5 en int
 
           ;EMPAQUETO
 
