@@ -6,25 +6,25 @@
 ; ************************************************************************* ;
 
 section .data
-mascara0: dd 0x0, 0x0, 0x0, 0xFFFFFFFF
-mascara1: dd 0x0, 0x0, 0x0, 60.0
-mascara2: dd 0x0, 0x0, 0x0, 510
-mascara3: dd 255.0001, 0x0, 0x0, 0x0
-mascara4: dd 0x0, 0x0, 0x0, 6.0
-mascara5: dd 0x0, 0x0, 0x0, 2.0
-mascara6: dd 0x0, 0x0, 0x0, 4.0
-mascara7: dd 0x0, 0x0, 360, 0x0
-mascara8: dd 2.0, 0x0, 0x0, 0x0
-mascara9: dd 1.0, 0x0, 0x0, 0x0
-mascara10: dd 0x0,0x0,0xFFFFFFFF,0x0
-mascara11: dd 0x0,0xFFFFFFFF,0x0,0x0
-mascara12: dd 0xFFFFFFFF,0x0,0x0,0x0
-mascara13: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
-mascara14: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
-mascara15: dd 0,1,0,0
-mascara16: dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
-mascara17: dd 0x0, 0x0, 0x0, -1.0
-mascara18: dd 255.0, 255.0, 255.0, 0
+mascara0: dd 0xFFFFFFFF, 0x0, 0x0, 0x0           ;le
+mascara1: dd 60.0, 0x0, 0x0, 0x0                 ;le
+mascara2: dd 510, 0x0, 0x0, 0x0                  ;le
+mascara3: dd 0x0, 0x0, 0x0, 255.0001             ;le
+mascara4: dd 6.0, 0x0, 0x0, 0x0                  ;le
+mascara5: dd 2.0, 0x0, 0x0, 0x0                  ;le
+mascara6: dd 4.0, 0x0, 0x0, 0x0                  ;le
+mascara7: dd 0x0, 360, 0x0, 0x0                  ;le
+mascara8: dd 0x0, 0x0, 0x0, 2.0                  ;le
+mascara9: dd 0x0, 0x0, 0x0, 1.0                  ;le
+mascara10: dd 0x0,0xFFFFFFFF,0x0,0x0             ;le
+mascara11: dd 0x0,0x0,0xFFFFFFFF,0x0             ;le
+mascara12: dd 0x0,0x0,0x0,0xFFFFFFFF             ;le
+mascara13: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF      ;le
+mascara14: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF      ;le
+mascara15: dd 0,0,1,0
+mascara16: dd 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x0   ;le
+mascara17: dd -1.0, 0x0, 0x0, 0x0                     ;le
+mascara18: dd 0, 255.0, 255.0, 255.0,                  ;le
 section .text
 ; void ASM_hsl2(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl2
@@ -545,7 +545,7 @@ hslArgb:
         
         ;CALCULO FABS((p1_l *2) -1)  = max ( ((p1_l *2) -1) , - ((p1_l *2) -1))
         movdqu xmm5, xmm2        ; xmm5 = 0 | 0 | 0 | (p1_l *2) -1
-        mulps xmm5, [mascara17]  ; xmm5 = 0 | 0 | 0 | (p1_l *2) -1
+        mulps xmm5, [mascara17]  ; xmm5 = 0 | 0 | 0 | (p1_l *2) -1                       TENDRIA QUE SER UN ADDPS? SINO ESTOY MULTIPLICANDO POR -1
         maxps xmm5, xmm2         ; xmm5 = 0 | 0 | 0 | fabs((p1_l *2) -1)
 
         movdqu xmm6, [mascara9]  ; xmm6 = 1.0 | 0 | 0 | 0
