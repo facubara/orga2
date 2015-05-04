@@ -7,7 +7,7 @@
 extern malloc
 extern free
 section .data
-constante: times 4 dd 9
+constante: times 4 dd 9.0
 mascara: dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0
 mascara2: db 0,0,0,0,0,0xff,0xff,0xff,0,0,0,0,0,0,0,0
 section .text
@@ -77,8 +77,7 @@ ASM_blur1:
     jmp .ciclocopia
     ; la copia la hago contando las iteraciones y luego copiando esa cantidad de veces
   .cargarVar:                        
-    movdqu xmm14, [constante]         ;xmm14 = 9 | 9 | 9 | 9 
-    cvtdq2ps xmm14, xmm14             ;xmm14 = 9 | 9 | 9 | 9 (en float)
+    movdqu xmm14, [constante]         ;xmm14 = 9 | 9 | 9 | 9 (float)
     mov r8, r14       
     sub r8,2                          ;contador columna
     mov r9, r15                       
@@ -153,7 +152,7 @@ ASM_blur1:
       paddd xmm0, xmm1                ;xmm0 = p0+p2+s0+s2+i0+i2+t+s1+i1 Toda la suma entera 
       cvtdq2ps xmm0,xmm0              ;paso a float cada una de las componentes 
       divps xmm0, xmm14               ;dividi toda las componentes por 9 
-      cvtps2dq xmm0,xmm0              ;los volvi a pasar a integer
+      cvttps2dq xmm0,xmm0              ;los volvi a pasar a integer
       packusdw xmm0,xmm0              ;los paso a word
       packuswb xmm0,xmm0              ;los paso a byte xmm0 = |x|x|x|t
       
