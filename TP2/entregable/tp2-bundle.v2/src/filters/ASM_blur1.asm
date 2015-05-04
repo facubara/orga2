@@ -28,6 +28,7 @@ ASM_blur1:
     sub rsp,8
 
     xor r15, r15
+    xor r10, r10
     xor r8, r8
     xor r9, r9
     pxor xmm0, xmm0
@@ -42,23 +43,36 @@ ASM_blur1:
     mov r14, rdi                  ;backup  columnas
     mov r15,rsi                   ;backup filas
 
-    mov rax, rdi          ;preparo mul 
-    mul rsi               ;rdi*rsi Columnas* filas
-    lea rax,[rax*4]         ;multiplicacion de ancho*alto*4 (tamanio bytes)
+    mov rax, rdi                   ;preparo mul 
+    mul rsi                        ;rdi*rsi Columnas* filas
+    lea rax,[rax*4]                ;multiplicacion de ancho*alto*4 (tamanio bytes)
     mov rdi, rax                   ; preparo malloc
+    mov rbx, rdi                  ;guardo el tamanio de la imagen en rbx
     call malloc                   ; tengo en rax el puntero a copy
-    shr r9, 4                     ;tengo el tamanio de imagen en grupos de  4 pixeles
+    mov r9, rbx                  ;tam imagen a r9
+    shr r9, 4                    ;tengo el tamanio de imagen en grupos de  4 pixeles
     mov rdi, r13                  ; rdi puntero al dato rdi = r13
-    mov rsi, rax                  ; puntero a copy rsi = rax
+    mov rsi, rax                  ;puntero a copy 
+    
+    ;hasta aca
+    ;r13 p original
+    ;r14 col
+    ;r15 fil
+    ;rax puntero a copy 
+    ;rbx tiene tam imagen en bytes 
 
+    ;r9 tam imagen en grup 4 pix 
+    ;rdi puntero a la original
+    ;r15 tiene 0 va a ser contador 
+    ;rsi puntero a copy (rax tmb)
     .ciclocopia:
     ; en r9 = tamanio de imagen, en rsi puntero a la copia 
-    cmp r15, r9                       ;termine de copiar?
-    jz .cargarVar
+    cmp r9, r10                      ;termine de copiar?
+    je .cargarVar
     movdqu xmm0, [rdi]
-    movdqu xmm0, [rsi]
-    inc r15                           ;copio lo que estaba en la imagen
-    lea rdx,[rdx+16]
+    movdqu [rsi], xmm0
+    inc r10                           ;copio lo que estaba en la imagen
+    lea rsi,[rsi+16]
     lea rdi,[rdi+16]
     jmp .ciclocopia
     ; la copia la hago contando las iteraciones y luego copiando esa cantidad de veces
@@ -69,7 +83,7 @@ ASM_blur1:
     sub r8,2                          ;contador columna
     mov r9, r15                       
     sub r9,2                          ;contador fila
-    mov rsi, rax                      ;puntero a la fila actual (me muevo en la copia)
+    mov rsi, rax                      ;puntero a la fila actual copy(me muevo en la copia)
     lea rsi, [rsi+r14*4+4]            ;pongo la segunda fila segundo pixel como inicio
     mov rdi, rsi                      ;puntero a mi pixeles a cargar ->|v|pixel|v|v| (memoria)
     movdqu xmm15, [mascara]           ;cargo en xmm15 la mascara para and
@@ -78,6 +92,18 @@ ASM_blur1:
     mov r12, rax                      ;backup rax
     mov rax, r13                      ;puse en rax puntero a la orignal
     lea rax, [rax+r14*4+4]            ;pongo el puntero original tmb en segunda fila segundo pixel
+    lea r11, [r14*4]                  ;r11 tiene el offset fila
+    ;xmm14 cst float 
+    ;r8 contador columna
+    ;r9 contador fila 
+    ;rsi puntero a 2da fila 2do pixel copy
+    ;rax puntero a 2da fila 2do pixel original
+    ;rdi apunta a lo mismo q rsi va a ser el puntero a pixel 
+    ;xmm15 mascara and
+    ;rdx rcx = 0 son los contadores de filas y columnas (voy a iterar hasta que sean iguales a r8 y r9 respectivamente)
+    ;r11 offset fila 
+    ;r12 backup rax
+
   .ciclofila:
      cmp rdx, r9           ;se fija si termine con las filas   
      je .fin               ;si es la ultima termino
@@ -90,11 +116,9 @@ ASM_blur1:
       ;EMPIEZA OPERATORIA CON PIXEL
       movdqu xmm0,[rdi]                 ;cargo el pixel a cargar
       mov rbx, rdi                      ;rbx = rdi
-      mov r12, r14                      ;r12 = r14
-      lea r12,[r12*4]                   ;r12*4 (offset fila)
-      sub rbx, r12                      ;rbx estoy en la fila superior
+      sub rbx, r11                      ;rbx-r11(offsetFila) estoy en la fila superior
       movdqu xmm1, [rbx]                ; cargo vecinos superiores
-      lea rbx, [rbx + r14 * 8]          ; estoy en la fila inferior
+      lea rbx, [rbx + r11*2]          ; estoy en la fila inferior
       movdqu xmm2, [rbx]                ; cargo vecinos inferiores
       ;xmm0 = |p3|p2|t|p0| medio
       ;xmm1 = |s3|s2|s1|s0| superior
@@ -133,22 +157,25 @@ ASM_blur1:
       packssdw xmm0,xmm0              ;los paso a word
       packsswb xmm0,xmm0              ;los paso a byte xmm0 = |x|x|x|t
       
-      ;parche 
-      mov rbx, rdi                        ;backup rdi
+      ;cuenta para encontrar el puntero que debo escribir en la original 
       mov r10, rax                        ;backup rax 
-      mov rax, r9                         ;rax = filaQmeMovi 
-      mul r14                             ;rax = filaQmeMovi*cantColumna
-      lea rax,[rax*4]                     ;rax = filaQmeMovi*cantColumna*4 (cuantos bytes me movi de filas)
-      mov rdi,r10                         ;pongo el puntero a la segunda fila segunda segundo pixel de la original
-      add rdi, rax                        ;le agrego el offsetFila al puntero
-      lea rdi,[rdi+r8*4]                  ;puntero_a_la_segunda_fila+offsetFila+cantColQMeMovi*4(offset columna) calculo la posicion del pixel que levanto en la original
-      mov rax,r10                         ;devuelvo rax a lo original
-      ;falta volver rdi al original
+      mov rax, rdx                        ;rax = filaQmeMovi 
+      mov rbx, rdx                        ;PROBANDO SI ES MUL LA Q ME ROMPE 
+      mul r11                             ;rax = filaQmeMovi*offsetFila 
+      mov rdx, rbx                        ;RESTABLEZCO TODO IGUAL
+      mov rbx, r10                        ;rbx contiene el puntero a original 
+      add rbx, rax                        ;rbx contiene el puntero original + lasFilasQmemovi*offsetFila
+      lea rbx,[rbx + rcx*4]               ;rbx = filaQmeMovi*offsetFila+colQMovi*4 (cuantos bytes me movi de filas)
+      mov rax, rbx                        ;rax = puntero al pixel q debo escribir original
+      mov rbx, rdi                        ;backup rdi
+      mov rdi, rax                        ;rdi = rax (es necesario porque maskmovdqu direcciona sobre el valor de rdi)
+      ;falta volver rax y rdi al original
       pslldq xmm0, 0x04              ;shifteo 4 bytes hacia la izq xmm0 = |x|x|t|0 
       movdqu xmm3, [mascara2]         ;cargo la mascara
       maskmovdqu xmm0, xmm3           ;esto va cargar los bytes que su bit mas significativo empieze con 1 cargando a memoria 
       ;si mi mascara esta bien deberia cargar cargar solo los r g b del pixel t
-      mov rdi,rbx                     ;ahi lo volvi al orignial 
+      mov rax,r10                     ;devuelvo rax a lo original
+      mov rdi,rbx                     ;ahi lo volvi al orignial a rdi 
       ;TERMINO OPERATORIA CON PIXEL
 
 
@@ -158,7 +185,7 @@ ASM_blur1:
       jmp .cicloColumna
       .avanzoFila:
         inc rdx                       ;incremento contador fila
-        lea rsi,[rsi+ r14*4]          ; rsi+=columnas*4 pongo el puntero fila actual en la siguiente
+        lea rsi,[rsi + r14*4]          ; rsi+=columnas*4 pongo el puntero fila actual en la siguiente
         mov rdi, rsi                  ; pongo el puntero pixeles a cargar en el inicio de la fila
         jmp .ciclofila
                          
