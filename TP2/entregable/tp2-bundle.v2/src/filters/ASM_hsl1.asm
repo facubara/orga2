@@ -8,15 +8,15 @@ extern rgbTOhsl
 extern hslTOrgb
 
 section .data
-mascara0: dd 0x0,0x0,0xFFFFFFFF,0x0
-mascara1: dd 0x0,0xFFFFFFFF,0x0,0x0
-mascara2: dd 0xFFFFFFFF,0x0,0x0,0x0
-mascara3: dd 0,0,360,0
-mascara4: dd 0,1,0,0
-mascara5: dd 1,0,0,0
-mascara6: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
-mascara7: dd 0x0,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
-mascara8: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF
+mascara0: dd 0x0,0xFFFFFFFF,0x0,0x0              ;le
+mascara1: dd 0x0,0x0,0xFFFFFFFF,0x0              ;le
+mascara2: dd 0x0,0x0,0x0,0xFFFFFFFF              ;le
+mascara3: dd 0,360,0,0                           ;le
+mascara4: dd 0,0,1,0                             ;le
+mascara5: dd 0,0,0,1                             ;le
+mascara6: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF   ;le
+mascara7: dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0x0   ;le
+mascara8: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF
 ; void ASM_hsl1(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl1
 ASM_hsl1:
@@ -48,12 +48,12 @@ ASM_hsl1:
   movdqu xmm3, xmm0                    ;xmm3 = 0 | 0 | hh | 0 (xmm0 se usa como parametro para rgbtohsl)
   pand xmm1, [mascara1]                ;xmm1 = 0 | ss | 0 | 0
   pand xmm2, [mascara2]                ;xmm2 = ll | 0 | 0 | 0
-  movdqu xmm15, [mascara3]             ;xmm15 = 0 | 0 | 360 | 0    (en ints)
-  movdqu xmm14, [mascara4]             ;xmm14 = 0 | 1 | 0 | 0      (en ints)
-  movdqu xmm13, [mascara5]             ;xmm13 = 1 | 0 | 0 | 0      (en ints)
-  cvtdq2ps xmm15, xmm15                ;xmm15 = 0 | 0 | 360 | 0    (en floats)
-  cvtdq2ps xmm14, xmm14                ;xmm14 = 0 | 1 | 0 | 0      (en floats)
-  cvtdq2ps xmm13, xmm13                ;xmm13 = 1 | 0 | 0 | 0      (en floats)
+  ;movdqu xmm15, [mascara3]             ;xmm15 = 0 | 0 | 360 | 0    (en ints)
+  ;movdqu xmm14, [mascara4]             ;xmm14 = 0 | 1 | 0 | 0      (en ints)
+  ;movdqu xmm13, [mascara5]             ;xmm13 = 1 | 0 | 0 | 0      (en ints)
+  ;cvtdq2ps xmm15, xmm15                ;xmm15 = 0 | 0 | 360 | 0    (en floats)
+  ;cvtdq2ps xmm14, xmm14                ;xmm14 = 0 | 1 | 0 | 0      (en floats)
+  ;cvtdq2ps xmm13, xmm13                ;xmm13 = 1 | 0 | 0 | 0      (en floats)
   
 
   .ciclofilas:
