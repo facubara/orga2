@@ -9,7 +9,7 @@ extern free
 section .data
 constante: times 4 dd 9
 mascara: dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0
-mascara2: db 0,0,0,0,0xff,0xff,0xff,0,0,0,0,0,0,0,0,0
+mascara2: db 0,0,0,0,0,0xff,0xff,0xff,0,0,0,0,0,0,0,0
 section .text
 ; void ASM_blur1( uint32_t w, uint32_t h, uint8_t* data )
 global ASM_blur1
@@ -154,8 +154,8 @@ ASM_blur1:
       cvtdq2ps xmm0,xmm0              ;paso a float cada una de las componentes 
       divps xmm0, xmm14               ;dividi toda las componentes por 9 
       cvtps2dq xmm0,xmm0              ;los volvi a pasar a integer
-      packssdw xmm0,xmm0              ;los paso a word
-      packsswb xmm0,xmm0              ;los paso a byte xmm0 = |x|x|x|t
+      packusdw xmm0,xmm0              ;los paso a word
+      packuswb xmm0,xmm0              ;los paso a byte xmm0 = |x|x|x|t
       
       ;cuenta para encontrar el puntero que debo escribir en la original 
       mov r10, rax                        ;backup rax 
