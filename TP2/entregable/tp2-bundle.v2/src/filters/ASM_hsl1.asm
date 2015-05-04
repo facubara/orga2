@@ -70,7 +70,7 @@ ASM_hsl1:
             jz .avanzo
             mov rdi, rbx               ;puntero al pixel
             ;pxor xmm0, xmm0
-            mov rsi, rax              ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
+            mov rsi, r8              ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
             call rgbTOhsl              ;xmm0 = pi_l | pi_s | pi_h | pi_A
             movdqu xmm0, [r8]         ;xmm0 = pi_l | pi_s | pi_h | pi_A
             ;SUPONGO QUE NO HAY MANERA DE PROCESAR MAS PIXELS, SI LLAMO 4 veces a RGBTOHSL ES COMO SI PROCESARA DE A 1, 4 VECES
@@ -203,7 +203,11 @@ ASM_hsl1:
             ;mov rdi, rdx               ;paso direccion del pixel
             mov rdi, r8               ;paso la dir del pixel en HSL
             mov rsi, rdx               ;paso la dir para que almacene el pixel convertido en RGB
-            call hslTOrgb              
+            push r8;
+            sub rsp,8
+            call hslTOrgb
+            add rsp,8
+            pop r8              
            
             ;ACA YA TERMINE DE PROCESAR ESE PIXEL Y SE INSERTA EN LA IMAGEN
 
@@ -223,7 +227,7 @@ ASM_hsl1:
  
             
 .fin:
-  mov rdi, rsi
+  mov rdi, r8
   call free                     ;libero los 16 bytes
   add rsp, 8
   pop r15
