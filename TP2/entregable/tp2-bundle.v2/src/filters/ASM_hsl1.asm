@@ -19,6 +19,7 @@ mascara5: dd 0,0,0,1                             ;le
 mascara6: dd 0xFFFFFFFF,0xFFFFFFFF,0x0,0xFFFFFFFF   ;le
 mascara7: dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0x0   ;le
 mascara8: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF
+section .text
 ; void ASM_hsl1(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
 global ASM_hsl1
 ASM_hsl1:
@@ -58,7 +59,7 @@ ASM_hsl1:
   ;cvtdq2ps xmm13, xmm13                ;xmm13 = 1 | 0 | 0 | 0      (en floats)
   mov qword rdi, 16                     ;pido 16 bytes para guardar HSL
   call malloc                           ;rax = puntero a la direccion donde voy a guardar HSL
-
+  mov r8, rax                           ;r8 = puntero a la memoria reservada para HSL
   .ciclofilas:
      cmp r14,r13                       ;termine?
      jz .fin	
@@ -71,7 +72,7 @@ ASM_hsl1:
             ;pxor xmm0, xmm0
             movd rsi, rax              ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
             call rgbTOhsl              ;xmm0 = pi_l | pi_s | pi_h | pi_A
-            movdqu xmm0, [rsi]         ;xmm0 = pi_l | pi_s | pi_h | pi_A
+            movdqu xmm0, [r8]         ;xmm0 = pi_l | pi_s | pi_h | pi_A
             ;SUPONGO QUE NO HAY MANERA DE PROCESAR MAS PIXELS, SI LLAMO 4 veces a RGBTOHSL ES COMO SI PROCESARA DE A 1, 4 VECES
             
             ; h 
@@ -198,9 +199,9 @@ ASM_hsl1:
             ;APLICO CAMBIOS
             pxor xmm0, xmm10           ;ACA DEBERIA TENER YA EL VALOR FINAL DE XMM0
             cvtdq2ps xmm0, xmm0        ;paso a float para pasarlo como parametro a hslTOrgb
-            movdqu [rsi], xmm0         ;a partir de la direccion indicada por rsi guardo el HSL ya procesado
+            movdqu [r8], xmm0         ;a partir de la direccion indicada por rsi guardo el HSL ya procesado
             ;mov rdi, rdx               ;paso direccion del pixel
-            mov rdi, rsi               ;paso la dir del pixel en HSL
+            mov rdi, r8               ;paso la dir del pixel en HSL
             mov rsi, rdx               ;paso la dir para que almacene el pixel convertido en RGB
             call hslTOrgb              
            
