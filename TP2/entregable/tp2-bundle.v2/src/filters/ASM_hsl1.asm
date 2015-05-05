@@ -71,7 +71,11 @@ ASM_hsl1:
             mov rdi, rbx               ;puntero al pixel
             ;pxor xmm0, xmm0
             mov rsi, r8              ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
+            push r8
+            sub rsp,8
             call rgbTOhsl              ;xmm0 = pi_l | pi_s | pi_h | pi_A
+            add rsp,8
+            pop r8
             movdqu xmm0, [r8]         ;xmm0 = pi_l | pi_s | pi_h | pi_A
             ;SUPONGO QUE NO HAY MANERA DE PROCESAR MAS PIXELS, SI LLAMO 4 veces a RGBTOHSL ES COMO SI PROCESARA DE A 1, 4 VECES
             
@@ -202,7 +206,7 @@ ASM_hsl1:
             movdqu [r8], xmm0         ;a partir de la direccion indicada por rsi guardo el HSL ya procesado
             ;mov rdi, rdx               ;paso direccion del pixel
             mov rdi, r8               ;paso la dir del pixel en HSL
-            mov rsi, rdx               ;paso la dir para que almacene el pixel convertido en RGB
+            mov rsi, rbx               ;paso la dir para que almacene el pixel convertido en RGB
             push r8;
             sub rsp,8
             call hslTOrgb
