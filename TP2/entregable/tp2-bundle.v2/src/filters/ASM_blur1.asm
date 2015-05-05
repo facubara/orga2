@@ -26,19 +26,8 @@ ASM_blur1:
     push r15
     push rbx
     sub rsp,8
+    ; Fin seteo
 
-    xor r15, r15
-    xor r10, r10
-    xor r8, r8
-    xor r9, r9
-    pxor xmm0, xmm0
-    pxor xmm1, xmm1
-    pxor xmm2, xmm2
-    pxor xmm3, xmm3
-    pxor xmm4, xmm4
-    pxor xmm5, xmm5
-    pxor xmm6, xmm6
-    ; Fin de seteo 
     mov r13, rdx                  ;backup puntero
     mov r14, rdi                  ;backup  columnas
     mov r15,rsi                   ;backup filas
@@ -53,6 +42,7 @@ ASM_blur1:
     shr r9, 4                    ;tengo el tamanio de imagen en grupos de  4 pixeles
     mov rdi, r13                  ; rdi puntero al dato rdi = r13
     mov rsi, rax                  ;puntero a copy 
+    xor r10, r10                  ;r10 = 0
     
     ;hasta aca
     ;r13 p original
@@ -92,6 +82,7 @@ ASM_blur1:
     mov rax, r13                      ;puse en rax puntero a la orignal
     lea rax, [rax+r14*4+4]            ;pongo el puntero original tmb en segunda fila segundo pixel
     lea r11, [r14*4]                  ;r11 tiene el offset fila
+    pxor xmm6, xmm6
     ;xmm14 cst float 
     ;r8 contador columna
     ;r9 contador fila 
