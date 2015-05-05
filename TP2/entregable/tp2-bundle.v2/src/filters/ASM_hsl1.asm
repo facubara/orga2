@@ -42,8 +42,8 @@ ASM_hsl1:
   push r15                             
   sub rsp, 8
 
-  xor r14, r14                              ;contador filas
-  xor r15, r15                              ;contador columnas
+  xor r14, r14                         ;contador filas
+  xor r15, r15                         ;contador columnas
   mov qword r12, rdi                   ;respaldo ancho en pixels
   mov qword r13, rsi                   ;respaldo alto
   mov qword rbx, rdx                   ;respaldo puntero a la imagen
@@ -51,15 +51,27 @@ ASM_hsl1:
   movdqu xmm3, xmm0                    ;xmm3 = 0 | 0 | hh | 0 (xmm0 se usa como parametro para rgbtohsl)
   pand xmm1, [mascara1]                ;xmm1 = 0 | ss | 0 | 0
   pand xmm2, [mascara2]                ;xmm2 = ll | 0 | 0 | 0
-  ;movdqu xmm15, [mascara3]             ;xmm15 = 0 | 0 | 360 | 0    (en ints)
-  ;movdqu xmm14, [mascara4]             ;xmm14 = 0 | 1 | 0 | 0      (en ints)
-  ;movdqu xmm13, [mascara5]             ;xmm13 = 1 | 0 | 0 | 0      (en ints)
-  ;cvtdq2ps xmm15, xmm15                ;xmm15 = 0 | 0 | 360 | 0    (en floats)
-  ;cvtdq2ps xmm14, xmm14                ;xmm14 = 0 | 1 | 0 | 0      (en floats)
-  ;cvtdq2ps xmm13, xmm13                ;xmm13 = 1 | 0 | 0 | 0      (en floats)
-  mov qword rdi, 16                     ;pido 16 bytes para guardar HSL
-  call malloc                           ;rax = puntero a la direccion donde voy a guardar HSL
-  mov r8, rax                           ;r8 = puntero a la memoria reservada para HSL
+  ;movdqu xmm15, [mascara3]            ;xmm15 = 0 | 0 | 360 | 0    (en ints)
+  ;movdqu xmm14, [mascara4]            ;xmm14 = 0 | 1 | 0 | 0      (en ints)
+  ;movdqu xmm13, [mascara5]            ;xmm13 = 1 | 0 | 0 | 0      (en ints)
+  ;cvtdq2ps xmm15, xmm15               ;xmm15 = 0 | 0 | 360 | 0    (en floats)
+  ;cvtdq2ps xmm14, xmm14               ;xmm14 = 0 | 1 | 0 | 0      (en floats)
+  ;cvtdq2ps xmm13, xmm13               ;xmm13 = 1 | 0 | 0 | 0      (en floats)
+  mov qword rdi, 16                    ;pido 16 bytes para guardar HSL
+  sub rsp,16
+  movdqu [rsp], xmm3                    ;push xmm3
+  sub rsp,16
+  movdqu [rsp], xmm1                    ;push xmm1
+  sub rsp,16
+  movdqu [rsp], xmm2                    ;push xmm2
+  call malloc                          ;rax = puntero a la direccion donde voy a guardar HSL
+  mov r8, rax                          ;r8 = puntero a la memoria reservada para HSL
+  movdqu xmm2, [rsp]                    ;pop xmm2
+  add rsp,16
+  movdqu xmm1, [rsp]                    ;pop xmm1
+  add rsp,16
+  movdqu xmm3, [rsp]                    ;pop xmm3
+  add rsp,16
   .ciclofilas:
      cmp r14,r13                       ;termine?
      jz .fin	
@@ -70,12 +82,25 @@ ASM_hsl1:
             jz .avanzo
             mov rdi, rbx               ;puntero al pixel
             ;pxor xmm0, xmm0
-            mov rsi, r8              ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
+            mov rsi, r8                ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
             push r8
             sub rsp,8
+            sub rsp,16
+            movdqu [rsp], xmm3          ;push xmm3
+            sub rsp,16
+            movdqu [rsp], xmm1          ;push xmm1
+            sub rsp,16
+            movdqu [rsp], xmm2          ;push xmm2
             call rgbTOhsl              ;xmm0 = pi_l | pi_s | pi_h | pi_A
+            movdqu xmm2, [rsp]          ;pop xmm2
+            add rsp,16
+            movdqu xmm1, [rsp]          ;pop xmm1
+            add rsp,16
+            movdqu xmm3, [rsp]          ;pop xmm3
+            add rsp,16
             add rsp,8
             pop r8
+            
             movdqu xmm0, [r8]         ;xmm0 = pi_l | pi_s | pi_h | pi_A
             ;SUPONGO QUE NO HAY MANERA DE PROCESAR MAS PIXELS, SI LLAMO 4 veces a RGBTOHSL ES COMO SI PROCESARA DE A 1, 4 VECES
             
@@ -209,7 +234,19 @@ ASM_hsl1:
             mov rsi, rbx               ;paso la dir para que almacene el pixel convertido en RGB
             push r8;
             sub rsp,8
+            sub rsp,16
+            movdqu [rsp], xmm3          ;push xmm3
+            sub rsp,16
+            movdqu [rsp], xmm1          ;push xmm1
+            sub rsp,16
+            movdqu [rsp], xmm2          ;push xmm2
             call hslTOrgb
+            movdqu xmm2, [rsp]          ;pop xmm2
+            add rsp,16
+            movdqu xmm1, [rsp]          ;pop xmm1
+            add rsp,16
+            movdqu xmm3, [rsp]          ;pop xmm3
+            add rsp,16
             add rsp,8
             pop r8              
            
