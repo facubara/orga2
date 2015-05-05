@@ -73,14 +73,14 @@ ASM_blur1:
     mov r9, r15                       
     sub r9,2                          ;contador fila
     mov rsi, rax                      ;puntero a la fila actual copy(me muevo en la copia)
-    lea rsi, [rsi+r14*4+4]            ;pongo la segunda fila segundo pixel como inicio
+    lea rsi, [rsi+r14*4]            ;pongo la segunda fila  como inicio
     mov rdi, rsi                      ;puntero a mi pixeles a cargar ->|v|pixel|v|v| (memoria)
     movdqu xmm15, [mascara]           ;cargo en xmm15 la mascara para and
     xor rdx,rdx
     xor rcx,rcx
     mov r12, rax                      ;backup rax
     mov rax, r13                      ;puse en rax puntero a la orignal
-    lea rax, [rax+r14*4+4]            ;pongo el puntero original tmb en segunda fila segundo pixel
+    lea rax, [rax+r14*4]            ;pongo el puntero original tmb en segunda fila
     lea r11, [r14*4]                  ;r11 tiene el offset fila
     pxor xmm6, xmm6
     ;xmm14 cst float 
