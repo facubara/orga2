@@ -143,8 +143,8 @@ ASM_hsl1:
             pand xmm6, [mascara0]          ;CREO QUE NO ES NECESARIO 
             pand xmm6, [mascara3]      ;xmm6 = 0 | 0 | 360 si h+hh>=360, 0 sino | 0
             pxor xmm8, xmm9               
-            pandn xmm8, xmm8
-            pand xmm8, [mascara0]      ;xmm8 = 0 | 0 | h+hh<0? | 0
+            pxor xmm8, [mascara0]      ;xmm8 = 0 | 0 | h+hh<0? | 0
+            ;pand xmm8, [mascara0]     ;xmm8 = 0 | 0 | h+hh<0? | 0
             pand xmm8, [mascara3]      ;xmm8 = 0 | 0 | 360 si h+hh<0, 0 sino | 0
             movdqu xmm5, xmm0          ;queda pi_h + hh
             
@@ -180,8 +180,8 @@ ASM_hsl1:
             
             pxor xmm6, xmm7
             pand xmm6, [mascara4]      ;xmm6 = 0 | 1 si pi_s+ss >= 1, 0 sino | 0 | 0
-            pxor xmm8, xmm9
-            ;pnand xmm8, xmm8           ;xmm8 = 0 | 1s si s+ss<0 0s sino | 0 | 0
+            pxor xmm8, xmm9            ;xmm8 = 0 | 1 si pi_s+ss >= 0, 0 sino | 0 | 0
+            ;pnand xmm8, xmm8                                                                         ;xmm8 = 0 | 1s si s+ss<0 0s sino | 0 | 0
             movdqu xmm10, xmm0
             pand xmm8, xmm10           ;xmm8 = 0 | pi_s+ss si s+ss>=0, 0 sino | 0 | 0         
             pand xmm10, [mascara6]     ;xmm10 = pi_l + ll | 0 | pi_h+hh | pi_A
