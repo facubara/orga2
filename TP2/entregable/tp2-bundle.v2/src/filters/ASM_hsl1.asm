@@ -136,7 +136,7 @@ ASM_hsl1:
             pcmpgtd xmm5, [mask360i]   ;pi_h+hh > 360?
             movdqu xmm7, xmm5          
             pand xmm7, [maskHH]      ; xmm7 = 0 | 0 | h+hh > 360? | 0
-            ;h + hh = 0?
+            ;h<<<<< + hh = 0?
             movdqu xmm5, xmm14
             pcmpeqd xmm5, [mascara8]   ;pi_h+hh = 0?
             movdqu xmm8, xmm5          
@@ -162,8 +162,8 @@ ASM_hsl1:
             cvtdq2ps xmm6,xmm6         ;convierto a float xmm6
             cvtdq2ps xmm8,xmm8         ;convierto a float xmm8
 
-            psubd xmm15, xmm6           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh - 360 si pi_h+hh>=360, pi_h+hh sino | pi_A
-            paddd xmm15, xmm8           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh +360 si pi_h+hh<0, pi_h+hh sino | pi_A
+            subps xmm15, xmm6           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh - 360 si pi_h+hh>=360, pi_h+hh sino | pi_A
+            addps xmm15, xmm8           ;xmm6 = pi_l + ll | pi_s + ss | pi_h+hh +360 si pi_h+hh<0, pi_h+hh sino | pi_A
             
             ;ACLARO QUE SOLO PUEDE PASAR 1 CASO DE LOS 2 ANTERIORES, osea que o hago +360 o -360 o queda pi_h+hh
 

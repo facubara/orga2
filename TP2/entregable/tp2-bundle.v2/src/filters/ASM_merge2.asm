@@ -24,7 +24,7 @@ ASM_merge2:
   push r13
   push r14
   push r15
-
+  sub rbp, 8
 
   ;rdi = ancho
   ;rsi = alto
@@ -202,9 +202,11 @@ ASM_merge2:
             jmp .ciclofilas
 
   .fin:
+  add rbp, 8
   pop r15
   pop r14
   pop r13
   pop r12
+  pop rbx
   pop rbp         
   ret
