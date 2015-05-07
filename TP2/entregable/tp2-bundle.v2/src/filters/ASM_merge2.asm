@@ -8,7 +8,10 @@
 section .data
 align 16
 constante1: times 4 dd 1
-
+mascaraexp: dd 0xFF, 0xFF, 0x7F, 0x00
+mascaraFloat: dd 0xFFFFFFFF, 0, 0, 0
+mascaraA: dd 0x0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+mascara1: dd 1, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 section .text
 
 ; void ASM_merge2(uint32_t w, uint32_t h, uint8_t* data1, uint8_t* data2, float value)
@@ -16,6 +19,7 @@ global ASM_merge2
 ASM_merge2:
   push rbp
   mov rbp, rsp
+  push rbx
   push r12
   push r13
   push r14
@@ -27,8 +31,45 @@ ASM_merge2:
   ;rdx = src1
   ;rcx = src2
   ;xmm0 = value
-  shufps xmm0, xmm0, 0h                 ;xmm0 = value | value | value | value
-  cvtps2dq xmm0, xmm0                   ;xmm0 = value | value | value | value  (en ints)
+  xor rax, rax
+  xor rbx, rbx
+  xor r9, r9
+  pxor xmm12, xmm12
+  pand xmm0, [mascaraFloat] ; xmm0 = 0 | 0 | 0 | value
+  movd eax, xmm0            ;eax = value            seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
+  shr rax, 23              ;eax = exponente        000000000000000000000000eeeeeeee
+  mov qword r10, 150        ;r10 = 150
+  mov ebx, 150
+  sub ebx, eax              ;eax = 150 - exponente = "k"
+  shl rbx, 23              ;ebx = 
+  shl r10, 23              ;r10 = 150 en la posicion del exponente de un float en ieee754
+  movdqu xmm13, xmm0        
+  pand xmm13, [mascaraexp]    ; xmm13 = mantisa del float en el ultimo dword osea saco exponente
+  movd xmm12, r10d             ; xmm12 = 150 en el lugar del exponente del primer dword
+  pxor xmm13, xmm12           ;el float con la misma mantisa que value pero exponente 150, osea 150-127 = 23
+  cvtps2dq xmm13, xmm13       ;value como int
+  mov r9d, ebx                ;r9 = k
+  pxor xmm14, xmm14
+  movd xmm14, r9d             ;xmm14 = 0 | 0 | 0 | k
+  xor r10, r10                ;r10 = 0
+  inc r10                     ;r10 = 1
+.cicloshift:
+  cmp r9d, 0                   ;termine de shiftear?
+  jz .finshift
+  shl r10, 1
+  dec r9
+  jmp .cicloshift
+   
+.finshift: 
+  ;r10 = 2^k
+  movd xmm12, r10d           ;xmm12 = 0 | 0 | 0 | 2^k
+  psubd xmm12, xmm13         ;xmm12 =  0 | 0 | 0 | 2^k - value  (como ints)
+  pshufd xmm12, xmm12, 0h   ;xmm12 = 2^k - value | 2^k - value | 2^k - value | 2^k - value (como ints)
+  pand xmm12, [mascaraA]    ;xmm12 = 2^k - value | 2^k - value | 2^k - value | 0 (como ints)
+  ;pxor xmm12, [mascara1]    ;xmm12 = 2^k - value | 2^k - value | 2^k - value | 1 (como ints)
+  pshufd xmm13, xmm13, 0h   ;xmm13 = value | value | value | value (como ints)
+  pand xmm13, [mascaraA]    ;xmm13 = value | value | value | 0 (como ints)
+  pxor xmm13, [mascara1]    ;xmm13 = value | value | value | 1 (como ints)
   mov r12, rdi              ;cant pixels por fila
   mov r13, rsi              ;r13 = cant filas
   xor r14, r14              ;contador filas
@@ -36,8 +77,7 @@ ASM_merge2:
   mov r8, rdx
   mov r9, rcx
   pxor xmm15, xmm15
-  movdqu xmm14, [constante1]              ;xmm14 = 1 | 1 | 1 | 1
-  psubd xmm14, xmm0                       ;xmm14 = 1 - value | 1 - value | 1 - value | 1 - value (en ints)
+
   
   .ciclofilas:
    cmp r14, r13
@@ -102,29 +142,49 @@ ASM_merge2:
 	  punpcklwd xmm10,xmm15			; xmm10 = p4_b | p4_g | p4_r | p4_a  (como ints)
 
           ;HASTA ACA TENGO TODO ARMADITO
-          ;SUMO CON FLOATS
-          pmuldq xmm2, xmm0                      ;xmm2 src1 = p1_b * value| p1_g * value| p1_r * value| p1_a * value (como ints)
-          pmuldq xmm7, xmm14                     ;xmm7 src2 = p1_b * (1 - value)| p1_g * (1 - value)| p1_r * (1 - value)| p1_a * (1 - value) (como ints)
+          ;SUMO CON INTS
+          pmulld xmm2, xmm13                     ;xmm2 src1 = p1_b * value| p1_g * value| p1_r * value| p1_a * 1 (como ints)
+          movdqu xmm11, xmm7                     ;xmm11 = p1_b | p1_g | p1_r | p1_a  (como ints)
+          pmulld xmm7, xmm13                     ;xmm7 src2 = p1_b * value | p1_g * value | p1_r * value | p1_a * 1
+          psrld xmm7, xmm14                      ;xmm7= xmm7/2^k
+          psubd xmm11, xmm7                       ;xmm11 = p1_b - p1_b*value/2^k... | p1_a - p1_a*value/2^k 
+          pand xmm11, [mascaraA]                 ;xmm11 = p1_b - p1_b*value/2^k... | 0
+          movdqu xmm7, xmm11 
           paddd xmm2, xmm7                       ;xmm2 = value * m1[j][i][k] + (1 - value ) * m2[j][i][k]
 
-          pmuldq xmm3, xmm0                      ;xmm3 src1 = p2_b * value| p2_g * value| p2_r * value| p2_a * value (como ints)
-          pmuldq xmm8, xmm14                     ;xmm8 src2 = p2_b * (1 - value)| p2_g * (1 - value)| p2_r * (1 - value)| p2_a * (1 - value) (como ints)
+          pmulld xmm3, xmm13                      ;xmm3 src1 = p2_b * value| p2_g * value| p2_r * value| p2_a * 1 (como ints)
+          movdqu xmm11, xmm8                     ;xmm11 = p2_b | p2_g | p2_r | p2_a 
+          pmulld xmm8, xmm13                     ;xmm8 src2 = p2_b * value| p2_g * value| p2_r *value| p2_a * 1 (como ints)
+          psrld xmm8, xmm14                      ;xmm8 = xmm8/2^k
+          psubd xmm11, xmm8                       ;xmm11 = p2_b - p2_b*value/2^k .... | p2_a - p2_a*value/2^k
+          pand xmm11, [mascaraA]                 ;xmm11 = p2_b - p2_b*value/2^k .... | 0
+          movdqu xmm8, xmm11                 
           paddd xmm3, xmm8                       ;xmm3 = value * m1[j][i+1][k] + (1 - value ) * m2[j][i+1][k]
 
-          pmuldq xmm4, xmm0                      ;xmm4 src1 = p3_b * value| p3_g * value| p3_r * value| p3_a * value (como ints)
-          pmuldq xmm9, xmm14                     ;xmm9 src2 = p3_b * (1 - value)| p3_g * (1 - value)| p3_r * (1 - value)| p3_a * (1 - value) (como ints)
+          pmulld xmm4, xmm13                      ;xmm4 src1 = p3_b * value| p3_g * value| p3_r * value| p3_a * 1 (como ints)
+          movdqu xmm11, xmm9                     ;xmm11 = p3_b | p3_g | p3_r | p3_a
+          pmulld xmm9, xmm13                     ;xmm9 = p3_b * value | p3_g * value | p3_r * value | p3_a * 1 
+          psrld xmm9, xmm14                      ;xmm9 = xmm9/2^k
+          psubd xmm11, xmm9                       ;xmm9 = p3_b - p3_b *value/2^k... | p3_a - p3_a*value/2^k
+          pand xmm11, [mascaraA]                 ;xmm11 = p3_b - p3_b * value/2^k | ... | 0
+          movdqu xmm9, xmm11                   
           paddd xmm4, xmm9                       ;xmm4 = value * m1[j][i+2][k] + (1 - value ) * m2[j][i+2][k]
 
-          pmuldq xmm5, xmm0                      ;xmm5 src1 = p4_b * value| p4_g * value| p4_r * value| p4_a * value (como ints)
-          pmuldq xmm10, xmm14                    ;xmm10 src2 = p4_b * (1 - value)| p4_g * (1 - value)| p4_r * (1 - value)| p4_a * (1 - value) (como ints)
+          pmulld xmm5, xmm13                      ;xmm5 src1 = p4_b * value| p4_g * value| p4_r * value| p4_a * 1 (como ints)
+          movdqu xmm11, xmm10                    ;xmm11 = p4_b | p4_g | p4_r | p4_a
+          pmulld xmm10, xmm13                    ;xmm10= p4_b * value | p4_g * value | p4_r * value | p4_a * 1 
+          psrld xmm10, xmm14                     ;xmm10 = xmm10/2^k
+          psubd xmm11, xmm10                      ;xmm10 = p4_b - p4_b * value/2^k | ... p4_a  - p4_a*value/2^k
+          pand xmm11, [mascaraA]
+          movdqu xmm10, xmm11
           paddd xmm5, xmm10                      ;xmm5 = value * m1[j][i+3][k] + (1 - value ) * m2[j][i+3][k]
 
-
+          ;YA MULTIPLIQUE, AHORA EMPAQUETO Y SUMO
           ;EMPAQUETO
 
           packusdw xmm2, xmm3
 	  packusdw xmm4, xmm5
-	  packuswb xmm2, xmm4                   
+	  packuswb xmm2, xmm4                
           
           ;COLOCO
 
