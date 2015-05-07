@@ -82,6 +82,7 @@ ASM_blur1:
     mov rax, r13                      ;puse en rax puntero a la orignal
     lea rax, [rax+r14*4]            ;pongo el puntero original tmb en segunda fila
     lea r11, [r14*4]                  ;r11 tiene el offset fila
+    movdqu xmm7, [mascara2]         ;cargo la mascara
     pxor xmm6, xmm6
     ;xmm14 cst float 
     ;r8 contador columna
@@ -161,8 +162,7 @@ ASM_blur1:
       mov rdi, rax                        ;rdi = rax (es necesario porque maskmovdqu direcciona sobre el valor de rdi)
       ;falta volver rax y rdi al original
       pslldq xmm0, 0x04              ;shifteo 4 bytes hacia la izq xmm0 = |x|x|t|0 
-      movdqu xmm3, [mascara2]         ;cargo la mascara
-      maskmovdqu xmm0, xmm3           ;esto va cargar los bytes que su bit mas significativo empieze con 1 cargando a memoria 
+      maskmovdqu xmm0, xmm7           ;esto va cargar los bytes que su bit mas significativo empieze con 1 cargando a memoria 
       ;si mi mascara esta bien deberia cargar cargar solo los r g b del pixel t
       mov rax,r10                     ;devuelvo rax a lo original
       mov rdi,rbx                     ;ahi lo volvi al orignial a rdi 
