@@ -1,0 +1,121 @@
+00000000000d[CTRL ] searching for component 'log' in list 'bochs'
+00000000000d[CTRL ] searching for component 'prefix' in list 'log'
+00000000000i[     ] Bochs x86 Emulator 2.6.2
+00000000000i[     ]   Built from SVN snapshot on May 26, 2013
+00000000000i[     ] Compiled on May 19 2015 at 18:26:32
+00000000000i[     ] System configuration
+00000000000d[CTRL ] searching for component 'cpu' in list 'bochs'
+00000000000d[CTRL ] searching for component 'n_threads' in list 'cpu'
+00000000000d[CTRL ] searching for component 'cpu' in list 'bochs'
+00000000000d[CTRL ] searching for component 'n_cores' in list 'cpu'
+00000000000i[     ]   processors: 1 (cores=1, HT threads=1)
+00000000000i[     ]   A20 line support: yes
+00000000000d[CTRL ] searching for component 'cpu' in list 'bochs'
+00000000000d[CTRL ] searching for component 'msrs' in list 'cpu'
+00000000000i[     ]   load configurable MSRs from file "msrs.def"
+00000000000d[CTRL ] searching for component 'cpu' in list 'bochs'
+00000000000d[CTRL ] searching for component 'ips' in list 'cpu'
+00000000000i[     ] IPS is set to 5000000
+00000000000i[     ] CPU configuration
+00000000000i[     ]   SMP support: no
+00000000000d[CTRL ] searching for component 'cpu' in list 'bochs'
+00000000000d[CTRL ] searching for component 'model' in list 'cpu'
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'level' in list 'cpuid'
+00000000000i[     ]   level: 6
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'apic' in list 'cpuid'
+00000000000i[     ]   APIC support: xapic
+00000000000i[     ]   FPU support: yes
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'mmx' in list 'cpuid'
+00000000000i[     ]   MMX support: yes
+00000000000i[     ]   3dnow! support: no
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'sep' in list 'cpuid'
+00000000000i[     ]   SEP support: yes
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'sse4a' in list 'cpuid'
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'sse' in list 'cpuid'
+00000000000i[     ]   SSE support: sse2
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'xsave' in list 'cpuid'
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'xsaveopt' in list 'cpuid'
+00000000000i[     ]   XSAVE support: no 
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'aes' in list 'cpuid'
+00000000000i[     ]   AES support: no
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'movbe' in list 'cpuid'
+00000000000i[     ]   MOVBE support: no
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'adx' in list 'cpuid'
+00000000000i[     ]   ADX support: no
+00000000000i[     ]   x86-64 support: no
+00000000000d[CTRL ] searching for component 'cpuid' in list 'bochs'
+00000000000d[CTRL ] searching for component 'mwait' in list 'cpuid'
+00000000000i[     ]   MWAIT support: yes
+00000000000i[     ] Optimization configuration
+00000000000i[     ]   RepeatSpeedups support: no
+00000000000i[     ]   Fast function calls: no
+00000000000i[     ]   Handlers Chaining speedups: no
+00000000000i[     ] Devices configuration
+00000000000i[     ]   NE2000 support: no
+00000000000d[CTRL ] searching for component 'pci' in list 'bochs'
+00000000000d[CTRL ] searching for component 'enabled' in list 'pci'
+00000000000i[     ]   PCI support: yes, enabled=yes
+00000000000i[     ]   SB16 support: no
+00000000000i[     ]   USB support: no
+00000000000i[     ]   VGA extension support: vbe
+00000000000d[CTRL ] searching for component 'memory' in list 'bochs'
+00000000000d[CTRL ] searching for component 'standard' in list 'memory'
+00000000000d[CTRL ] searching for component 'rom' in list 'standard'
+00000000000d[CTRL ] searching for component 'path' in list 'rom'
+00000000000d[CTRL ] searching for component 'general' in list 'bochs'
+00000000000d[CTRL ] searching for component 'benchmark' in list 'general'
+00000000000d[CTRL ] searching for component 'memory' in list 'bochs'
+00000000000d[CTRL ] searching for component 'standard' in list 'memory'
+00000000000d[CTRL ] searching for component 'ram' in list 'standard'
+00000000000d[CTRL ] searching for component 'size' in list 'ram'
+00000000000d[CTRL ] searching for component 'memory' in list 'bochs'
+00000000000d[CTRL ] searching for component 'standard' in list 'memory'
+00000000000d[CTRL ] searching for component 'ram' in list 'standard'
+00000000000d[CTRL ] searching for component 'host_size' in list 'ram'
+00000000000d[MEM0 ] Init $Id: misc_mem.cc 11635 2013-02-18 20:52:19Z vruppert $
+00000000000i[MEM0 ] allocated memory at 0x7fa1024ec010. after alignment, vector=0x7fa1024ed000
+00000000000i[MEM0 ] 256,00MB
+00000000000i[MEM0 ] mem block size = 0x00100000, blocks=256
+00000000000d[CTRL ] searching for component 'pci' in list 'bochs'
+00000000000d[CTRL ] searching for component 'enabled' in list 'pci'
+00000000000d[CTRL ] searching for component 'bochs' in list 'bochs'
+00000000000d[CTRL ] searching for component 'memory' in list 'bochs'
+00000000000d[CTRL ] searching for component 'standard' in list 'memory'
+00000000000d[CTRL ] searching for component 'rom' in list 'standard'
+00000000000d[CTRL ] searching for component 'addr' in list 'rom'
+00000000000d[CTRL ] searching for component 'memory' in list 'bochs'
+00000000000d[CTRL ] searching for component 'standard' in list 'memory'
+00000000000d[CTRL ] searching for component 'rom' in list 'standard'
+00000000000d[CTRL ] searching for component 'path' in list 'rom'
+00000000000p[MEM0 ] >>PANIC<< ROM: couldn't open ROM image file '/home/mignanelli/bochs-2.6.2/share/bochs/BIOS-bochs-latest'.
+00000000000d[     ] dbg: before exit
+00000000000i[CPU0 ] CPU is in real mode (active)
+00000000000i[CPU0 ] CS.mode = 16 bit
+00000000000i[CPU0 ] SS.mode = 16 bit
+00000000000i[CPU0 ] EFER   = 0x00000000
+00000000000i[CPU0 ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000000
+00000000000i[CPU0 ] | ESP=00000000  EBP=00000000  ESI=00000000  EDI=00000000
+00000000000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+00000000000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00000000000i[CPU0 ] |  CS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  DS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  SS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  ES:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  GS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] | EIP=00000000 (00000000)
+00000000000i[CPU0 ] | CR0=0x00000000 CR2=0x00000000
+00000000000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+00000000000i[MEM0 ] allocate_block: block=0x0 used 0x1 of 0x100
+00000000000i[CTRL ] quit_sim called with exit code 1

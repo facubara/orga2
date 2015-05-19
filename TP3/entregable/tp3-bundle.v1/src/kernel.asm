@@ -57,7 +57,7 @@ start:
 
     ; Saltar a modo protegido
 
-    jmp 0x08:modo_protegido
+    jmp 0x08:.modo_protegido
 
 
     ; Establecer selectores de segmentos
@@ -116,3 +116,4 @@ start:
 ;; -------------------------------------------------------------------------- ;;
 
 %include "a20.asm"
+extern GDT_DESC
