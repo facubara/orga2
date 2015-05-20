@@ -48,7 +48,7 @@ start:
     ; Cargar la GDT
 
     lgdt [GDT_DESC]
-
+    xchg bx, bx
     ; Setear el bit PE del registro CR0
 
     mov eax, cr0
@@ -57,23 +57,29 @@ start:
 
     ; Saltar a modo protegido
 
-    jmp 0x08:.modo_protegido
+    jmp 0x40:mp
 
 
     ; Establecer selectores de segmentos
 
-  .modo_protegido:
+  mp:
 
     xor eax, eax
-    mov ax, 1000000b       ; index = 8 / gdt/ldt = 0 / rpl = 0
+    mov ax, 0x50       ; index = 8 / gdt/ldt = 0 / rpl = 0
     mov ds, ax
     mov es, ax
     mov gs, ax
-    mov fs, ax              ; no se esto
+    mov fs, ax             ; no se esto
+    mov ss, ax
 
     ; Establecer la base de la pila
+    
+    mov ebp, 0x27000
+    mov esp, 0x27000
 
     ; Imprimir mensaje de bienvenida
+    
+     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 3, 0
 
     ; Inicializar el juego
 
