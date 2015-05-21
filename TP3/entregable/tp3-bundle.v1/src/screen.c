@@ -91,7 +91,7 @@ void inic_video(){
     //PRIMERA FILA EN NEGRO
     while (x<VIDEO_COLS){
           p[0][x].c = (unsigned char) ' ';
-          p[0][x].a = (unsigned char) C_BG_BLUE;
+          p[0][x].a = (unsigned char) C_BG_BLACK;
           x++;
     }
     x=0;
@@ -110,7 +110,7 @@ void inic_video(){
     x = 0;
     while (y<VIDEO_FILS){
         p[y][x].c = (unsigned char) ' ';
-        p[y][x].a = (unsigned char) C_BG_BLUE;
+        p[y][x].a = (unsigned char) C_BG_BLACK;
         x++;
         if (x == VIDEO_COLS){
             x= 0;
@@ -128,16 +128,27 @@ void inic_video(){
         else{
             p[y][x].a = (unsigned char) C_BG_BLUE;
         }
-
+        x++;
+        if(x == VIDEO_COLS/2+5){
+            x = VIDEO_COLS/2 -5;
+            y++;
+        }
     }
     //0s para puntaje jugador 1
-    p[35][VIDEO_FILS-3].c = (unsigned char) '0';
-    p[36][VIDEO_FILS-3].c = (unsigned char) '0';
-    p[37][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[47][36].c = (unsigned char) '0';
+    p[47][36].a = (unsigned char) C_FG_WHITE;
+    p[47][37].c = (unsigned char) '0';
+    p[47][37].a = (unsigned char) C_FG_WHITE;
+    p[47][38].c = (unsigned char) '0';
+    p[47][38].a = (unsigned char) C_FG_WHITE;
     //0s para puntaje jugador 2
-    p[42][VIDEO_FILS-3].c = (unsigned char) '0';
-    p[43][VIDEO_FILS-3].c = (unsigned char) '0';
-    p[44][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[47][41].c = (unsigned char) '0';
+    p[47][41].a = (unsigned char) C_FG_WHITE;
+    p[47][42].c = (unsigned char) '0';
+    p[47][42].a = (unsigned char) C_FG_WHITE;
+    p[47][43].c = (unsigned char) '0';
+    p[47][43].a = (unsigned char) C_FG_WHITE;
+
 
 }
 
