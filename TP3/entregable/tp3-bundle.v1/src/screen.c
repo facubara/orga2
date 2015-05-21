@@ -82,4 +82,63 @@ void print_dec(uint numero, int size, uint x, uint y, unsigned short attr) {
     }
 }
 
+void inic_video(){
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+
+    int x = 0;
+    int y = 0;
+    //PRIMERA FILA EN NEGRO
+    while (x<VIDEO_COLS){
+          p[0][x].c = (unsigned char) ' ';
+          p[0][x].a = (unsigned char) C_BG_BLUE;
+          x++;
+    }
+    x=0;
+    y=1;
+    //PANTALLA EN GRIS
+    while (y<45){
+          p[y][x].c = (unsigned char) ' ';
+          p[y][x].a = (unsigned char) C_BG_LIGHT_GREY;
+          x++;
+          if (x == VIDEO_COLS){
+            x = 0;
+            y++;
+      }
+    }
+    y = VIDEO_FILS -5;
+    x = 0;
+    while (y<VIDEO_FILS){
+        p[y][x].c = (unsigned char) ' ';
+        p[y][x].a = (unsigned char) C_BG_BLUE;
+        x++;
+        if (x == VIDEO_COLS){
+            x= 0;
+            y++;
+        }
+        
+    }
+    y = VIDEO_FILS - 5;
+    x = (VIDEO_COLS/2) - 5;
+    while (y<VIDEO_FILS){
+        p[y][x].c = (unsigned char) ' ';
+        if(x<VIDEO_COLS/2){
+            p[y][x].a = (unsigned char) C_BG_RED;
+        }
+        else{
+            p[y][x].a = (unsigned char) C_BG_BLUE;
+        }
+
+    }
+    //0s para puntaje jugador 1
+    p[35][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[36][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[37][VIDEO_FILS-3].c = (unsigned char) '0';
+    //0s para puntaje jugador 2
+    p[42][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[43][VIDEO_FILS-3].c = (unsigned char) '0';
+    p[44][VIDEO_FILS-3].c = (unsigned char) '0';
+
+}
+
 

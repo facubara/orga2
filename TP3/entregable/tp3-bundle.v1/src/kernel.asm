@@ -48,7 +48,6 @@ start:
     ; Cargar la GDT
 
     lgdt [GDT_DESC]
-    xchg bx, bx
     ; Setear el bit PE del registro CR0
 
     mov eax, cr0
@@ -62,6 +61,7 @@ start:
 
     ; Establecer selectores de segmentos
 
+BITS 32
   mp:
 
     xor eax, eax
@@ -69,8 +69,9 @@ start:
     mov ds, ax
     mov es, ax
     mov gs, ax
-    mov fs, ax             ; no se esto
     mov ss, ax
+    mov ax, 0x60
+    mov fs, ax             ; no se esto
 
     ; Establecer la base de la pila
     
@@ -81,9 +82,15 @@ start:
     
      imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 3, 0
 
+    xchg bx, bx
+
     ; Inicializar el juego
 
     ; Inicializar pantalla
+
+    call inic_video
+
+    xchg bx,bx
 
     ; Inicializar el manejador de memoria
 
@@ -123,3 +130,4 @@ start:
 
 %include "a20.asm"
 extern GDT_DESC
+extern inic_video
