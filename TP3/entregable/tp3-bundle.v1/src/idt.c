@@ -34,15 +34,31 @@ idt_descriptor IDT_DESC = {
     }
 */
 
-/*
+
 #define IDT_ENTRY(numero)                                                                                        \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
-    idt[numero].segsel = (unsigned short) 0x00;                                                                  \
-    idt[numero].attr = (unsigned short) 0x0000;                                                                  \
+    idt[numero].segsel = (unsigned short) 0x40;                                                                  \
+    idt[numero].attr = (unsigned short) 0x8E00;                                                                  \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
-*/
+
 
 
 void idt_inicializar() {
     // Excepciones
+    IDT_ENTRY(0);
+    IDT_ENTRY(1);
+    IDT_ENTRY(2);
+    IDT_ENTRY(3);
+    IDT_ENTRY(4);
+    IDT_ENTRY(5);//BOUND Range Exceeded Exception
+    IDT_ENTRY(6);
+    IDT_ENTRY(7);
+    IDT_ENTRY(8);//Double Fault Exception
+    IDT_ENTRY(9);//Coprocessor Segment Overrun
+    IDT_ENTRY(10);//invalid TSS
+    IDT_ENTRY(11);//Segment Not Present
+    IDT_ENTRY(12);//Stack Fault Exception
+    IDT_ENTRY(13);
+    IDT_ENTRY(14);
+    IDT_ENTRY(17);
 }
