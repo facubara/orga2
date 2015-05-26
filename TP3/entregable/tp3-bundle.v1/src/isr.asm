@@ -173,7 +173,7 @@ _isr8:;Double Fault Exception
 
     imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
     
-    jmp imprimirErrorCode
+    
     jmp $
 
 _isr9:;Coprocessor Segment Overrun
@@ -190,7 +190,7 @@ _isr10:;invalid TSS
     pushad
 
     imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
-    jmp imprimirErrorCode
+    
     jmp $
 
 _isr11:;Segment Not Present
@@ -199,7 +199,7 @@ _isr11:;Segment Not Present
     pushad
 
     imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    jmp imprimirErrorCode
+    
     jmp $
 
 _isr12:;Stack Fault Exception
@@ -208,7 +208,7 @@ _isr12:;Stack Fault Exception
     pushad
 
     imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
-    jmp imprimirErrorCode
+    
     jmp $
 
 _isr13:
@@ -217,7 +217,7 @@ _isr13:
     pushad
 
     imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
-    jmp imprimirErrorCode
+    
     jmp $
 
 _isr14:
@@ -228,7 +228,7 @@ _isr14:
 
     imprimir_texto_mp int14_capturada, int14_capturada_len, 0x07, 20, 30
     
-    jmp imprimirErrorCode
+    
     jmp $
     
 
@@ -238,7 +238,7 @@ _isr17:
     pushad
 
     imprimir_texto_mp int17_capturada, int17_capturada_len, 0x07, 20, 30
-    jmp imprimirErrorCode
+   
     jmp $
 
 ;;

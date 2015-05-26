@@ -152,6 +152,13 @@ void inic_video(){
 
 }
 
+int long_string(const char* s){
+	int i = 0;
+	while(s[i] != 0){
+		i++;
+	}
+	return i;
+}
 
 void imprime_nombre_grupo(){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;

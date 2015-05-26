@@ -31,6 +31,7 @@ typedef unsigned int   uint;
 
 #define dir_kernel_addr 	0x27000
 #define table_0_kernel_addr 0x28000
+#define table_1_kernel_addr 0x29000
 
 
 /* Indices en la gdt */

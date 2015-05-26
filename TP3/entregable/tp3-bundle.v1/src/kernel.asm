@@ -20,6 +20,8 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
+%define dir_kernel_addr 0x27000
+
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -119,11 +121,12 @@ BITS 32
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
-
+    call idt_inicializar
     ; Cargar IDT
-
+    lidt [IDT_DESC]
     ; Configurar controlador de interrupciones
-
+    xor eax, eax      ; eax = 0
+    div ebx
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
@@ -142,4 +145,7 @@ BITS 32
 
 %include "a20.asm"
 extern GDT_DESC
+extern IDT_DESC
 extern inic_video
+extern imprime_nombre_grupo
+extern idt_inicializar

@@ -7,6 +7,7 @@
 
 #include "mmu.h"
 #include "i386.h"
+#include "defines.h"
 /* Atributos paginas */
 /* -------------------------------------------------------------------------- */
 
