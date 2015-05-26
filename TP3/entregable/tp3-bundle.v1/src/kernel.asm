@@ -98,7 +98,19 @@ BITS 32
 
     ; Cargar directorio de paginas
 
+    mov eax, dir_kernel_addr ;0x27000
+    mov cr3, eax
+
+
     ; Habilitar paginacion
+
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+ 
+    ; IMPIMIR NOMBRE DE GRUPO POR PANTALLA
+
+    call imprime_nombre_grupo
 
     ; Inicializar tss
 

@@ -153,3 +153,16 @@ void inic_video(){
 }
 
 
+void imprime_nombre_grupo(){
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	char* nombre_grupo = " Circus / Family";
+	int len = long_string(nombre_grupo);
+	int x = VIDEO_COLS-len;
+	int y = 0;
+	int i = 0;
+	for(i = 0; i<len; i++){
+		p[y][x+i].a = (unsigned char) C_FG_LIGHT_CYAN;
+		p[y][x+i].c = (unsigned char) nombre_grupo[i];
+	}
+}
+

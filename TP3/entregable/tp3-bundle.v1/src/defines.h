@@ -29,6 +29,10 @@ typedef unsigned int   uint;
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
 
 
+#define dir_kernel_addr 	0x27000
+#define table_0_kernel_addr 0x28000
+
+
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_COUNT 30
