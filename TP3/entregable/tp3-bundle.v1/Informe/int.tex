@@ -1,0 +1,5 @@
+\begin{enumerate}
+
+\item[a)] Completamos la IDT con las primeras 17 entradas, que corresponden a diferentes rutinas de excepciones del procesador. Las excepciones reservadas por intel no son consideradas en este punto. Cargamos las entradas como {\it Interrupt Gate}; bit de presente en 1, DPL 00, bit de sistema en 0, tipo de puerta en 1 (32 bits) y el valor 110 en los bits 8-10. Por el momento, las rutinas de atención de excepciones estan hechas de manera tal que solo muestren por pantalla el error incurrido.
+
+\item[b)] Cargamos la IDT agregando en {\tt kernel.asm} un call a {\tt idt\_inicializar} y usando la instrucción {\tt lidt} y la estructura {\tt idt\_descriptor} ya definida.  
