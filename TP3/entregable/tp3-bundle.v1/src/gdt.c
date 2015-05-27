@@ -113,7 +113,7 @@ gdt_entry gdt[GDT_COUNT] = {
 
 
     /*segmento video: 
-         * datos user
+         
          */
         [12] = (gdt_entry) {
         (unsigned short)    0x1000,         /* limit[0:15]  */
