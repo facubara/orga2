@@ -130,28 +130,34 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 }
 
 
-unsigned int mmu_inicializar_dir_zombi(unsigned short _zombie, unsigned char _jugador, unsigned short y, unsigned char tipo){
-	unsigned int i, j;
+unsigned int mmu_inic_dir_pirata(){
+	
 	unsigned int cr3 = obtener_pagina_libre();	// Busco una pagina nueva y la pongo en cr3
 
 	page_dir_entry* page_dir = (page_dir_entry*)(cr3);	// Voy con la dir de esa pag nueva a page_dir
 	page_dir_entry* page_tables[1];						// Arreglo de 4 page_dir_entry
 
-	for (j = 0; j < 1; j++) {
-		page_tables[j] = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag para cada una
-	}
+	
+		page_tables[j] = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag libre para la page table
+	
 	
 	// Inicializo tooooodo
 	for (i = 0; i < 1024; i++) {
-		page_dir[i] = (page_dir_entry) {
+		page_dir[i] = (page_dir_entry) {                //inicializo todas las entradas del directorio de tarea       
 			.p = 0,
 			.rw = 1,
 			.su = 1,
 			.ignored = 0,
 			.base = i
 		};
-
-		for (j = 0; j < 1; j++) {
+                page_tables[0][i] = (page_dir_entry) {           //identity mapping para los primeros 0x000000 - 0x3FFFFF
+                        .p = 0,
+                        .rw = 1,
+                        .su = 1,
+                        .ignored = 0,
+                        .base = i
+                }
+		/*for (j = 0; j < 1; j++) {
 			page_tables[j][i] = (page_dir_entry) {
 				.p = 1,
 				.rw = 1,
@@ -160,7 +166,8 @@ unsigned int mmu_inicializar_dir_zombi(unsigned short _zombie, unsigned char _ju
 				.base = i + j * 1024
 			};
 		}
-
+                */
+                
 		//~ if (0x003FFFFF < (i + 2048) * 0x1000) {
 			//~ page_tables[2][i] = (page_dir_entry) {
 				//~ .p = 0,
@@ -172,9 +179,9 @@ unsigned int mmu_inicializar_dir_zombi(unsigned short _zombie, unsigned char _ju
 		//~ }
 	}
 	
-	// Las primeras 1 entradas de esa page dir van con cada page table
-	for (j = 0; j < 1; j++) {
-		page_dir[j] = (page_dir_entry) {
+	// Las primera entrada de esa page dir van con el page table que ya hice
+	//for (j = 0; j < 1; j++) {
+		page_dir[0] = (page_dir_entry) {                            
 			.p = 1,
 			.rw = 1,
 			.su = 1,
@@ -184,7 +191,7 @@ unsigned int mmu_inicializar_dir_zombi(unsigned short _zombie, unsigned char _ju
 	}
 	
 			
-	for(i=1;i<1024;i++){
+	for(i=1;i<1024;i++){                                      ;//ignoro el resto de las entradas del directorio de la tarea
 		page_dir[i] = (page_dir_entry) {
 				.p = 0,
 				.rw = 0,
