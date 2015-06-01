@@ -48,8 +48,9 @@ global _isr3
 global _isr4
 global _isr6
 global _isr7
-
-
+global _isr32
+global _isr33
+global _isr70
 
 int0_capturada: db "Divide Error Exception"
 int0_capturada_len equ $ - int0_capturada
@@ -103,6 +104,7 @@ int17_capturada_len equ $ - int17_capturada
 ;; -------------------------------------------------------------------------- ;;
 ; Scheduler
 
+tecla: db 0x00
 ;;
 ;; Rutina de atención de las EXCEPCIONES
 ;; -------------------------------------------------------------------------- ;;
@@ -244,10 +246,52 @@ _isr17:
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+_isr32:
 
+    pushad
+
+    call screen_actualizar_reloj_global
+    call fin_intr_pic1
+    popad
+    iret
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+_isr33:
+
+   pushad
+
+   xor eax, eax
+   mov al, [tecla]
+   push eax
+   in al, 0x60
+   push eax
+   call imprime_tecla
+   cmp eax, 0
+   je. next
+   pop eax
+   mov [tecla], al
+   jmp .sale
+   
+   .next:
+    add esp, 4
+   
+   .sale:
+    
+    call fin_intr_pic1
+   
+    add esp, 4
+    popad
+   iret
+
+
+_isr70:
+
+   pushad
+   mov eax, 0x42
+   call fin_intr_pic1
+   popad
+   iret
 
 ;;
 ;; Rutinas de atención de las SYSCALLS

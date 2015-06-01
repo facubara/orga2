@@ -51,7 +51,7 @@ void screen_borrar_pirata(jugador_t *j, pirata_t *pirata);
 void screen_pintar_reloj_pirata(jugador_t *j, pirata_t *pirata);
 void screen_pintar_reloj_piratas(jugador_t *j);
 void screen_pintar_relojes();
-
+unsigned char imprime_tecla(unsigned char n, unsigned char prev);
 void screen_actualizar_posicion_mapa(uint x, uint y);
 void screen_stop_game_show_winner(jugador_t *j);
 

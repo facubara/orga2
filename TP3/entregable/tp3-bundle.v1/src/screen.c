@@ -173,3 +173,74 @@ void imprime_nombre_grupo(){
 	}
 }
 
+
+unsigned char imprime_tecla(unsigned char n, unsigned char prev){
+	if(n >= 0x80 && prev+0x80 != n){ //cuando presiono
+		return 0;
+	}
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+	int len;
+	int x;
+	int y = 0;
+	int i = 0;
+	if(n>=0x80){
+		n = n-0x80; //recuperar el make
+		char* mensajeSol = "Usted ha soltado la tecla: ";
+		len = long_string(mensajeSol)+1;
+		x = VIDEO_COLS-len;
+		for(i = 0; i<len; i++){
+			p[y][x+i].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][x+i].c = (unsigned char) mensajeSol[i];
+		}
+	}else{
+		char* mensajeA = "Usted ha presionado la tecla: ";
+		len = long_string(mensajeA)+1;
+		x = VIDEO_COLS-len;
+		for(i = 0; i<len; i++){
+			p[y][x+i].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][x+i].c = (unsigned char) mensajeA[i];
+		}
+	}
+	
+	
+	//~ int len = long_string(mensaje)+1;
+	switch ( n ) {
+		case 0x11: //W
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'W';
+		break;
+		case 0x1e: //A
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'A';
+		break;
+		case 0x1f: //S
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'S';
+		break;
+		case 0x20: //D
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'D';
+		break;
+		case 0x17: //I
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'I';
+		break;
+		case 0x24: //J
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'J';
+		break;
+		case 0x25: //K
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'K';
+		break;
+		case 0x26: //L
+			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+			p[y][VIDEO_COLS-1].c = (unsigned char) 'L';
+		break;
+		//~ case
+	}
+	
+	return 1;
+}
+
+
