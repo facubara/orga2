@@ -84,22 +84,20 @@ BITS 32
     
      imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 3, 0
 
-    xchg bx, bx
 
     ; Inicializar el juego
 
     ; Inicializar pantalla
 
     call inic_video
-
-    xchg bx,bx
+ 
 
     ; Inicializar el manejador de memoria
 
     ; Inicializar el directorio de paginas
 
     ; Cargar directorio de paginas
-
+    call mmu_inicializar_dir_kernel
     mov eax, dir_kernel_addr ;0x27000
     mov cr3, eax
 
@@ -111,7 +109,7 @@ BITS 32
     mov cr0, eax
  
     ; IMPIMIR NOMBRE DE GRUPO POR PANTALLA
-
+    xchg bx,bx
     call imprime_nombre_grupo
 
     ; Inicializar tss
@@ -125,8 +123,7 @@ BITS 32
     ; Cargar IDT
     lidt [IDT_DESC]
     ; Configurar controlador de interrupciones
-    xor eax, eax      ; eax = 0
-    div ebx
+    
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
@@ -149,3 +146,4 @@ extern IDT_DESC
 extern inic_video
 extern imprime_nombre_grupo
 extern idt_inicializar
+extern mmu_inicializar_dir_kernel
