@@ -130,7 +130,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-
+      //PILA
         [13] = (gdt_entry) {
         (unsigned short)    0x1000,         /* limit[0:15]  */
         (unsigned short)    0x7000,         /* base[0:15]   */
@@ -143,7 +143,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
         (unsigned char)     0x01,           /* db           */ 
-        (unsigned char)     0x01,           /* g            */
+        (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
 };

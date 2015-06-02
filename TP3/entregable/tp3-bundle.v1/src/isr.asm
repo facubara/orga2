@@ -17,6 +17,8 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_tick
 extern sched_tarea_actual
+extern screen_actualizar_reloj_global
+extern imprime_tecla
 
 
 ;;
@@ -268,7 +270,7 @@ _isr33:
    push eax
    call imprime_tecla
    cmp eax, 0
-   je. next
+   je .next
    pop eax
    mov [tecla], al
    jmp .sale

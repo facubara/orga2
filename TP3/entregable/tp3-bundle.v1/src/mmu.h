@@ -29,6 +29,12 @@ typedef struct str_page_dir_entry {
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, char rw, char su);
+void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3);
+unsigned int mmu_inic_dir_pirata();
+unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned char jugador, unsigned short y, unsigned char tipo*/);
+void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1,/* int signo,*/ unsigned int logica);
+unsigned int obtener_pagina_libre();
 
 
 #endif	/* !__MMU_H__ */

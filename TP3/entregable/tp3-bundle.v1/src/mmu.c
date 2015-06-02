@@ -62,7 +62,7 @@ void mmu_inicializar_dir_kernel(){
 		.base = (unsigned int) table_1_kernel_addr >> 12
 	};
 	
-	/*for(i=1;i<1024;i++){
+	for(i=1;i<1024;i++){
 		page_dir[i] = (page_dir_entry) {
 				.p = 0,
 				.rw = 0,
@@ -135,13 +135,14 @@ unsigned int mmu_inic_dir_pirata(){
 	unsigned int cr3 = obtener_pagina_libre();	// Busco una pagina nueva y la pongo en cr3
 
 	page_dir_entry* page_dir = (page_dir_entry*)(cr3);	// Voy con la dir de esa pag nueva a page_dir
-	page_dir_entry* page_tables[1];						// Arreglo de 4 page_dir_entry
+	//page_dir_entry* page_tables[1];						// Arreglo de 4 page_dir_entry
 
 	
-		page_tables[j] = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag libre para la page table
+		page_dir_entry* page_tables = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag libre para la page table
 	
 	
 	// Inicializo tooooodo
+		int i;
 	for (i = 0; i < 1024; i++) {
 		page_dir[i] = (page_dir_entry) {                //inicializo todas las entradas del directorio de tarea       
 			.p = 0,
@@ -150,13 +151,13 @@ unsigned int mmu_inic_dir_pirata(){
 			.ignored = 0,
 			.base = i
 		};
-                page_tables[0][i] = (page_dir_entry) {           //identity mapping para los primeros 0x000000 - 0x3FFFFF
+                page_tables[i] = (page_dir_entry) {           //identity mapping para los primeros 0x000000 - 0x3FFFFF
                         .p = 0,
                         .rw = 1,
                         .su = 1,
                         .ignored = 0,
                         .base = i
-                }
+                };
 		/*for (j = 0; j < 1; j++) {
 			page_tables[j][i] = (page_dir_entry) {
 				.p = 1,
@@ -186,12 +187,11 @@ unsigned int mmu_inic_dir_pirata(){
 			.rw = 1,
 			.su = 1,
 			.ignored = 0,
-			.base = (unsigned int) page_tables[j] >> 12
+			.base = (unsigned int) page_tables >> 12
 		};
-	}
-	
+
 			
-	for(i=1;i<1024;i++){                                      ;//ignoro el resto de las entradas del directorio de la tarea
+	for(i=1; i<1024; i++){                                      ;//ignoro el resto de las entradas del directorio de la tarea
 		page_dir[i] = (page_dir_entry) {
 				.p = 0,
 				.rw = 0,
@@ -206,11 +206,11 @@ unsigned int mmu_inic_dir_pirata(){
 }	
 	
 unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned char jugador, unsigned short y, unsigned char tipo*/){
-	int signo, x;
+	//int signo, x;
 
-        unsigned int posicion_mapa;
+        //unsigned int posicion_mapa;
         //0x500000 puerto jugador 1 supongo
-	posicion_mapa = 0x500000;  //+ 0x1000; 
+	    unsigned char* posicion_mapa = (unsigned char*) (0x500000);  //+ 0x1000; 
         //posicion mapa = salida del puerto digamos
 
         unsigned char* codigo_tarea = (unsigned char*) (0x10000);
@@ -220,8 +220,8 @@ unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned c
 	return cr3;
 }
 
-void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, int signo, unsigned int logica){
-	unsigned int temp;
+void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica){
+	//unsigned int temp;
 	
 	//CODIGO EN LA 0x400000
 	mmu_mapear_pagina(0x400000, cr3, (unsigned int)fisica0, 1, 1);//codigo
@@ -232,17 +232,17 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 	
 	mmu_mapear_pagina(logica+0x6000, cr3, (unsigned int)fisica1 - 0x1000, 0, 1); //atrás
 	
-	mmu_mapear_pagina(logica+0x5000, cr3, temp, 0, 1); //izquierda
+	mmu_mapear_pagina(logica+0x5000, cr3, (unsigned int)fisica1 - (0x1000*80), 0, 1); //izquierda
 	
-	mmu_mapear_pagina(logica+0x3000, cr3, temp, 0, 1); //adelante izquierda
+	mmu_mapear_pagina(logica+0x3000, cr3, (unsigned int)fisica1 - (0x1000*79), 0, 1); //adelante izquierda
 	
-	mmu_mapear_pagina(logica+0x7000, cr3, temp, 0, 1); //atrás izquierda
+	mmu_mapear_pagina(logica+0x7000, cr3, (unsigned int)fisica1 - (0x1000*81), 0, 1); //atrás izquierda
 	
-	mmu_mapear_pagina(logica+0x2000, cr3, temp, 0, 1); //adelante derecha
+	mmu_mapear_pagina(logica+0x2000, cr3, (unsigned int)fisica1 + (0x1000*81), 0, 1); //adelante derecha
 	
-	mmu_mapear_pagina(logica+0x4000, cr3, temp, 0, 1); //derecha
+	mmu_mapear_pagina(logica+0x4000, cr3, (unsigned int)fisica1 + (0x1000*80), 0, 1); //derecha
 	
-	mmu_mapear_pagina(logica+0x8000, cr3, temp, 0, 1); //atrás derecha
+	mmu_mapear_pagina(logica+0x8000, cr3, (unsigned int)fisica1 + (0x1000*79), 0, 1); //atrás derecha
 
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS

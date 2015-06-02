@@ -67,7 +67,7 @@ BITS 32
   mp:
 
     xor eax, eax
-    mov ax, 0x50       ; index = 8 / gdt/ldt = 0 / rpl = 0
+    mov ax, 0x50       ; index = 9 / gdt/ldt = 0 / rpl = 0
     mov ds, ax
     mov es, ax
     mov gs, ax
@@ -75,6 +75,8 @@ BITS 32
     mov ax, 0x60
     mov fs, ax             ; no se esto
 
+    mov ax, 0x68
+    mov ss, ax
     ; Establecer la base de la pila
     
     mov ebp, 0x27000
@@ -123,7 +125,12 @@ BITS 32
     ; Cargar IDT
     lidt [IDT_DESC]
     ; Configurar controlador de interrupciones
-    
+    xchg bx,bx
+    call deshabilitar_pic
+    call resetear_pic
+    call habilitar_pic
+    sti
+
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
@@ -147,3 +154,6 @@ extern inic_video
 extern imprime_nombre_grupo
 extern idt_inicializar
 extern mmu_inicializar_dir_kernel
+extern deshabilitar_pic
+extern resetear_pic
+extern habilitar_pic
