@@ -61,7 +61,9 @@ void idt_inicializar() {
     IDT_ENTRY(13);
     IDT_ENTRY(14);
     IDT_ENTRY(17);
+
     IDT_ENTRY(32); //reloj
+    IDT_ENTRY(33); //teclado
 
     IDT_ENTRY(70); // 0x46    // FALTARIA CAMBIAR EL DPL A 3
 }

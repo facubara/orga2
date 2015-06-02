@@ -186,7 +186,7 @@ unsigned char imprime_tecla(unsigned char n, unsigned char prev){
 	if(n>=0x80){
 		n = n-0x80; //recuperar el make
 		char* mensajeSol = "Usted ha soltado la tecla: ";
-		len = long_string(mensajeSol)+1;
+		len = long_string(mensajeSol)+6;
 		x = VIDEO_COLS-len;
 		for(i = 0; i<len; i++){
 			p[y][x+i].a = (unsigned char) C_FG_LIGHT_CYAN;
@@ -194,7 +194,7 @@ unsigned char imprime_tecla(unsigned char n, unsigned char prev){
 		}
 	}else{
 		char* mensajeA = "Usted ha presionado la tecla: ";
-		len = long_string(mensajeA)+1;
+		len = long_string(mensajeA)+6;
 		x = VIDEO_COLS-len;
 		for(i = 0; i<len; i++){
 			p[y][x+i].a = (unsigned char) C_FG_LIGHT_CYAN;
@@ -205,38 +205,35 @@ unsigned char imprime_tecla(unsigned char n, unsigned char prev){
 	
 	//~ int len = long_string(mensaje)+1;
 	switch ( n ) {
-		case 0x11: //W
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'W';
-		break;
-		case 0x1e: //A
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'A';
-		break;
-		case 0x1f: //S
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'S';
-		break;
-		case 0x20: //D
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'D';
-		break;
-		case 0x17: //I
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'I';
-		break;
-		case 0x24: //J
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'J';
-		break;
-		case 0x25: //K
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'K';
-		break;
-		case 0x26: //L
-			p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
-			p[y][VIDEO_COLS-1].c = (unsigned char) 'L';
-		break;
+ 
+                case 0x2a:  //Lshift
+                        p[y][VIDEO_COLS-6].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-6].c = (unsigned char) 'L';
+                        p[y][VIDEO_COLS-5].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-5].c = (unsigned char) 'S';
+                        p[y][VIDEO_COLS-4].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-4].c = (unsigned char) 'H';
+                        p[y][VIDEO_COLS-3].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-3].c = (unsigned char) 'I';
+                        p[y][VIDEO_COLS-2].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-2].c = (unsigned char) 'F';
+                        p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-1].c = (unsigned char) 'T';
+                break;
+                case 0x36:  //Rshift
+                        p[y][VIDEO_COLS-6].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-6].c = (unsigned char) 'R';
+                        p[y][VIDEO_COLS-5].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-5].c = (unsigned char) 'S';
+                        p[y][VIDEO_COLS-4].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-4].c = (unsigned char) 'H';
+                        p[y][VIDEO_COLS-3].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-3].c = (unsigned char) 'I';
+                        p[y][VIDEO_COLS-2].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-2].c = (unsigned char) 'F';
+                        p[y][VIDEO_COLS-1].a = (unsigned char) C_FG_LIGHT_CYAN;
+                        p[y][VIDEO_COLS-1].c = (unsigned char) 'T';
+                break;
 		//~ case
 	}
 	

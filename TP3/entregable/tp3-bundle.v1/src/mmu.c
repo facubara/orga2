@@ -208,15 +208,15 @@ unsigned int mmu_inic_dir_pirata(){
 unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned char jugador, unsigned short y, unsigned char tipo*/){
 	int signo, x;
 
-        unsigned int posicion_mapa
+        unsigned int posicion_mapa;
         //0x500000 puerto jugador 1 supongo
-	posicion_mapa = 0x500000 + 0x1000 
+	posicion_mapa = 0x500000;  //+ 0x1000; 
         //posicion mapa = salida del puerto digamos
 
         unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
 
-        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0800000)
+        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0800000);
 	return cr3;
 }
 
