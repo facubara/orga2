@@ -27,7 +27,7 @@ typedef struct str_page_dir_entry {
 } __attribute__((__packed__, aligned (4))) page_dir_entry;
 
 
-void mmu_inicializar();
+void mmu_iniciar();
 void mmu_inicializar_dir_kernel();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, char rw, char su);
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3);

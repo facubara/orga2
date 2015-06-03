@@ -24,8 +24,8 @@ void _isr12();
 void _isr13();
 void _isr14();
 void _isr17();
-void _isr32();
-void _isr33();
-void _isr70();
+//void _isr32();
+//void _isr33();
+//void _isr70();
 
 #endif  /* !__ISR_H__ */

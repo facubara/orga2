@@ -67,7 +67,7 @@ BITS 32
   mp:
 
     xor eax, eax
-    mov ax, 0x50       ; index = 9 / gdt/ldt = 0 / rpl = 0
+    mov ax, 0x50       ; index = 10 / gdt/ldt = 0 / rpl = 0
     mov ds, ax
     mov es, ax
     mov gs, ax
@@ -75,8 +75,6 @@ BITS 32
     mov ax, 0x60
     mov fs, ax             ; no se esto
 
-    mov ax, 0x68
-    mov ss, ax
     ; Establecer la base de la pila
     
     mov ebp, 0x27000
@@ -99,9 +97,12 @@ BITS 32
     ; Inicializar el directorio de paginas
 
     ; Cargar directorio de paginas
-    call mmu_inicializar_dir_kernel
+    call mmu_iniciar
     mov eax, dir_kernel_addr ;0x27000
     mov cr3, eax
+    ;xchg bx,bx
+    ;call mmu_inic_dir_pirata
+    ;mov cr3, eax
 
 
     ; Habilitar paginacion
@@ -111,8 +112,9 @@ BITS 32
     mov cr0, eax
  
     ; IMPIMIR NOMBRE DE GRUPO POR PANTALLA
-    xchg bx,bx
     call imprime_nombre_grupo
+
+
 
     ; Inicializar tss
 
@@ -124,13 +126,29 @@ BITS 32
     call idt_inicializar
     ; Cargar IDT
     lidt [IDT_DESC]
-    ; Configurar controlador de interrupciones
-    xchg bx,bx
+    ; Configurar controlador de interrupciones 
     call deshabilitar_pic
     call resetear_pic
     call habilitar_pic
     sti
+    xchg bx, bx
 
+    call mmu_inic_dir_pirata
+    mov cr3, eax
+    mov edi, eax
+    mov esi, 0
+    mov edx, 0 
+    mov ecx, 0x881000
+    push ecx
+    push edx
+    push esi 
+    push edi
+    call tarea_al_mapa
+    xchg bx, bx
+    
+    
+    mov esi, [0x881000]
+    xchg bx,bx
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
@@ -142,6 +160,7 @@ BITS 32
     mov ebx, 0xFFFF
     mov ecx, 0xFFFF
     mov edx, 0xFFFF
+    xchg bx,bx
     jmp $
     jmp $
 
@@ -157,3 +176,7 @@ extern mmu_inicializar_dir_kernel
 extern deshabilitar_pic
 extern resetear_pic
 extern habilitar_pic
+extern mmu_iniciar
+extern mmu_inic_dir_pirata
+extern tarea_al_mapa
+extern mmu_mapear_pagina

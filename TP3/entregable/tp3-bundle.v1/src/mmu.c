@@ -21,6 +21,12 @@
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
 
+void mmu_iniciar(){
+	contador_paginas_ocupadas = 0;
+	mmu_inicializar_dir_kernel();
+}
+
+
 void mmu_inicializar_dir_kernel(){
 	page_dir_entry* page_table_0 = (page_dir_entry*)(table_0_kernel_addr);	// 0x28000
 	page_dir_entry* page_dir = (page_dir_entry*)(dir_kernel_addr);			// 0x27000
@@ -28,13 +34,7 @@ void mmu_inicializar_dir_kernel(){
 	// Inicializo dir y tabla a la vez
 	int i = 0;
 	while(i < 1024){
-		/*page_dir[i] = (page_dir_entry) {
-			.p = 0,
-			.rw = 1,
-			.su = 0,
-			.ignored = 0,
-			.base = i // i*4KB
-		};*/
+	
 		
 		page_table_0[i] = (page_dir_entry) {
 			.p = 1,
@@ -54,23 +54,16 @@ void mmu_inicializar_dir_kernel(){
 		.ignored = 0,
 		.base = (unsigned int) table_0_kernel_addr >> 12
 	};
-	/*page_dir[1] = (page_dir_entry) {
-		.p = 0,
-		.rw = 1,
-		.su = 0,
-		.ignored = 0,
-		.base = (unsigned int) table_1_kernel_addr >> 12
-	};
-	
-	for(i=1;i<1024;i++){
-		page_dir[i] = (page_dir_entry) {
-				.p = 0,
-				.rw = 0,
-				.su = 0,
-				.ignored = 0,
-				.base = 0
-			};*/
-	//}
+
+	for (i=1; i<1024; i++) {                  //EL RESTO NO LAS NECESITO
+		 page_dir[i] = (page_dir_entry){
+		 	.p = 0,
+		 	.rw = 0,
+		 	.su = 0,
+		 	.ignored = 0,
+		 	.base = 0,
+		 };
+	}
 }
 
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, char rw, char su) {
@@ -132,64 +125,44 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3) {
 
 unsigned int mmu_inic_dir_pirata(){
 	
-	unsigned int cr3 = obtener_pagina_libre();	// Busco una pagina nueva y la pongo en cr3
+	unsigned int cr3 = obtener_pagina_libre();	// Busco una pagina nueva y la pongo en cr3 para el directorio
 
 	page_dir_entry* page_dir = (page_dir_entry*)(cr3);	// Voy con la dir de esa pag nueva a page_dir
 	//page_dir_entry* page_tables[1];						// Arreglo de 4 page_dir_entry
 
 	
-		page_dir_entry* page_tables = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag libre para la page table
+		page_dir_entry* page_table_k = (page_dir_entry*)(obtener_pagina_libre());		// Pido una pag libre para la page table para "kernel"
 	
 	
 	// Inicializo tooooodo
 		int i;
 	for (i = 0; i < 1024; i++) {
-		page_dir[i] = (page_dir_entry) {                //inicializo todas las entradas del directorio de tarea       
+		/*page_dir[i] = (page_dir_entry) {                //inicializo todas las entradas del directorio de tarea       
 			.p = 0,
 			.rw = 1,
 			.su = 1,
 			.ignored = 0,
 			.base = i
-		};
-                page_tables[i] = (page_dir_entry) {           //identity mapping para los primeros 0x000000 - 0x3FFFFF
-                        .p = 0,
+		};*/
+                page_table_k[i] = (page_dir_entry) {           //identity mapping para los primeros 0x000000 - 0x3FFFFF (kernel)
+                        .p = 1,
                         .rw = 1,
                         .su = 1,
                         .ignored = 0,
                         .base = i
                 };
-		/*for (j = 0; j < 1; j++) {
-			page_tables[j][i] = (page_dir_entry) {
-				.p = 1,
-				.rw = 1,
-				.su = 1,
-				.ignored = 0,
-				.base = i + j * 1024
-			};
-		}
-                */
-                
-		//~ if (0x003FFFFF < (i + 2048) * 0x1000) {
-			//~ page_tables[2][i] = (page_dir_entry) {
-				//~ .p = 0,
-				//~ .rw = 0,
-				//~ .su = 0,
-				//~ .ignored = 0,
-				//~ .base = 0
-			//~ };
-		//~ }
+		
 	}
 	
+	   page_dir[0] = (page_dir_entry){
+	   	    .p = 1,
+	   	    .rw = 1,
+	   	    .su = 1,
+	   	    .ignored = 0,
+	   	    .base = (unsigned int) page_table_k >> 12
+	   };
 	// Las primera entrada de esa page dir van con el page table que ya hice
 	//for (j = 0; j < 1; j++) {
-		page_dir[0] = (page_dir_entry) {                            
-			.p = 1,
-			.rw = 1,
-			.su = 1,
-			.ignored = 0,
-			.base = (unsigned int) page_tables >> 12
-		};
-
 			
 	for(i=1; i<1024; i++){                                      ;//ignoro el resto de las entradas del directorio de la tarea
 		page_dir[i] = (page_dir_entry) {
@@ -216,7 +189,7 @@ unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned c
         unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
 
-        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0800000);
+        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000);
 	return cr3;
 }
 
@@ -224,25 +197,41 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 	//unsigned int temp;
 	
 	//CODIGO EN LA 0x400000
-	mmu_mapear_pagina(0x400000, cr3, (unsigned int)fisica0, 1, 1);//codigo
-	//logica = 0x800000
-        mmu_mapear_pagina(logica, cr3, (unsigned int)fisica0, 0, 1); //centro        
 
-	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)fisica1 + 0x1000, 0, 1); //adelante
+                unsigned int cr3Actual = rcr3();
+				mmu_mapear_pagina(0x0400000, cr3Actual, (unsigned int) 0x582000, 1, 0);
+                   
+				
+				unsigned char* cod_tarea_dest = (unsigned char*) 0x0400000;
+				unsigned char* cod_tarea_origen = (unsigned char*) 0x10000;
+				int i;
+				for (i = 0; i < 0x1000; i++) {
+					
+					cod_tarea_dest[i] = cod_tarea_origen[i];
+				}
+				
+				mmu_unmapear_pagina(0x0400000, cr3Actual);
+
+	mmu_mapear_pagina(0x400000, cr3, (unsigned int) 0x581000, 1, 1);//codigo
+	//logica = 0x800000
+
+    mmu_mapear_pagina(logica, cr3, (unsigned int) 0x581000, 0, 1); //centro        
+
+	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)0x581000 + 0x1000, 0, 1); //adelante
 	
-	mmu_mapear_pagina(logica+0x6000, cr3, (unsigned int)fisica1 - 0x1000, 0, 1); //atrás
+	mmu_mapear_pagina(logica-0x1000, cr3, (unsigned int)0x581000 - 0x1000, 0, 1); //atrás
 	
-	mmu_mapear_pagina(logica+0x5000, cr3, (unsigned int)fisica1 - (0x1000*80), 0, 1); //izquierda
+	mmu_mapear_pagina(logica- (0x1000*80), cr3, (unsigned int)0x581000 - (0x1000*80), 0, 1); //izquierda
 	
-	mmu_mapear_pagina(logica+0x3000, cr3, (unsigned int)fisica1 - (0x1000*79), 0, 1); //adelante izquierda
+	mmu_mapear_pagina(logica- (0x1000*79), cr3, (unsigned int)0x581000 - (0x1000*79), 0, 1); //adelante izquierda
 	
-	mmu_mapear_pagina(logica+0x7000, cr3, (unsigned int)fisica1 - (0x1000*81), 0, 1); //atrás izquierda
+	mmu_mapear_pagina(logica- (0x1000*81), cr3, (unsigned int)0x581000 - (0x1000*81), 0, 1); //atrás izquierda
 	
-	mmu_mapear_pagina(logica+0x2000, cr3, (unsigned int)fisica1 + (0x1000*81), 0, 1); //adelante derecha
+	mmu_mapear_pagina(logica+ (0x1000*81), cr3, (unsigned int)0x581000 + (0x1000*81), 0, 1); //adelante derecha
 	
-	mmu_mapear_pagina(logica+0x4000, cr3, (unsigned int)fisica1 + (0x1000*80), 0, 1); //derecha
+	mmu_mapear_pagina(logica+ (0x1000*80), cr3, (unsigned int)0x581000 + (0x1000*80), 0, 1); //derecha
 	
-	mmu_mapear_pagina(logica+0x8000, cr3, (unsigned int)fisica1 + (0x1000*79), 0, 1); //atrás derecha
+	mmu_mapear_pagina(logica+ (0x1000*79), cr3, (unsigned int)0x581000 + (0x1000*79), 0, 1); //atrás derecha
 
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS
