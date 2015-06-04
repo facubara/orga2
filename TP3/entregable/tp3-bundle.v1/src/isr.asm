@@ -288,11 +288,11 @@ _isr33:
 
 
 _isr70:
-
-   pushad
-   mov eax, 0x42
-   call fin_intr_pic1
-   popad
+    push ebp
+    mov ebp, esp
+    call fin_intr_pic1
+    mov eax, 0x42
+    pop ebp
    iret
 
 ;;

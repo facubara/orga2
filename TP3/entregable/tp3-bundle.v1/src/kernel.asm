@@ -127,28 +127,13 @@ BITS 32
     ; Cargar IDT
     lidt [IDT_DESC]
     ; Configurar controlador de interrupciones 
-    call deshabilitar_pic
     call resetear_pic
     call habilitar_pic
     sti
     xchg bx, bx
-
-    call mmu_inic_dir_pirata
-    mov cr3, eax
-    mov edi, eax
-    mov esi, 0
-    mov edx, 0 
-    mov ecx, 0x881000
-    push ecx
-    push edx
-    push esi 
-    push edi
-    call tarea_al_mapa
+    int 0x46
     xchg bx, bx
-    
-    
-    mov esi, [0x881000]
-    xchg bx,bx
+
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
