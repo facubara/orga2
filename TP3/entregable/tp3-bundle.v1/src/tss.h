@@ -56,5 +56,9 @@ typedef struct str_tss {
 } __attribute__((__packed__, aligned (8))) tss;
 
 void tss_inicializar();
+extern tss tss_inicial;
+extern tss tss_idle;
 
+void tss_inicializar_tarea_idle();
+void tss_inicializar_tareas_piratas(tss *mi_tss);
 #endif  /* !__TSS_H__ */
