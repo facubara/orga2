@@ -33,8 +33,8 @@ gdt_entry gdt[GDT_COUNT] = {
     },
 
 
-	/*primer segmento: 
-		 * codigo kernel
+	
+		 /* codigo kernel
 		 */
         [8] = (gdt_entry) {
         (unsigned short)    0xF400,         /* limit[0:15]  */
@@ -53,7 +53,7 @@ gdt_entry gdt[GDT_COUNT] = {
     },
 
 
-	/*segundo segmento: 
+	/*
 		 * codigo user
 		 */
         [9] = (gdt_entry) {
@@ -72,7 +72,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* base[31:24]  */
     },
 
-	/*tercero segmento: 
+	/*
 		 * datos kernel
 		 */
         [10] = (gdt_entry) {
@@ -92,7 +92,7 @@ gdt_entry gdt[GDT_COUNT] = {
     },
 
 
-	/*primer segmento: 
+	/*
 		 * datos user
 		 */
         [11] = (gdt_entry) {
@@ -131,7 +131,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* base[31:24]  */
     },
       
-    /* séptimo segmento: 
+    /*  
 		 * tarea inicial
 		 */ 
         [13] = (gdt_entry) {
@@ -150,7 +150,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)       0x00,         /* base[31:24]  */
     },
     
-    	/* séptimo segmento: 
+    	/* 
 		 * tss idle
 		 */ 
         [14] = (gdt_entry) {

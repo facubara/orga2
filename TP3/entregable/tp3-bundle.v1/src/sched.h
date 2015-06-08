@@ -10,5 +10,28 @@
 
 #include "game.h"
 
+unsigned short sched_proximo_indice();
+
+void cambiar_tarea (unsigned char tss_indice);
+
+unsigned short pasar_a_idle();
+
+unsigned char obtener_proxima_viva();
+
+unsigned char ver_vivo_aux(unsigned char i);
+
+//void sched_inserta_pirata(unsigned int cr3, unsigned char id, unsigned char _jugador, unsigned char tipo);
+
+unsigned short contador_tareas;
+
+unsigned char anterior;
+unsigned char actual;
+unsigned char proxima;
+unsigned char proximaA;	
+unsigned char proximaB; 
+unsigned char vivas;
+unsigned char jugadorJugando; 
+
+unsigned char gdt_tss_actual;
 
 #endif	/* !__SCHED_H__ */

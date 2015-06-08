@@ -288,13 +288,23 @@ _isr33:
 
 
 _isr70:
-    push ebp
-    mov ebp, esp
-    call fin_intr_pic1
-    mov eax, 0x42
-    pop ebp
-   iret
+    ;push ebp
+    ;mov ebp, esp
+    ;call fin_intr_pic1
+    ;mov eax, 0x42
 
+    ;pop ebp
+    ;iret
+    ;~ xchg bx,bx
+	pushad
+	push eax
+	call game_move_pirata
+	call fin_intr_pic1
+	pop eax
+	popad
+	;~ xchg bx,bx
+	iret
+    
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;

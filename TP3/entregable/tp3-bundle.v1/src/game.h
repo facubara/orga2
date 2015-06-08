@@ -22,11 +22,22 @@ typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD} direccion
 
 struct jugador_t;
 
+typedef struct str_posicion {
+    unsigned char x;
+    unsigned char y;
+} __attribute__((__packed__)) posicion;
+
 typedef struct pirata_t
 {
+    posicion posicion;
     uint index;
     struct jugador_t *jugador;
-
+    tss* tss;
+    unsigned int centro;
+    int vivo;
+    unsigned char clock;
+    unsigned char jugador;
+    unsigned char indice; //ESTO PARA EL CLOCK
     // id unica, posicion, tipo, reloj
 } pirata_t;
 
@@ -35,9 +46,22 @@ typedef struct jugador_t
 {
     uint index;
     pirata_t piratas[MAX_CANT_PIRATAS_VIVOS];
+    unsigned char remanente;
+    unsigned char puntaje;
+    posicion puerto;
+    unsigned char m_pendientes;
+
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
+
+
+pirata_t piratasA[8];	// piratas del primer jugador
+pirata_t piratasB[8];	// piratas del segundo jugador
+
+jugador_t jugadores[2]; 
+
+unsigned char debug;	//0 -> desactivado, 1-> en espera, 2-> mostrando
 
 extern jugador_t jugadorA, jugadorB;
 

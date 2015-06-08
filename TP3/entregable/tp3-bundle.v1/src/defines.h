@@ -39,6 +39,11 @@ typedef unsigned int   uint;
 #define GDT_COUNT 30
 
 #define GDT_IDX_NULL_DESC           0
+#define	seg_datos_usr = 0b1011011; // 11 DPL 3
+#define	seg_codigo_usr = 0b1001011; // 9 DPL 3
+#define	seg_codigo_ker = 0b1000000; // 8 dpl =0
+#define	seg_datos_ker = 0b1010000;  // 10 dpl = 0
+
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

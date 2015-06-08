@@ -125,22 +125,22 @@ void tss_inicializar() {
 	tss_inicializar_tareas_piratas(tarea_B7);
 	tss_inicializar_tareas_piratas(tarea_B8);
 	
-	zombiesA[0].tss = tarea_A1;
-	zombiesA[1].tss = tarea_A2;
-	zombiesA[2].tss = tarea_A3;
-	zombiesA[3].tss = tarea_A4;
-	zombiesA[4].tss = tarea_A5;
-	zombiesA[5].tss = tarea_A6;
-	zombiesA[6].tss = tarea_A7;
-	zombiesA[7].tss = tarea_A8;
-	zombiesB[0].tss = tarea_B1;
-	zombiesB[1].tss = tarea_B2;
-	zombiesB[2].tss = tarea_B3;
-	zombiesB[3].tss = tarea_B4;
-	zombiesB[4].tss = tarea_B5;
-	zombiesB[5].tss = tarea_B6;
-	zombiesB[6].tss = tarea_B7;
-	zombiesB[7].tss = tarea_B8;
+	piratasA[0].tss = tarea_A1;
+	piratasA[1].tss = tarea_A2;
+	piratasA[2].tss = tarea_A3;
+	piratasA[3].tss = tarea_A4;
+	piratasA[4].tss = tarea_A5;
+	piratasA[5].tss = tarea_A6;
+	piratasA[6].tss = tarea_A7;
+	piratasA[7].tss = tarea_A8;
+	piratasB[0].tss = tarea_B1;
+	piratasB[1].tss = tarea_B2;
+	piratasB[2].tss = tarea_B3;
+	piratasB[3].tss = tarea_B4;
+	piratasB[4].tss = tarea_B5;
+	piratasB[5].tss = tarea_B6;
+	piratasB[6].tss = tarea_B7;
+	piratasB[7].tss = tarea_B8;
 }
 
 
@@ -199,14 +199,14 @@ void tss_inicializar_tareas_piratas(tss *mi_tss) {
 	mi_tss->ss2      = 0;
 	mi_tss->unused3  = 0;
 	mi_tss->cr3      = 0;	// Esto se modifica al lanzar el zombi
-	mi_tss->eip      = 0x08000000;
+	mi_tss->eip      = 0x400000;
 	mi_tss->eflags   = 0x202;
 	mi_tss->eax      = 0;
 	mi_tss->ecx      = 0;
 	mi_tss->edx      = 0;
 	mi_tss->ebx      = 0;
-	mi_tss->esp      = 0x8000000+0x1000;
-	mi_tss->ebp      = 0x8000000+0x1000;
+	mi_tss->esp      = 0x400000+0x1000; //0x8000000+0x1000;
+	mi_tss->ebp      = 0x400000+0x1000; //0x8000000+0x1000;
 	mi_tss->esi      = 0;
 	mi_tss->edi      = 0;
 	mi_tss->es       = seg_datos_usr;
