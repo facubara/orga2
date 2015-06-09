@@ -10,7 +10,8 @@ BITS 32
 
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
-
+offset: dd 0
+selector: dw 0
 ;; PIC
 extern fin_intr_pic1
 
@@ -253,7 +254,28 @@ _isr32:
     pushad
 
     call screen_actualizar_reloj_global
+
+    call game_ver_si_termina
+
+    call sched_proximo_indice
+    cmp ax, 0xff
+    je .nojump
+    mov bx, [selector]
+    cmp ax, bx
+    je .nojump
+    mov [selector], ax
     call fin_intr_pic1
+
+    jmp far [offset]
+
+    jmp .end
+
+    .nojump:
+      call fin_intr_pic1
+
+    .end:
+      popad
+      iret
     popad
     iret
 ;;
