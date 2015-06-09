@@ -21,7 +21,7 @@ typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD} direccion
 
 
 struct jugador_t;
-
+//CAMBIAR POR UNSIGNED INT LOS x e y?
 typedef struct str_posicion {
     unsigned char x;
     unsigned char y;
@@ -31,22 +31,23 @@ typedef struct pirata_t
 {
     posicion posicion;
     uint index;
-    struct jugador_t *jugador;
+    //struct jugador_t *jugador;
     tss* tss;
     unsigned int centro;
     int vivo;
     unsigned char clock;
     unsigned char jugador;
     unsigned char indice; //ESTO PARA EL CLOCK
+    unsigned char vivos[8];
     // id unica, posicion, tipo, reloj
 } pirata_t;
 
 
 typedef struct jugador_t
 {
-    uint index;
-    pirata_t piratas[MAX_CANT_PIRATAS_VIVOS];
-    unsigned char remanente;
+    //uint index;
+    //pirata_t piratas[MAX_CANT_PIRATAS_VIVOS];
+    //FALTARIA UN ARRAY DE BOOLS PARA LOS VIVOS?
     unsigned char puntaje;
     posicion puerto;
     unsigned char m_pendientes;
@@ -91,6 +92,8 @@ uint game_syscall_manejar(uint syscall, uint param1);
 void game_tick(uint id_pirata);
 void game_terminar_si_es_hora();
 void game_atender_teclado(unsigned char tecla);
+void inic_game();
+void game_ver_si_termina();
 
 
 #endif  /* !__GAME_H__ */

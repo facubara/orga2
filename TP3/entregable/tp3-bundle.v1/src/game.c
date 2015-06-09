@@ -27,9 +27,83 @@ uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
                                         {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
                                     };
 
-jugador_t jugadorA;
-jugador_t jugadorB;
+//jugador_t jugadorA;
+//jugador_t jugadorB;
 
+
+void inic_game(){
+	tiempo_sin_juego = 0;
+	
+	buffer_debug = obtener_pagina_libre();
+        posicion pos1 = (posicion){
+		.x = 1,
+		.y = 1
+	};
+        posicion pos2 = (posicion){
+		.x = 78,
+		.y = 43
+	};
+	// Inicializo los valores de los jugadores
+	// Se decide arrancar con un zombie tipo mago ('M')
+	jugador_t j1 = (jugador){
+                .puerto = pos1,
+		.posicion = (unsigned char) 0,
+		.puntaje = (unsigned char) 0,
+                .m_pendientes = 0
+	};
+	
+	jugador_t j2 = (jugador){
+                .puerto = pos2,
+		.posicion = (unsigned char) 0,
+		.puntaje = (unsigned char) 0,
+                .m_pendientes = 0
+	};
+
+	jugadores[0] = j1;
+	jugadores[1] = j2;
+	
+	debug = 0;
+	
+	posicion p = (posicion){
+		.x = 0,
+		.y = 0
+	};
+	
+	int i;
+	for(i = 0; i<8; i++){
+		piratasA[i].posicion = p;
+		piratasB[i].posicion = p;
+		
+		piratasA[i].index = i;
+		piratasB[i].index = i;
+		
+		piratasA[i].centro = 0;
+		piratasB[i].centro = 0;
+		
+		piratasA[i].vivo = 0;
+		piratasB[i].vivo = 0;
+		
+		piratasA[i].clock = 0;
+		piratasB[i].clock = 0;
+		
+		piratasA[i].jugador = 0;
+		piratasB[i].jugador = 1;
+		
+		piratasA[i].indice = 0;
+		piratasB[i].indice = 0;
+		
+	}
+	
+	for(i=0; i<8;i++){
+		jugadores[0].vivos[i] = 0;
+		jugadores[1].vivos[i] = 0;
+	}
+	
+	// Esto muestra en pantalla a cada jugador
+	//screen_mueve_jug(0, 0, 0, 1);
+	//screen_mueve_jug(1, 0, 0, 1);
+	
+}
 
 void* error()
 {
@@ -224,7 +298,22 @@ void game_jugador_anotar_punto(jugador_t *j)
 {
 }
 
+void game_ver_si_termina(){
+   if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2){
+    return;
+   }
+   char ganador;
 
+   if(jugadores[1].puntaje < jugadores[0].puntaje){
+     ganador = 0;
+   }else{
+   if(jugadores[0].puntaje < jugadores[1].puntaje){
+     ganador = 1;
+   }else{
+     ganador = -1;
+   }
+   
+   screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje)
 
 void game_terminar_si_es_hora()
 {
