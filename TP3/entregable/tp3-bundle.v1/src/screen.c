@@ -241,3 +241,52 @@ unsigned char imprime_tecla(unsigned char n, unsigned char prev){
 }
 
 
+void mostrar_clock(unsigned int indice) {
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+	pirata_t pirata;
+
+	if (jugadorJugando == 0){
+		pirata = piratasA[indice];
+	}else{
+		pirata = piratasB[indice];
+	}
+	
+	int y = VIDEO_FILS-2;
+	int x = (2*pirata.indice);
+	if (pirata.jugador == 0){
+		x =  3 + x;
+	}else{
+		x = 59 + x;
+	}
+	
+	p[y][x].a = (unsigned char) C_FG_LIGHT_GREY | (unsigned char) C_BG_BLACK;
+
+    if(!pirata.vivo){
+		p[y][x].c = 'X';
+	}else{
+    
+		switch (pirata.clock) {
+			case 0:
+				p[y][x].c = '-';
+				break;
+			case 1:
+				p[y][x].c = '\\';
+				break;
+			case 2:
+				p[y][x].c = '|';
+				break;
+			case 3:
+				p[y][x].c = '/';
+				break;
+		}
+	}
+
+	if (jugadorJugando == 0){
+		piratasA[indice].clock = (pirata.clock + 1) % 4;;
+	}else{
+		piratasB[indice].clock = (pirata.clock + 1) % 4;;
+	}
+}
+
+
