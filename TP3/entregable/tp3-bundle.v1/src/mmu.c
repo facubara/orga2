@@ -178,13 +178,28 @@ unsigned int mmu_inic_dir_pirata(){
 	return cr3;
 }	
 	
-unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata, unsigned char jugador, unsigned short y, unsigned char tipo*/){
+unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo){
 	//int signo, x;
-
+        
         //unsigned int posicion_mapa;
         //0x500000 puerto jugador 1 supongo
 	    unsigned char* posicion_mapa = (unsigned char*) (0x500000);  //+ 0x1000; 
         //posicion mapa = salida del puerto digamos
+       if(jugador == 0){                //jugador 1
+            unsigned char* posicion_mapa = (unsigned char*) (0x500000 + 81*0x1000);   //puerto jugador 1
+            }
+                 if(tipo == 0){  //explorador
+                 unsigned char* codigo_tarea = (unsigned char*) (0x10000);
+                 }else{   //minero
+                 unsigned char* codigo_tarea = (unsigned char*) (0x11000);
+                 }
+            else{
+            unsigned char* posicion_mapa = (unsigned char*) (0x121FFFF - 81* 0x1000);  // puerto jugador 2}
+            if(tipo == 0){
+            unsigned char* codigo_tarea = (unsigned char*) (0x12000);
+            }else{
+            unsigned char* codigo_tarea = (unsigned char*) (0x13000);
+            }
 
         unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
@@ -199,7 +214,7 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 	//CODIGO EN LA 0x400000
 
                 unsigned int cr3Actual = rcr3();
-				mmu_mapear_pagina(0x0400000, cr3Actual, (unsigned int) 0x582000, 1, 0);
+				mmu_mapear_pagina(0x0400000, cr3Actual, (unsigned int) fisica1, 1, 0);
                    
 				
 				unsigned char* cod_tarea_dest = (unsigned char*) 0x0400000;
@@ -212,26 +227,25 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 				
 				mmu_unmapear_pagina(0x0400000, cr3Actual);
 
-	mmu_mapear_pagina(0x400000, cr3, (unsigned int) 0x581000, 1, 1);//codigo
-	//logica = 0x800000
+	mmu_mapear_pagina(0x400000, cr3, (unsigned int) fisica0, 1, 1);//codigo
 
-    mmu_mapear_pagina(logica, cr3, (unsigned int) 0x581000, 0, 1); //centro        
+        mmu_mapear_pagina(logica, cr3, (unsigned int) fisica1, 0, 1); //centro        
 
-	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)0x581000 + 0x1000, 0, 1); //adelante
+	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)fisica1 + 0x1000, 0, 1); //adelante
 	
-	mmu_mapear_pagina(logica-0x1000, cr3, (unsigned int)0x581000 - 0x1000, 0, 1); //atrás
+	mmu_mapear_pagina(logica-0x1000, cr3, (unsigned int)fisica1 - 0x1000, 0, 1); //atrás
 	
-	mmu_mapear_pagina(logica- (0x1000*80), cr3, (unsigned int)0x581000 - (0x1000*80), 0, 1); //izquierda
+	mmu_mapear_pagina(logica- (0x1000*80), cr3, (unsigned int)fisica1 - (0x1000*80), 0, 1); //izquierda
 	
-	mmu_mapear_pagina(logica- (0x1000*79), cr3, (unsigned int)0x581000 - (0x1000*79), 0, 1); //adelante izquierda
+	mmu_mapear_pagina(logica- (0x1000*79), cr3, (unsigned int)fisica1 - (0x1000*79), 0, 1); //adelante izquierda
 	
-	mmu_mapear_pagina(logica- (0x1000*81), cr3, (unsigned int)0x581000 - (0x1000*81), 0, 1); //atrás izquierda
+	mmu_mapear_pagina(logica- (0x1000*81), cr3, (unsigned int)fisica1 - (0x1000*81), 0, 1); //atrás izquierda
 	
-	mmu_mapear_pagina(logica+ (0x1000*81), cr3, (unsigned int)0x581000 + (0x1000*81), 0, 1); //adelante derecha
+	mmu_mapear_pagina(logica+ (0x1000*81), cr3, (unsigned int)fisica1 + (0x1000*81), 0, 1); //adelante derecha
 	
-	mmu_mapear_pagina(logica+ (0x1000*80), cr3, (unsigned int)0x581000 + (0x1000*80), 0, 1); //derecha
+	mmu_mapear_pagina(logica+ (0x1000*80), cr3, (unsigned int)fisica1 + (0x1000*80), 0, 1); //derecha
 	
-	mmu_mapear_pagina(logica+ (0x1000*79), cr3, (unsigned int)0x581000 + (0x1000*79), 0, 1); //atrás derecha
+	mmu_mapear_pagina(logica+ (0x1000*79), cr3, (unsigned int)fisica1 + (0x1000*79), 0, 1); //atrás derecha
 
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS

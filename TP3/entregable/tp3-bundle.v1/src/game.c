@@ -228,12 +228,12 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     return 0;
 }
 
-uint game_syscall_cavar(uint id)
+/*uint*/ void game_syscall_cavar(uint id)
 {   
     if(jugadorActual == 0)
     //actual es el indice en la gdt de la tss actual, hacer la cuenta necesaria para obtener 
     //que numero de tarea de jugador es
-    posicion pos = piratasA[actual].posicion;
+    posicion pos = piratasA[actual].posicion; //actual o id aca
     unsigned int x_a = pos.x                    // pos.x devuelve unsigned char no se si esta bien hacer eso
     unsigned int y_a = pos.y
     int i;
@@ -244,7 +244,7 @@ uint game_syscall_cavar(uint id)
 			haybotin = true;
 	}
     if(!haybotin){ //si no hay botin en esa pos
-    return //NO SE QUE DEVUELVE ESTA FUNCION
+    return; //NO SE QUE DEVUELVE ESTA FUNCION
     }
     unsigned int valor = game_valor_tesoro(x_a, y_a);
     if(valor == 0){
@@ -257,11 +257,12 @@ uint game_syscall_cavar(uint id)
 			botines[i][2] = botines[i][2]-1;   //resto moneda al botin
 		}
 	}
-	return 0; //NO SE QUE DEVUELVEEE
+	return; //0; //NO SE QUE DEVUELVEEE
 }
 
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
+    if(jugadorActual
     // ~ completar ~
     return 0;
 }

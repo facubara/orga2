@@ -318,14 +318,14 @@ _isr70:
     ;pop ebp
     ;iret
     ;~ xchg bx,bx
-	pushad
+	;pushad
 	push eax
         push ecx
 	call game_syscall_manejar
 	call fin_intr_pic1
 	pop eax
         pop ecx
-	popad
+	;popad
 	;~ xchg bx,bx
 	iret
     

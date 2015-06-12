@@ -52,7 +52,7 @@ typedef struct jugador_t
     unsigned char puntaje;
     posicion puerto;
     unsigned char m_pendientes;
-    unsigned int visitadas[4000];
+    unsigned int visitadas[3520];
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
@@ -95,6 +95,6 @@ void game_terminar_si_es_hora();
 void game_atender_teclado(unsigned char tecla);
 void inic_game();
 void game_ver_si_termina();
-
+void game_syscall_cavar(uint id)        //por ahora es void
 
 #endif  /* !__GAME_H__ */
