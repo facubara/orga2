@@ -320,9 +320,11 @@ _isr70:
     ;~ xchg bx,bx
 	pushad
 	push eax
-	call game_move_pirata
+        push ecx
+	call game_syscall_manejar
 	call fin_intr_pic1
 	pop eax
+        pop ecx
 	popad
 	;~ xchg bx,bx
 	iret

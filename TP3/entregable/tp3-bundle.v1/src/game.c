@@ -271,16 +271,17 @@ uint game_syscall_manejar(uint syscall, uint param1)
 
     if (syscall == 0x1) //mover
         {
-         game_syscall_pirata_mover(param1)
+         game_syscall_pirata_mover(param1);
          return 0
         }
     if (syscall == 0x2) //cavar
         {
-         game_syscall_cavar
+         game_syscall_cavar;
          return 0
         }
     if (syscall == 0x3) //posición
         {
+         game_syscall_posicion(param1);
          return pos;
         }
     // ~ completar ~
