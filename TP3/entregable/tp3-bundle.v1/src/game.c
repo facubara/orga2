@@ -91,6 +91,9 @@ void inic_game(){
 		
 		piratasA[i].indice = 0;
 		piratasB[i].indice = 0;
+
+                piratasA[i].tipo = 0;
+                piratasB[i].tipo = 0;
 		
 	}
 	
