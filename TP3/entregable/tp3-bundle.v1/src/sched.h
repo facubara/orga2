@@ -20,6 +20,8 @@ unsigned char obtener_proxima_viva();
 
 unsigned char ver_vivo_aux(unsigned char i);
 
+void inicializar_scheduler();
+
 //void sched_inserta_pirata(unsigned int cr3, unsigned char id, unsigned char _jugador, unsigned char tipo);
 
 unsigned short contador_tareas;

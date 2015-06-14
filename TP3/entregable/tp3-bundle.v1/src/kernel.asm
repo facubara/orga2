@@ -21,7 +21,8 @@ iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
 %define dir_kernel_addr 0x27000
-
+%define selector_Inicial 0x006b ;0000000001101011
+%define selector_Idle 0x073 ;0000 0000 0111 0011
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -93,18 +94,12 @@ BITS 32
  
 
     ; Inicializar el manejador de memoria
-
-    ; Inicializar el directorio de paginas
-
-    ; Cargar directorio de paginas
     call mmu_iniciar
+    ; Inicializar el directorio de paginas
     mov eax, dir_kernel_addr ;0x27000
+    ; Cargar directorio de paginas
     mov cr3, eax
-    ;xchg bx,bx
-    ;call mmu_inic_dir_pirata
-    ;mov cr3, eax
-
-
+   
     ; Habilitar paginacion
 
     mov eax, cr0
@@ -116,12 +111,13 @@ BITS 32
 
 
 
-    ; Inicializar tss
 
-    ; Inicializar tss de la tarea Idle
+    ; Inicializar tss
+    call tss_inicializar()
 
     ; Inicializar el scheduler
-
+    call inicializar_scheduler()
+    
     ; Inicializar la IDT
     call idt_inicializar
     ; Cargar IDT
@@ -129,16 +125,20 @@ BITS 32
     ; Configurar controlador de interrupciones 
     call resetear_pic
     call habilitar_pic
-    sti
-    xchg bx, bx
-    int 0x46
-    xchg bx, bx
 
     ; Cargar tarea inicial
 
-    ; Habilitar interrupciones
+    pasar_a_idle:
+        mov ax, selector_Inicial
+        ltr ax
 
+    ; Habilitar interrupciones
+    sti
+    
     ; Saltar a la primera tarea: Idle
+    mov ax, selector_Idle
+    mov es, ax 
+    jmp es:0x0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
@@ -148,7 +148,7 @@ BITS 32
     xchg bx,bx
     jmp $
     jmp $
-
+   
 ;; -------------------------------------------------------------------------- ;;
 
 %include "a20.asm"

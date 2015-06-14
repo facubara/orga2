@@ -34,77 +34,77 @@ void tss_inicializar() {
 	tss* tarea_B7 = (tss*) obtener_pagina_libre();
 	tss* tarea_B8 = (tss*) obtener_pagina_libre();
 	
-	gdt[14].base_0_15  = (unsigned int) tarea_inicial;
-	gdt[14].base_23_16 = ((unsigned int) tarea_inicial) >> 16;
-	gdt[14].base_31_24 = ((unsigned int) tarea_inicial) >> 24;
+	gdt[13].base_0_15  = (unsigned int) tarea_inicial;
+	gdt[13].base_23_16 = ((unsigned int) tarea_inicial) >> 16;
+	gdt[13].base_31_24 = ((unsigned int) tarea_inicial) >> 24;
 	
-	gdt[15].base_0_15  = (unsigned int) &tss_idle;
-	gdt[15].base_23_16 = ((unsigned int) &tss_idle) >> 16;
-	gdt[15].base_31_24 = ((unsigned int) &tss_idle) >> 24;
+	gdt[14].base_0_15  = (unsigned int) &tss_idle;
+	gdt[14].base_23_16 = ((unsigned int) &tss_idle) >> 16;
+	gdt[14].base_31_24 = ((unsigned int) &tss_idle) >> 24;
 	
-	gdt[16].base_0_15  = (unsigned int) tarea_A1;
-	gdt[16].base_23_16 = ((unsigned int) tarea_A1) >> 16;
-	gdt[16].base_31_24 = ((unsigned int) tarea_A1) >> 24;
+	gdt[15].base_0_15  = (unsigned int) tarea_A1;
+	gdt[15].base_23_16 = ((unsigned int) tarea_A1) >> 16;
+	gdt[15].base_31_24 = ((unsigned int) tarea_A1) >> 24;
 	
-	gdt[17].base_0_15  = (unsigned int) tarea_A2;
-	gdt[17].base_23_16 = ((unsigned int) tarea_A2) >> 16;
-	gdt[17].base_31_24 = ((unsigned int) tarea_A2) >> 24;
+	gdt[16].base_0_15  = (unsigned int) tarea_A2;
+	gdt[16].base_23_16 = ((unsigned int) tarea_A2) >> 16;
+	gdt[16].base_31_24 = ((unsigned int) tarea_A2) >> 24;
 	
-	gdt[18].base_0_15  = (unsigned int) tarea_A3;
-	gdt[18].base_23_16 = ((unsigned int) tarea_A3) >> 16;
-	gdt[18].base_31_24 = ((unsigned int) tarea_A3) >> 24;
+	gdt[17].base_0_15  = (unsigned int) tarea_A3;
+	gdt[17].base_23_16 = ((unsigned int) tarea_A3) >> 16;
+	gdt[17].base_31_24 = ((unsigned int) tarea_A3) >> 24;
 	
-	gdt[19].base_0_15  = (unsigned int) tarea_A4;
-	gdt[19].base_23_16 = ((unsigned int) tarea_A4) >> 16;
-	gdt[19].base_31_24 = ((unsigned int) tarea_A4) >> 24;
+	gdt[18].base_0_15  = (unsigned int) tarea_A4;
+	gdt[18].base_23_16 = ((unsigned int) tarea_A4) >> 16;
+	gdt[18].base_31_24 = ((unsigned int) tarea_A4) >> 24;
 	
-	gdt[20].base_0_15  = (unsigned int) tarea_A5;
-	gdt[20].base_23_16 = ((unsigned int) tarea_A5) >> 16;
-	gdt[20].base_31_24 = ((unsigned int) tarea_A5) >> 24;
+	gdt[19].base_0_15  = (unsigned int) tarea_A5;
+	gdt[19].base_23_16 = ((unsigned int) tarea_A5) >> 16;
+	gdt[19].base_31_24 = ((unsigned int) tarea_A5) >> 24;
 	
-	gdt[21].base_0_15  = (unsigned int) tarea_A6;
-	gdt[21].base_23_16 = ((unsigned int) tarea_A6) >> 16;
-	gdt[21].base_31_24 = ((unsigned int) tarea_A6) >> 24;
+	gdt[20].base_0_15  = (unsigned int) tarea_A6;
+	gdt[20].base_23_16 = ((unsigned int) tarea_A6) >> 16;
+	gdt[20].base_31_24 = ((unsigned int) tarea_A6) >> 24;
 	
-	gdt[22].base_0_15  = (unsigned int) tarea_A7;
-	gdt[22].base_23_16 = ((unsigned int) tarea_A7) >> 16;
-	gdt[22].base_31_24 = ((unsigned int) tarea_A7) >> 24;
+	gdt[21].base_0_15  = (unsigned int) tarea_A7;
+	gdt[21].base_23_16 = ((unsigned int) tarea_A7) >> 16;
+	gdt[21].base_31_24 = ((unsigned int) tarea_A7) >> 24;
 	
-	gdt[23].base_0_15  = (unsigned int) tarea_A8;
-	gdt[23].base_23_16 = ((unsigned int) tarea_A8) >> 16;
-	gdt[23].base_31_24 = ((unsigned int) tarea_A8) >> 24;
+	gdt[22].base_0_15  = (unsigned int) tarea_A8;
+	gdt[22].base_23_16 = ((unsigned int) tarea_A8) >> 16;
+	gdt[22].base_31_24 = ((unsigned int) tarea_A8) >> 24;
 	
-	gdt[24].base_0_15  = (unsigned int) tarea_B1;
-	gdt[24].base_23_16 = ((unsigned int) tarea_B1) >> 16;
-	gdt[24].base_31_24 = ((unsigned int) tarea_B1) >> 24;
+	gdt[23].base_0_15  = (unsigned int) tarea_B1;
+	gdt[23].base_23_16 = ((unsigned int) tarea_B1) >> 16;
+	gdt[23].base_31_24 = ((unsigned int) tarea_B1) >> 24;
 	
-	gdt[25].base_0_15  = (unsigned int) tarea_B2;
-	gdt[25].base_23_16 = ((unsigned int) tarea_B2) >> 16;
-	gdt[25].base_31_24 = ((unsigned int) tarea_B2) >> 24;
+	gdt[24].base_0_15  = (unsigned int) tarea_B2;
+	gdt[24].base_23_16 = ((unsigned int) tarea_B2) >> 16;
+	gdt[24].base_31_24 = ((unsigned int) tarea_B2) >> 24;
 	
-	gdt[26].base_0_15  = (unsigned int) tarea_B3;
-	gdt[26].base_23_16 = ((unsigned int) tarea_B3) >> 16;
-	gdt[26].base_31_24 = ((unsigned int) tarea_B3) >> 24;
+	gdt[25].base_0_15  = (unsigned int) tarea_B3;
+	gdt[25].base_23_16 = ((unsigned int) tarea_B3) >> 16;
+	gdt[25].base_31_24 = ((unsigned int) tarea_B3) >> 24;
 	
-	gdt[27].base_0_15  = (unsigned int) tarea_B4;
-	gdt[27].base_23_16 = ((unsigned int) tarea_B4) >> 16;
-	gdt[27].base_31_24 = ((unsigned int) tarea_B4) >> 24;
+	gdt[26].base_0_15  = (unsigned int) tarea_B4;
+	gdt[26].base_23_16 = ((unsigned int) tarea_B4) >> 16;
+	gdt[26].base_31_24 = ((unsigned int) tarea_B4) >> 24;
 	
-	gdt[28].base_0_15  = (unsigned int) tarea_B5;
-	gdt[28].base_23_16 = ((unsigned int) tarea_B5) >> 16;
-	gdt[28].base_31_24 = ((unsigned int) tarea_B5) >> 24;
+	gdt[27].base_0_15  = (unsigned int) tarea_B5;
+	gdt[27].base_23_16 = ((unsigned int) tarea_B5) >> 16;
+	gdt[27].base_31_24 = ((unsigned int) tarea_B5) >> 24;
 	
-	gdt[29].base_0_15  = (unsigned int) tarea_B6;
-	gdt[29].base_23_16 = ((unsigned int) tarea_B6) >> 16;
-	gdt[29].base_31_24 = ((unsigned int) tarea_B6) >> 24;
+	gdt[28].base_0_15  = (unsigned int) tarea_B6;
+	gdt[28].base_23_16 = ((unsigned int) tarea_B6) >> 16;
+	gdt[28].base_31_24 = ((unsigned int) tarea_B6) >> 24;
 	
-	gdt[30].base_0_15  = (unsigned int) tarea_B7;
-	gdt[30].base_23_16 = ((unsigned int) tarea_B7) >> 16;
-	gdt[30].base_31_24 = ((unsigned int) tarea_B7) >> 24;
+	gdt[29].base_0_15  = (unsigned int) tarea_B7;
+	gdt[29].base_23_16 = ((unsigned int) tarea_B7) >> 16;
+	gdt[29].base_31_24 = ((unsigned int) tarea_B7) >> 24;
 	
-	gdt[31].base_0_15  = (unsigned int) tarea_B8;
-	gdt[31].base_23_16 = ((unsigned int) tarea_B8) >> 16;
-	gdt[31].base_31_24 = ((unsigned int) tarea_B8) >> 24;
+	gdt[30].base_0_15  = (unsigned int) tarea_B8;
+	gdt[30].base_23_16 = ((unsigned int) tarea_B8) >> 16;
+	gdt[30].base_31_24 = ((unsigned int) tarea_B8) >> 24;
 	
 	tss_inicializar_tarea_idle();
 	
