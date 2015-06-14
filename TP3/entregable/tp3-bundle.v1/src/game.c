@@ -49,14 +49,16 @@ void inic_game(){
                 .puerto = pos1,
 		.posicion = (unsigned char) 0,
 		.puntaje = (unsigned char) 0,
-                .m_pendientes = 0
+                .m_pendientes = 0,
+                .ult_indice_vis = 0
 	};
 	
 	jugador_t j2 = (jugador){
                 .puerto = pos2,
 		.posicion = (unsigned char) 0,
 		.puntaje = (unsigned char) 0,
-                .m_pendientes = 0
+                .m_pendientes = 0,
+                .ult_indice_vis = 0
 	};
 
 	jugadores[0] = j1;
@@ -224,7 +226,57 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 
 uint game_syscall_pirata_mover(uint id, direccion dir)
 {
-    // ~ completar
+    int signo;
+    if (jugadorActual == 0){
+       pirata_t pir = piratasA[actual];
+       signo = 1; 
+       }else{
+       pirata_t pir = piratasB[actual];
+       signo = -1;
+       }
+       posicion pos = pir.posicion;
+
+       unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 0x80000
+       posicion pos_dst;
+       switch(dir){
+		case IZQ:
+                        if(pos.x = 1){
+                        pos_dst = pos;
+                        }else{
+			pos_dst.x = pos.x-1;
+			pos_dst.y = pos.y;
+			}
+			break;
+		case DER:
+                        if(pos.x = 78){
+                        pos_dst = pos;
+                        }else{
+			pos_dst.x = pos.x+1;
+			pos_dst.y = pos.y;
+			}
+			break;
+		case ARR:
+                        if(pos.y = 1){
+                        pos_dst = pos;
+                        }else{
+                        pos_dst.x = pos.x;
+                        pos_dst.y = pos.y-1;
+			}
+			break;
+		case ABA:
+                        if(pos.y = 43){
+                        pos_dst = pos;
+                        }else{
+                        pos_dst.x = pos.x;
+                        pos_dst.y = pos.y+1;
+			}
+			break;
+	}
+    if(pir.tipo == 1 ) //si es minero tiene que estar mapeada la pos, sino no hay drama
+    int i;   
+    for(i = 0, i<jugadores[jugadorActual].ult_indice_vis, i++)
+       {
+       
     return 0;
 }
 
@@ -262,9 +314,39 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
-    if(jugadorActual
-    // ~ completar ~
-    return 0;
+    if(jugadorActual == 0){
+          if(idx != -1){
+             posicion pos = piratasA[idx].posicion;
+             uint res = 0;
+             res || pos.y;
+             res << 8;
+             res || pos.x;
+             return res
+          }else{
+             posicion pos = piratasA[actual].posicion;
+             uint res = 0;
+             res || pos.y;
+             res << 8;
+             res || pos.x;
+             return res
+          }
+    }else{
+          if(idx != -1){
+             posicion pos = piratasB[idx].posicion;
+             uint res = 0;
+             res || pos.y;
+             res << 8;
+             res || pos.x;
+             return res
+             }else{
+             posicion pos = piratasB[actual].posicion;
+             uint res = 0;
+             res || pos.y;
+             res << 8;
+             res || pos.x;
+             return res
+             }
+         }
 }
 
 uint game_syscall_manejar(uint syscall, uint param1)
@@ -298,7 +380,29 @@ pirata_t* game_pirata_en_posicion(uint x, uint y)
 	return NULL;
 }
 
+void game_matar_pirata(){
+	if(jugadorJugando == 0){
+		piratasA[actual].vivo = 0;
+	}else{
+		piratasB[actual].vivo = 0;
+	}
+}
 
+void game_matar_pirata_interrupt(){
+	game_matar_pirata();
+	
+	mostrar_clock(actual);
+	
+	pirata_t pir;
+	if(jugadorJugando == 0){
+		pir = piratasA[actual];
+	}else{
+		pir = piratasB[actual];
+	}
+	posicion pos = pir.posicion;
+	
+	//screen_mover_zombie(pos,pos,1, _zombie/*no necesario, pero no da sobrecargar por la diferencia*/);
+}
 void game_jugador_anotar_punto(jugador_t *j)
 {
 }

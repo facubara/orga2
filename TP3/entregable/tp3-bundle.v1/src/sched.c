@@ -104,6 +104,18 @@ unsigned char ver_vivo_aux(unsigned char j){
 	return siguiente;
 }
 
+unsigned short pasar_a_idle() {
+	//~ breakpoint();
+	if (actual == 0xff) {
+		return 0xff;
+	}
+
+	cambiar_tarea(0xff);
+
+	return ((13 + gdt_tss_actual) << 3);
+}
+
+
 void cambiar_tarea (unsigned char tss_indice) {
 	unsigned char gdt_nueva_tss;
 	if(tss_indice == 0xff){
