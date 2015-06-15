@@ -9,7 +9,7 @@
 #define __SCHED_H__
 
 #include "game.h"
-
+#include "screen.h"
 unsigned short sched_proximo_indice();
 
 void cambiar_tarea (unsigned char tss_indice);

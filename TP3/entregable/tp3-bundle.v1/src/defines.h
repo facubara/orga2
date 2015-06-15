@@ -36,13 +36,13 @@ typedef unsigned int   uint;
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 30
+#define GDT_COUNT 32
 
 #define GDT_IDX_NULL_DESC           0
-#define	seg_datos_usr = 0b1011011; // 11 DPL 3
-#define	seg_codigo_usr = 0b1001011; // 9 DPL 3
-#define	seg_codigo_ker = 0b1000000; // 8 dpl =0
-#define	seg_datos_ker = 0b1010000;  // 10 dpl = 0
+#define	seg_datos_usr = 0x005B // 0b1011011; // 11 DPL 3
+#define	seg_codigo_usr = 0x004B //0b1001011; // 9 DPL 3
+#define	seg_codigo_ker = 0x0040 //0b1000000; // 8 dpl =0
+#define	seg_datos_ker = 0x0050 //0b1010000;  // 10 dpl = 0
 
 
 /* Offsets en la gdt */

@@ -113,10 +113,10 @@ BITS 32
 
 
     ; Inicializar tss
-    call tss_inicializar()
+    call tss_inicializar
 
     ; Inicializar el scheduler
-    call inicializar_scheduler()
+    call inicializar_scheduler
     
     ; Inicializar la IDT
     call idt_inicializar
@@ -138,7 +138,7 @@ BITS 32
     ; Saltar a la primera tarea: Idle
     mov ax, selector_Idle
     mov es, ax 
-    jmp es:0x0
+    jmp selector_Idle:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
@@ -165,3 +165,5 @@ extern mmu_iniciar
 extern mmu_inic_dir_pirata
 extern tarea_al_mapa
 extern mmu_mapear_pagina
+extern inicializar_scheduler
+extern tss_inicializar

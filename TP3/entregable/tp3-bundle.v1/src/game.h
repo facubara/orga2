@@ -8,6 +8,8 @@
 #define __GAME_H__
 
 #include "defines.h"
+#include "tss.h"
+
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD} direccion;
 
@@ -62,6 +64,8 @@ typedef struct jugador_t
 pirata_t piratasA[8];	// piratas del primer jugador
 pirata_t piratasB[8];	// piratas del segundo jugador
 
+unsigned int tiempo_sin_juego;
+
 jugador_t jugadores[2]; 
 
 unsigned char debug;	//0 -> desactivado, 1-> en espera, 2-> mostrando
@@ -78,7 +82,7 @@ void game_pirata_erigir(pirata_t *pirata, jugador_t *j, uint tipo);
 void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y);
 void game_pirata_exploto(uint id);
 
-void game_jugador_inicializar(jugador_t *j);
+//void game_jugador_inicializar(jugador_t *j);
 void game_jugador_lanzar_pirata(jugador_t *j, uint tipo, int x, int y);
 pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo);
 void game_jugador_anotar_punto(jugador_t *j);
@@ -96,6 +100,7 @@ void game_terminar_si_es_hora();
 void game_atender_teclado(unsigned char tecla);
 void inic_game();
 void game_ver_si_termina();
-void game_syscall_cavar(uint id)        //por ahora es void
+void game_syscall_cavar(uint id);        //por ahora es void
+void game_matar_pirata();
 
 #endif  /* !__GAME_H__ */

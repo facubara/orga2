@@ -6,7 +6,7 @@ definicion de funciones del scheduler
 */
 
 #include "screen.h"
-#include "game.h"
+#include "sched.h"
 
 
 extern jugador_t jugadorA, jugadorB;

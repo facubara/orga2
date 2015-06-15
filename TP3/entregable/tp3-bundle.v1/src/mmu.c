@@ -7,7 +7,8 @@
 
 #include "mmu.h"
 #include "i386.h"
-#include "defines.h"
+
+
 /* Atributos paginas */
 /* -------------------------------------------------------------------------- */
 
@@ -178,32 +179,34 @@ unsigned int mmu_inic_dir_pirata(){
 	return cr3;
 }	
 	
-unsigned int copiar_codigo(unsigned int cr3/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo){
+unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo){
 	//int signo, x;
         
         //unsigned int posicion_mapa;
         //0x500000 puerto jugador 1 supongo
-	    unsigned char* posicion_mapa = (unsigned char*) (0x500000);  //+ 0x1000; 
+	    unsigned char* posicion_mapa; // = (unsigned char*) (0x500000);  //+ 0x1000;
+	    unsigned char* codigo_tarea; 
         //posicion mapa = salida del puerto digamos
        if(jugador == 0){                //jugador 1
-            unsigned char* posicion_mapa = (unsigned char*) (0x500000 + 81*0x1000);   //puerto jugador 1
-            }
+            posicion_mapa = (unsigned char*) (0x500000 + 81*0x1000);   //puerto jugador 1
+            
                  if(tipo == 0){  //explorador
-                 unsigned char* codigo_tarea = (unsigned char*) (0x10000);
+                 codigo_tarea = (unsigned char*) (0x10000);
                  }else{   //minero
-                 unsigned char* codigo_tarea = (unsigned char*) (0x11000);
-                 }
+                 codigo_tarea = (unsigned char*) (0x11000);
+                      }
+                   }
             else{
-            unsigned char* posicion_mapa = (unsigned char*) (0x121FFFF - 81* 0x1000);  // puerto jugador 2}
+            posicion_mapa = (unsigned char*) (0x121FFFF - 81* 0x1000);  // puerto jugador 2}
             if(tipo == 0){
-            unsigned char* codigo_tarea = (unsigned char*) (0x12000);
+            codigo_tarea = (unsigned char*) (0x12000);
             }else{
-            unsigned char* codigo_tarea = (unsigned char*) (0x13000);
+            codigo_tarea = (unsigned char*) (0x13000);
             }
-
-        unsigned char* codigo_tarea = (unsigned char*) (0x10000);
+        }
+        //unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
-
+        
         tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000);
 	return cr3;
 }

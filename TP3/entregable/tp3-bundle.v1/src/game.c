@@ -4,14 +4,11 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 ================================================================================
 */
 
-#include "game.h"
-#include "mmu.h"
-#include "tss.h"
-#include "screen.h"
-
+//#include "game.h"
 #include <stdarg.h>
-
-
+#include "screen.h"
+#include "mmu.h"
+#include "sched.h"
 #define POS_INIT_A_X                      1
 #define POS_INIT_A_Y                      1
 #define POS_INIT_B_X         MAPA_ANCHO - 2
@@ -34,7 +31,7 @@ uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
 void inic_game(){
 	tiempo_sin_juego = 0;
 	
-	buffer_debug = obtener_pagina_libre();
+	//buffer_debug = obtener_pagina_libre();
         posicion pos1 = (posicion){
 		.x = 1,
 		.y = 1
@@ -45,18 +42,18 @@ void inic_game(){
 	};
 	// Inicializo los valores de los jugadores
 	// Se decide arrancar con un zombie tipo mago ('M')
-	jugador_t j1 = (jugador){
+	jugador_t j1 = (jugador_t){
                 .puerto = pos1,
-		.posicion = (unsigned char) 0,
-		.puntaje = (unsigned char) 0,
+		        
+		        .puntaje = (unsigned char) 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0
 	};
 	
-	jugador_t j2 = (jugador){
+	jugador_t j2 = (jugador_t){
                 .puerto = pos2,
-		.posicion = (unsigned char) 0,
-		.puntaje = (unsigned char) 0,
+		
+		        .puntaje = (unsigned char) 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0
 	};
@@ -98,11 +95,10 @@ void inic_game(){
                 piratasB[i].tipo = 0;
 		
 	}
-	
-	for(i=0; i<8;i++){
+	/*for(i=0; i<8;i++){
 		jugadores[0].vivos[i] = 0;
 		jugadores[1].vivos[i] = 0;
-	}
+	}*/
 	
 	// Esto muestra en pantalla a cada jugador
 	//screen_mueve_jug(0, 0, 0, 1);
@@ -180,14 +176,14 @@ void game_jugador_inicializar_mapa(jugador_t *jug)
 {
 }
 
-void game_jugador_inicializar(jugador_t *j)
+/*void game_jugador_inicializar(jugador_t *j)
 {
 	static int index = 0;
 
 	j->index = index++;
     // ~ completar ~
 
-}
+}*/
 
 void game_pirata_inicializar(pirata_t *pirata, jugador_t *j, uint index, uint id)
 {
@@ -226,21 +222,22 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 
 uint game_syscall_pirata_mover(uint id, direccion dir)
 {
-    int signo;
-    if (jugadorActual == 0){
-       pirata_t pir = piratasA[actual];
+    /*int signo;
+       pirata_t pir;
+    if (jugadorJugando == 0){
+       pir = piratasA[actual];
        signo = 1; 
        }else{
-       pirata_t pir = piratasB[actual];
+       pir = piratasB[actual];
        signo = -1;
        }
        posicion pos = pir.posicion;
 
-       unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 0x80000
+       unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 0x80000;
        posicion pos_dst;
        switch(dir){
 		case IZQ:
-                        if(pos.x = 1){
+                        if(pos.x == 1){
                         pos_dst = pos;
                         }else{
 			pos_dst.x = pos.x-1;
@@ -248,7 +245,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 			}
 			break;
 		case DER:
-                        if(pos.x = 78){
+                        if(pos.x == 78){
                         pos_dst = pos;
                         }else{
 			pos_dst.x = pos.x+1;
@@ -256,7 +253,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 			}
 			break;
 		case ARR:
-                        if(pos.y = 1){
+                        if(pos.y == 1){
                         pos_dst = pos;
                         }else{
                         pos_dst.x = pos.x;
@@ -264,7 +261,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 			}
 			break;
 		case ABA:
-                        if(pos.y = 43){
+                        if(pos.y == 43){
                         pos_dst = pos;
                         }else{
                         pos_dst.x = pos.x;
@@ -272,28 +269,32 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 			}
 			break;
 	}
-    if(pir.tipo == 1 ) //si es minero tiene que estar mapeada la pos, sino no hay drama
-    int i;   
-    for(i = 0, i<jugadores[jugadorActual].ult_indice_vis, i++)
-       {
+    //if(pir.tipo == 1) //si es minero tiene que estar mapeada la pos, sino no hay drama
+    //int i;   
+    //for(i = 0, i<jugadores[jugadorJugando].ult_indice_vis, i++)
+       //{
        
-    return 0;
+    return 0;*/
 }
 
 /*uint*/ void game_syscall_cavar(uint id)
 {   
-    if(jugadorActual == 0)
+	posicion pos;
+    if(jugadorJugando == 0){
     //actual es el indice en la gdt de la tss actual, hacer la cuenta necesaria para obtener 
     //que numero de tarea de jugador es
-    posicion pos = piratasA[actual].posicion; //actual o id aca
-    unsigned int x_a = pos.x                    // pos.x devuelve unsigned char no se si esta bien hacer eso
-    unsigned int y_a = pos.y
+    pos = piratasA[actual].posicion; //actual o id aca
+}else{
+	pos = piratasB[actual].posicion;
+}
+    unsigned int x_a = pos.x;                    // pos.x devuelve unsigned char no se si esta bien hacer eso
+    unsigned int y_a = pos.y;
     int i;
-    bool haybotin = false;
+    unsigned char haybotin = 0;
 	for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
 		if (botines[i][0] == x_a && botines[i][1] == y_a)
-			haybotin = true;
+			haybotin = 1;
 	}
     if(!haybotin){ //si no hay botin en esa pos
     return; //NO SE QUE DEVUELVE ESTA FUNCION
@@ -302,7 +303,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     if(valor == 0){
     //ACA MATO A LA TAREA MINERO
 	}else{
-    jugadores[jugadorActual].puntaje++; //aumento puntaje
+    jugadores[jugadorJugando].puntaje++; //aumento puntaje
        for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
 		if (botines[i][0] == x_a && botines[i][1] == y_a){
@@ -314,37 +315,37 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
-    if(jugadorActual == 0){
+    if(jugadorJugando == 0){
           if(idx != -1){
              posicion pos = piratasA[idx].posicion;
              uint res = 0;
-             res || pos.y;
-             res << 8;
-             res || pos.x;
-             return res
+             res = res || pos.y;
+             res =res << 8;
+             res = res || pos.x;
+             return res;
           }else{
              posicion pos = piratasA[actual].posicion;
              uint res = 0;
-             res || pos.y;
-             res << 8;
-             res || pos.x;
-             return res
+             res = res || pos.y;
+             res = res << 8;
+             res = res || pos.x;
+             return res;
           }
     }else{
           if(idx != -1){
              posicion pos = piratasB[idx].posicion;
              uint res = 0;
-             res || pos.y;
-             res << 8;
-             res || pos.x;
-             return res
+             res = res || pos.y;
+             res = res << 8;
+             res = res || pos.x;
+             return res;
              }else{
              posicion pos = piratasB[actual].posicion;
              uint res = 0;
-             res || pos.y;
-             res << 8;
-             res || pos.x;
-             return res
+             res = res || pos.y;
+             res = res << 8;
+             res = res || pos.x;
+             return res;
              }
          }
 }
@@ -355,12 +356,12 @@ uint game_syscall_manejar(uint syscall, uint param1)
     if (syscall == 0x1) //mover
         {
          game_syscall_pirata_mover(param1);
-         return 0
+         return 0;
         }
     if (syscall == 0x2) //cavar
         {
-         game_syscall_cavar;
-         return 0
+         game_syscall_cavar();
+         return 0;
         }
     if (syscall == 0x3) //posición
         {
@@ -416,13 +417,16 @@ void game_ver_si_termina(){
    if(jugadores[1].puntaje < jugadores[0].puntaje){
      ganador = 0;
    }else{
-   if(jugadores[0].puntaje < jugadores[1].puntaje){
-     ganador = 1;
-   }else{
-     ganador = -1;
-   }
+        if(jugadores[0].puntaje < jugadores[1].puntaje){
+        ganador = 1;
+        }else{
+        ganador = -1;
+        }
    
-   screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje)
+   
+ } 
+screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje);
+  }
 
 void game_terminar_si_es_hora()
 {

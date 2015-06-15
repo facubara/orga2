@@ -8,6 +8,7 @@ definicion de funciones del scheduler
 #include "sched.h"
 #include "i386.h"
 
+
 void inicializar_scheduler() {
 	contador_tareas = 0;
 	anterior = 0;
@@ -30,7 +31,7 @@ unsigned short sched_proximo_indice() {
 		//~ breakpoint();
 		//~ if (jugadorJugando == 0) {
 			cambiar_tarea(proxima_viva);
-			actualizar_restantes();
+			//actualizar_restantes();
 			mostrar_clock(actual);
 			return ((13 + gdt_tss_actual) << 3);
 		//~ }

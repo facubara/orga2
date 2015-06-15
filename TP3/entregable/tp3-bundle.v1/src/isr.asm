@@ -20,7 +20,9 @@ extern sched_tick
 extern sched_tarea_actual
 extern screen_actualizar_reloj_global
 extern imprime_tecla
-
+extern game_syscall_manejar
+extern game_ver_si_termina
+extern sched_proximo_indice
 
 ;;
 ;; Definición de MACROS
@@ -320,7 +322,7 @@ _isr70:
     ;~ xchg bx,bx
 	;pushad
 	push eax
-        push ecx
+    push ecx
 	call game_syscall_manejar
 	call fin_intr_pic1
 	pop eax

@@ -11,8 +11,9 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
-#include "game.h"
 
+
+unsigned char stack_kernel_adress;
 
 typedef struct str_tss {
     unsigned short  ptl;
