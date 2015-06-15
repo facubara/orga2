@@ -53,6 +53,7 @@ typedef struct jugador_t
     posicion puerto;
     unsigned char m_pendientes;
     unsigned int visitadas[3520];
+    unsigned int color; 
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 

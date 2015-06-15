@@ -49,14 +49,16 @@ void inic_game(){
                 .puerto = pos1,
 		.posicion = (unsigned char) 0,
 		.puntaje = (unsigned char) 0,
-                .m_pendientes = 0
+                .m_pendientes = 0,
+                .color = C_FG_MAGENTA
 	};
 	
 	jugador_t j2 = (jugador){
                 .puerto = pos2,
 		.posicion = (unsigned char) 0,
 		.puntaje = (unsigned char) 0,
-                .m_pendientes = 0
+                .m_pendientes = 0,
+                .color = c_FG_CYAN
 	};
 
 	jugadores[0] = j1;
