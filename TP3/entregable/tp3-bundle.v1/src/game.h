@@ -56,6 +56,7 @@ typedef struct jugador_t
     unsigned char m_pendientes;
     unsigned int visitadas[3520];
     unsigned int ult_indice_vis;        //ultimo indice visitado del arreglo de visitadas
+    unsigned int color; 
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 

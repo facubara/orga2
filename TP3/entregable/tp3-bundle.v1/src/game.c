@@ -44,18 +44,18 @@ void inic_game(){
 	// Se decide arrancar con un zombie tipo mago ('M')
 	jugador_t j1 = (jugador_t){
                 .puerto = pos1,
-		        
 		        .puntaje = (unsigned char) 0,
                 .m_pendientes = 0,
-                .ult_indice_vis = 0
+                .ult_indice_vis = 0,
+                .color = C_FG_MAGENTA
 	};
 	
 	jugador_t j2 = (jugador_t){
                 .puerto = pos2,
-		
 		        .puntaje = (unsigned char) 0,
                 .m_pendientes = 0,
-                .ult_indice_vis = 0
+                .ult_indice_vis = 0,
+                .color = c_FG_CYAN
 	};
 
 	jugadores[0] = j1;

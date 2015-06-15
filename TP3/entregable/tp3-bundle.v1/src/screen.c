@@ -289,4 +289,56 @@ void mostrar_clock(unsigned int indice) {
 	}
 }
 
+void screen_pintar_pirata(jugador_t *j, pirata_t *pirata){
+    
+    posicion p = pirata->posicion;
+    unsigned char color = screen_color_jugador(j);
+    unsigned char caracter = screen_caracter_pirata(pirata->tipo);
+   
+    screen_pintar_rect('', color, p->x - 1, p->y - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
+    screen_pintar(caracter, C_FG_WHITE , p->x, p->y); // ahi puse el caracter en el medio
+}
+
+void screen_borrar_pirata(jugador_t *j, pirata_t *pirata){
+     
+     posicion p = pirata->posicion;
+     screen_pintar_rect('', C_BG_LIGHT_GREY, p->x - 1, p->y - 1, 3, 3 ); // ahi pinte el rectangulo con el color gris
+}
+
+unsigned char screen_color_jugador(jugador_t *j){
+    
+    return j->color;
+}
+
+unsigned char screen_caracter_pirata(unsigned int tipo){
+   
+    if(tipo == 0) {
+        return 'E';
+    }else{
+        return 'M';
+    }
+}
+void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int columna, int alto, int ancho){
+    
+    for(int i = 0; i<alto; i++){
+        screen_pintar_linea_h(c,color,(fila + i), columna, ancho);
+    }
+}
+void screen_pintar_linea_h(unsigned char c, unsigned char color, int fila, int columna, int ancho){
+    
+    for(int i = 0; i<ancho; i++){
+        screen_pintar(c,color,fila, (columna + i));
+    }
+}
+void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int columna, int alto){
+    
+    for(int i = 0; i<alto; i++){
+        screen_pintar(c,color,(fila + i), columna);
+    }
+}
+
+void screen_pintar_puntajes(unsigned char* puntajeJ1, unsigned char* puntajeJ2){
+    print(puntajeJ1,47,36,C_FG_WHITE);
+    print(puntajeJ2,47,41,C_FG_WHITE);
+}
 
