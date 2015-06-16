@@ -55,7 +55,7 @@ void inic_game(){
 		        .puntaje = (unsigned char) 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
-                .color = c_FG_CYAN
+                .color = C_FG_CYAN
 	};
 
 	jugadores[0] = j1;
