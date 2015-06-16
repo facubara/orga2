@@ -302,7 +302,7 @@ void screen_pintar_pirata(jugador_t *j, pirata_t *pirata){
 void screen_borrar_pirata(jugador_t *j, pirata_t *pirata){
      
      posicion p = pirata->posicion;
-     screen_pintar_rect('a', C_BG_LIGHT_GREY, p.y - 1, p.x - 1, 3, 3 ); // ahi pinte el rectangulo con el color gris
+     screen_pintar_rect('a', j->color, p.y - 1, p.x - 1, 3, 3 ); // ahi pinte el rectangulo con el color del jugador
 }
 
 unsigned char screen_color_jugador(jugador_t *j){
@@ -337,26 +337,26 @@ void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int c
     }
 }
 
-void screen_pintar_puntajes(unsigned char* puntajeJ1, unsigned char* puntajeJ2){
-    print_dec((unsigned int)puntajeJ1,4,47,36,C_FG_WHITE);
-    print_dec((unsigned int)puntajeJ2,4,47,41,C_FG_WHITE);
+void screen_pintar_puntajes(){
+    unsigned int puntajeJ1 = jugadores[0].puntaje;
+    unsigned int puntajeJ2 = jugadores[1].puntaje;
+    print_dec(puntajeJ1,4,47,36,C_FG_WHITE);
+    print_dec(puntajeJ2,4,47,41,C_FG_WHITE);
 }
+ 
+//void screen_inicializar(); // creo que esto es inic_video
+//void screen_actualizar_reloj_pirata (jugador_t *j, pirata_t *pirata); // creo que esto es mostrar_clock
+//void screen_pintar_reloj_pirata(jugador_t *j, pirata_t *pirata);//esto tambien lo hace mostrar_clock ? 
+//void screen_pintar_reloj_piratas(jugador_t *j); //esto tambien lo hace mostrar_clock ? 
+//void screen_pintar_relojes(); // esto lo hacemos solo una vez en inic video? 
 
-void screen_pintar_puntajes(); // aca hice otra version habria que ver 
-
-void screen_inicializar(); // creo que esto es inic_video
-void screen_actualizar_reloj_pirata (jugador_t *j, pirata_t *pirata); // creo que esto es mostrar_clock
-void screen_pintar_reloj_pirata(jugador_t *j, pirata_t *pirata);//esto tambien lo hace mostrar_clock ? 
-void screen_pintar_reloj_piratas(jugador_t *j); //esto tambien lo hace mostrar_clock ? 
-void screen_pintar_relojes(); // esto lo hacemos solo una vez en inic video? 
-
-void screen_actualizar_posicion_mapa(uint x, uint y); // esto no se que deberia hacer
+//void screen_actualizar_posicion_mapa(uint x, uint y); // esto no se que deberia hacer
 
 void screen_stop_game_show_winner(jugador_t *j){
-    unsigned int inicioX = VIDEO_COLS/2 - 15
-    unsigned int inicioY = VIDEO_FILS/2 - 10 
-    screen_pintar_rect("a", j->color, inicio Y, inicio X, 20 , 30); // rectangulo de 20x30 con el color del jugador 
-    print_dec((unsigned int)j->puntaje,4, inicioY + 10, inicioX + 13, C_FG_WHITE) // escribo el puntaje calculando 4 pixeles para el mismo 
+    unsigned int inicioX = VIDEO_COLS/2 - 15;
+    unsigned int inicioY = VIDEO_FILS/2 - 10 ;
+    screen_pintar_rect('a', j->color, inicioY, inicioX, 20 , 30); // rectangulo de 20x30 con el color del jugador 
+    print_dec((unsigned int)(j->puntaje),4, inicioY + 10, inicioX + 13, C_FG_WHITE); // escribo el puntaje calculando 4 pixeles para el mismo 
 }  
 
 

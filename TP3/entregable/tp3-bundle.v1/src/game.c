@@ -275,6 +275,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
        //{
        
     return 0;*/
+    return 0;
 }
 
 /*uint*/ void game_syscall_cavar(uint id)
@@ -310,9 +311,9 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 			botines[i][2] = botines[i][2]-1;   //resto moneda al botin
 		}
 	}
-	return; //0; //NO SE QUE DEVUELVEEE
+	//return; //0; //NO SE QUE DEVUELVEEE
 }
-
+}
 uint game_syscall_pirata_posicion(uint id, int idx)
 {
     if(jugadorJugando == 0){
@@ -352,7 +353,7 @@ uint game_syscall_pirata_posicion(uint id, int idx)
 
 uint game_syscall_manejar(uint syscall, uint param1)
 {
-
+/*
     if (syscall == 0x1) //mover
         {
          game_syscall_pirata_mover(param1);
@@ -369,7 +370,8 @@ uint game_syscall_manejar(uint syscall, uint param1)
          return pos;
         }
     // ~ completar ~
-    
+  */  
+        return 0;
 }
 
 void game_pirata_exploto(uint id)
@@ -394,13 +396,13 @@ void game_matar_pirata_interrupt(){
 	
 	mostrar_clock(actual);
 	
-	pirata_t pir;
-	if(jugadorJugando == 0){
-		pir = piratasA[actual];
-	}else{
-		pir = piratasB[actual];
-	}
-	posicion pos = pir.posicion;
+	//pirata_t pir;
+	//if(jugadorJugando == 0){
+//		pir = piratasA[actual];
+//	}else{
+//		pir = piratasB[actual];
+//	}
+	//posicion pos = pir.posicion;
 	
 	//screen_mover_zombie(pos,pos,1, _zombie/*no necesario, pero no da sobrecargar por la diferencia*/);
 }
@@ -409,26 +411,27 @@ void game_jugador_anotar_punto(jugador_t *j)
 }
 
 void game_ver_si_termina(){
-   if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2){
-    return;
-   }
-   char ganador;
-
-   if(jugadores[1].puntaje < jugadores[0].puntaje){
-     ganador = 0;
-   }else{
+/*	char ganador;
+   	if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2){
+    	return;
+    }
+    if(jugadores[1].puntaje < jugadores[0].puntaje){
+     	ganador = 0;
+   	}else{
         if(jugadores[0].puntaje < jugadores[1].puntaje){
-        ganador = 1;
+        	ganador = 1;
         }else{
-        ganador = -1;
+        	ganador = -1;
         }
-   
-   
- } 
-screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje);
-  }
-
+ 	} 
+	//screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje);
+*/
+}
 void game_terminar_si_es_hora()
+{
+}
+
+void game_atender_teclado(unsigned char tecla)
 {
 }
 
@@ -447,6 +450,3 @@ void game_terminar_si_es_hora()
 #define KB_shiftB   0x36 // 0xb6
 
 
-void game_atender_teclado(unsigned char tecla)
-{
-}

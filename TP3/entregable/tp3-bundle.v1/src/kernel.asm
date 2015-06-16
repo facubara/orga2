@@ -128,7 +128,6 @@ BITS 32
 
     ; Cargar tarea inicial
 
-    pasar_a_idle:
         mov ax, selector_Inicial
         ltr ax
 
