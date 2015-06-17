@@ -54,14 +54,15 @@ typedef struct jugador_t
     unsigned char puntaje;
     posicion puerto;
     unsigned char m_pendientes;
-    unsigned int visitadas[3520];
+    //unsigned int visitadas[3520];
     unsigned int ult_indice_vis;        //ultimo indice visitado del arreglo de visitadas
-    unsigned int color; 
+    unsigned char color; 
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
 
-
+unsigned char visitadasA[3520];
+unsigned char visitadasB[3520];
 pirata_t piratasA[8];	// piratas del primer jugador
 pirata_t piratasB[8];	// piratas del segundo jugador
 

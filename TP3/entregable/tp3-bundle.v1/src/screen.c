@@ -295,14 +295,14 @@ void screen_pintar_pirata(jugador_t *j, pirata_t *pirata){
     unsigned char color = screen_color_jugador(j);
     unsigned char caracter = screen_caracter_pirata(pirata->tipo);
    
-    screen_pintar_rect('a', color, p.x - 1, p.y - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
+    screen_pintar_rect(' ', color, p.x - 1, p.y - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
     screen_pintar(caracter, C_FG_WHITE , p.y, p.x); // ahi puse el caracter en el medio
 }
 
 void screen_borrar_pirata(jugador_t *j, pirata_t *pirata){
      
      posicion p = pirata->posicion;
-     screen_pintar_rect('a', j->color, p.y - 1, p.x - 1, 3, 3 ); // ahi pinte el rectangulo con el color del jugador
+     screen_pintar_rect(' ', j->color, p.y - 1, p.x - 1, 3, 3 ); // ahi pinte el rectangulo con el color del jugador
 }
 
 unsigned char screen_color_jugador(jugador_t *j){
