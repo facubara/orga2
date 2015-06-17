@@ -24,6 +24,7 @@ extern game_syscall_manejar
 extern game_ver_si_termina
 extern sched_proximo_indice
 extern tiempo_sin_juego
+extern game_atender_teclado
 
 ;;
 ;; Definición de MACROS
@@ -535,7 +536,8 @@ _isr33:
    push eax
    in al, 0x60
    push eax
-   call imprime_tecla
+   ;call imprime_tecla
+   call game_atender_teclado
    cmp eax, 0
    je .next
    pop eax
