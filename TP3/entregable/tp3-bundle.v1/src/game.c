@@ -224,7 +224,7 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 }
 
 
-uint game_syscall_pirata_mover(uint id, direccion dir)
+uint game_syscall_pirata_mover(direccion dir)
 {
     /*int signo;
        pirata_t pir;
@@ -282,7 +282,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
     return 0;
 }
 
-/*uint*/ void game_syscall_cavar(uint id)
+/*uint*/ void game_syscall_cavar()
 {   
 	posicion pos;
     if(jugadorJugando == 0){
@@ -318,7 +318,7 @@ uint game_syscall_pirata_mover(uint id, direccion dir)
 	//return; //0; //NO SE QUE DEVUELVEEE
 }
 }
-uint game_syscall_pirata_posicion(uint id, int idx)
+uint game_syscall_pirata_posicion(int idx)
 {
     if(jugadorJugando == 0){
           if(idx != -1){
@@ -357,7 +357,7 @@ uint game_syscall_pirata_posicion(uint id, int idx)
 
 uint game_syscall_manejar(uint syscall, uint param1)
 {
-/*
+
     if (syscall == 0x1) //mover
         {
          game_syscall_pirata_mover(param1);
@@ -370,11 +370,11 @@ uint game_syscall_manejar(uint syscall, uint param1)
         }
     if (syscall == 0x3) //posición
         {
-         game_syscall_posicion(param1);
+         uint pos = game_syscall_pirata_posicion(param1);
          return pos;
         }
     // ~ completar ~
-  */  
+  
         return 0;
 }
 
