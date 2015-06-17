@@ -41,7 +41,7 @@ typedef struct pirata_t
     unsigned char jugador;
     unsigned char indice; //ESTO PARA EL CLOCK
     unsigned char tipo; // 0 explorador 1 minero
-    unsigned char vivos[8];
+    //unsigned char vivos[8];
     // id unica, posicion, tipo, reloj
 } pirata_t;
 
@@ -58,6 +58,7 @@ typedef struct jugador_t
     unsigned int ult_indice_vis;        //ultimo indice visitado del arreglo de visitadas
     unsigned char color;
     unsigned char colorLetra;
+    unsigned char vivos;
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
@@ -86,7 +87,7 @@ void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y
 void game_pirata_exploto(uint id);
 
 //void game_jugador_inicializar(jugador_t *j);
-void game_jugador_lanzar_pirata(jugador_t *j, uint tipo, int x, int y);
+void game_jugador_lanzar_pirata(unsigned char, unsigned char);
 pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo);
 void game_jugador_anotar_punto(jugador_t *j);
 void game_explorar_posicion(jugador_t *jugador, int x, int y);

@@ -48,7 +48,8 @@ void inic_game(){
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
                 .color = C_FG_MAGENTA,
-                .colorLetra = C_BG_RED
+                .colorLetra = C_BG_RED,
+                .vivos = 0
 	};
 	
 	jugador_t j2 = (jugador_t){
@@ -57,6 +58,7 @@ void inic_game(){
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
                 .color = C_FG_CYAN,
+                .vivos = 0,
                 .colorLetra = C_BG_BLUE
                 
 	};
@@ -213,10 +215,70 @@ pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo)
 }
 
 
-void game_jugador_lanzar_pirata(jugador_t *j, uint tipo, int x, int y)
+void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo)
 {
-}
+  tiempo_sin_juego = 0;
+  if (jugadores[jug].vivos == 8){
+     return;           //NO HAY LUGAR PARA MAS TAREAS DE ESE JUGADOR
+  }
+   int i = 0;
+  if(jug == 0){
+    while (piratasA[i].vivo != 0){
+     i++;
+   }
+ }else{
+    while (piratasB[i].vivo !=0){
+    i++;
+    }
+  }
+   jugadores[jug].vivos = jugadores[jug].vivos+1;
 
+   unsigned int cr3 = mmu_inic_dir_pirata();
+   //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
+   copiar_codigo(cr3, jug, tipo);
+   
+posicion pos;
+if(jug == 0){
+   pos = jugadores[jug].puerto;
+   }
+else{
+   pos = jugadores[jug].puerto;
+  }
+if(jug == 0){//breakpoint();
+		tss_inicializar_tareas_piratas(piratasA[i].tss);
+		piratasA[i].tss->cr3 = cr3;// | 3;
+		piratasA[i].tipo = tipo;
+	}else{
+		tss_inicializar_tareas_piratas(piratasB[i].tss);
+		piratasB[i].tss->cr3 = cr3;// | 3;
+		piratasB[i].tipo = tipo;
+	}
+	if(jug==0){
+		piratasA[i].vivo = 1;
+		piratasA[i].indice = i+1;
+		piratasA[i].jugador = jug;
+                piratasA[i].index = i;
+                piratasA[i].posicion = pos;
+	}else{
+		piratasB[i].vivo = 1;
+		piratasB[i].indice = i+1;
+		piratasB[i].jugador = jug;
+                piratasB[i].index = i;
+                piratasB[i].posicion = pos;
+
+
+}
+ jugador_t j;
+ pirata_t p;
+ if(jug == 0){
+   j = jugadores[jug];
+   p = piratasA[i];
+  }else{
+   j = jugadores[jug];
+   p = piratasB[i];
+  }
+ screen_pintar_pirata(&j,&p);
+}
 void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y)
 {
 }
@@ -425,7 +487,7 @@ unsigned char ganador;
             if (botines[i][2] != 0)
                 haybotines = 1;
         }
-   	if ((tiempo_sin_juego < MAX_SIN_CAMBIOS && haybotines){
+   	if (tiempo_sin_juego < MAX_SIN_CAMBIOS && haybotines){
     	return;
     }
     if(jugadores[1].puntaje < jugadores[0].puntaje){
@@ -452,7 +514,48 @@ void game_terminar_si_es_hora()
 
 void game_atender_teclado(unsigned char tecla)
 {
+//_cli();
+
+        //	if(tecla >= 0x80 && prev+0x80 != tecla){ 	// cuando presiono
+	//	return tecla;
+	//}
+	
+	//if(n>=0x80){
+	//	n = tecla-0x80; 	// recuperar el make
+	//}else{
+	//	return n;
+	//}
+        unsigned char tipo = 0;
+        unsigned char jugador;
+	switch (tecla) {
+		case 0x2a: // LShift
+			if(debug != 2){ //agregar atributo vivos para que no tire de mas){
+                                jugador = 0;
+				game_jugador_lanzar_pirata(jugador, tipo);
+                        //game_jugador_lanza_pirata(jugador, tipo)
+			}
+			break;
+		case 0x36: // RShift
+			if(debug != 2){ //agregar atributo vivos){
+                                jugador = 1;
+				game_jugador_lanzar_pirata(jugador, tipo);
+			}
+			break;
+		case 0x15: // Y
+			if(debug == 0){//0 -> desactivado, 1-> activo(espera inter), 2-> mostrando
+				debug = 1;
+				//screen_indicar_debug_activo();
+			}else if(debug == 2){
+				//restaurar_pantalla();
+				debug = 1;
+			}
+			break;
+	}
+	
+	//_sti();
+
 }
+
 
 
 #define KB_w_Aup    0x11 // 0x91
