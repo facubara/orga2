@@ -115,101 +115,303 @@ tecla: db 0x00
 ;; -------------------------------------------------------------------------- ;;
 ;ISR 0
 _isr0:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+ 
+    ;call game_matar_pirata_interrupt
+
+
     imprimir_texto_mp int0_capturada, int0_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr1:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+    ;call game_matar_pirata_interrupt
+
     imprimir_texto_mp int1_capturada, int1_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr2:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+    ;call game_matar_pirata_interrupt 
+
     imprimir_texto_mp int2_capturada, int2_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr3:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+     ;call game_matar_pirata_interrupt
+
     imprimir_texto_mp int3_capturada, int3_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr4:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+     ;call game_matar_pirata_interrupt
+
     imprimir_texto_mp int4_capturada, int4_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr5:;BOUND Range Exceeded Exception
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+     ;call game_matar_pirata_interrupt
 
     imprimir_texto_mp int5_capturada, int5_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr6:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
 
+     ;call game_matar_pirata_interrupt
+ 
     imprimir_texto_mp int6_capturada, int6_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr7:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+    ;call game_matar_pirata_interrupt
+
 
     imprimir_texto_mp int7_capturada, int7_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr8:;Double Fault Exception
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
 
+     ;call game_matar_pirata_interrupt
+    
     imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
     
     
     jmp $
 
 _isr9:;Coprocessor Segment Overrun
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+     ;call game_matar_pirata_interrupt
+
 
     imprimir_texto_mp int9_capturada, int9_capturada_len, 0x07, 20, 30
     jmp $
 
 _isr10:;invalid TSS
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
+
+     ;call game_matar_pirata_interrupt
+
 
     imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
     
     jmp $
 
 _isr11:;Segment Not Present
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
 
+     ;call game_matar_pirata_interrupt
+   
     imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     
     jmp $
 
 _isr12:;Stack Fault Exception
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
@@ -219,6 +421,19 @@ _isr12:;Stack Fault Exception
     jmp $
 
 _isr13:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
@@ -228,6 +443,19 @@ _isr13:
     jmp $
 
 _isr14:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad
@@ -240,6 +468,19 @@ _isr14:
     
 
 _isr17:
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
     push ebp
     mov ebp, esp
     pushad

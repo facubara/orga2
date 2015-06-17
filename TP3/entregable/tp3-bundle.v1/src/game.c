@@ -47,7 +47,8 @@ void inic_game(){
 		.puntaje = 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
-                .color = C_FG_MAGENTA
+                .color = C_FG_MAGENTA,
+                .colorletra = C_BG_RED
 	};
 	
 	jugador_t j2 = (jugador_t){
@@ -55,7 +56,9 @@ void inic_game(){
 		.puntaje = 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
-                .color = C_FG_CYAN
+                .color = C_FG_CYAN,
+                .colorletra = C_BG_BLUE
+                
 	};
         int j;
         for(j=0; j<3520;j++){
@@ -415,21 +418,33 @@ void game_jugador_anotar_punto(jugador_t *j)
 }
 
 void game_ver_si_termina(){
-/*	char ganador;
-   	if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2){
+unsigned char ganador;
+        unsigned char haybotines = 0;
+        int i;
+	for (i = 0; i < BOTINES_CANTIDAD; i++){
+            if (botines[i][2] != 0)
+                haybotines = 1;
+        }
+   	if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2 || haybotines){
     	return;
     }
     if(jugadores[1].puntaje < jugadores[0].puntaje){
      	ganador = 0;
-   	}else{
+        }else{
+        ganador = 1;
+   	/*}else{
         if(jugadores[0].puntaje < jugadores[1].puntaje){
         	ganador = 1;
         }else{
         	ganador = -1;
         }
- 	} 
-	//screen_muestro_ganador(ganador, jugadores[0].puntaje, jugadores[1].puntaje);
-*/
+ 	}
+         */}
+        //NO EXISTE EL EMPATE, GANA EL JUGADOR 2 EN ESE CASO
+        jugador_t jg = jugadores[ganador];
+        jugador_t *jp = &jg;
+        screen_stop_game_show_winner(jp);
+	
 }
 void game_terminar_si_es_hora()
 {

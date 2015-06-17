@@ -56,7 +56,8 @@ typedef struct jugador_t
     unsigned char m_pendientes;
     //unsigned int visitadas[3520];
     unsigned int ult_indice_vis;        //ultimo indice visitado del arreglo de visitadas
-    unsigned char color; 
+    unsigned char color;
+    unsigned char colorletra;
     // coordenadas puerto, posiciones exploradas, mineros pendientes, etc
 } jugador_t;
 
@@ -104,5 +105,5 @@ void inic_game();
 void game_ver_si_termina();
 void game_syscall_cavar();        //por ahora es void
 void game_matar_pirata();
-
+void game_matar_pirata_interrupt();
 #endif  /* !__GAME_H__ */

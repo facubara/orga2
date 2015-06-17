@@ -207,11 +207,11 @@ unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigne
         //unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
         
-        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000);
+        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000, tipo);
 	return cr3;
 }
 
-void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica){
+void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica, unsigned char tipo){
 	//unsigned int temp;
 	
 	//CODIGO EN LA 0x400000
@@ -229,9 +229,9 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 				}
 				
 				mmu_unmapear_pagina(0x0400000, cr3Actual);
-
+        
 	mmu_mapear_pagina(0x400000, cr3, (unsigned int) fisica0, 1, 1);//codigo
-
+        if(tipo == 0){ //explorador
         mmu_mapear_pagina(logica, cr3, (unsigned int) fisica1, 0, 1); //centro        
 
 	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)fisica1 + 0x1000, 0, 1); //adelante
@@ -249,7 +249,7 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
 	mmu_mapear_pagina(logica+ (0x1000*80), cr3, (unsigned int)fisica1 + (0x1000*80), 0, 1); //derecha
 	
 	mmu_mapear_pagina(logica+ (0x1000*79), cr3, (unsigned int)fisica1 + (0x1000*79), 0, 1); //atrás derecha
-
+        }
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS
 	
