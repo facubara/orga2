@@ -58,6 +58,6 @@ void screen_stop_game_show_winner(jugador_t *j);
 
 void imprime_nombre_grupo();
 void mostrar_clock(unsigned int indice);
-
+void screen_inicializar_reloj_pirata();
 //void inic_video();
 #endif  /* !__SCREEN_H__ */

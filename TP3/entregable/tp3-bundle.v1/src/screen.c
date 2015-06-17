@@ -28,8 +28,10 @@ void screen_actualizar_reloj_global()
 }
 
 void screen_pintar(uchar c, uchar color, uint fila, uint columna)
-{
-    p[fila][columna].c = c;
+{   
+    if (c != 'q'){
+        p[fila][columna].c = c;
+    }
     p[fila][columna].a = color;
 }
 
@@ -149,7 +151,7 @@ void inic_video(){
     p[47][43].c = (unsigned char) '0';
     p[47][43].a = (unsigned char) C_FG_WHITE;
 
-
+    screen_inicializar_reloj_pirata();
 }
 
 int long_string(const char* s){
@@ -290,24 +292,26 @@ void mostrar_clock(unsigned int indice) {
 }
 
 void screen_pintar_pirata(jugador_t *j, pirata_t *pirata){
-    
     posicion p = pirata->posicion;
     unsigned char color = screen_color_jugador(j);
+    unsigned char colorFondo= j->color;
     unsigned char caracter = screen_caracter_pirata(pirata->tipo);
    
-    screen_pintar_rect(' ', color, p.x - 1, p.y - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
+    screen_pintar_rect('q', colorFondo, p.y - 1, p.x - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
     screen_pintar(caracter, C_FG_WHITE , p.y, p.x); // ahi puse el caracter en el medio
+    screen_pintar(' ', color, p.y, p.x); //ahi le puse de background el color del pirata
 }
 
 void screen_borrar_pirata(jugador_t *j, pirata_t *pirata){
-     
+     //borra la posicion actual 
      posicion p = pirata->posicion;
-     screen_pintar_rect(' ', j->color, p.y - 1, p.x - 1, 3, 3 ); // ahi pinte el rectangulo con el color del jugador
+     unsigned char caracter = screen_caracter_pirata(pirata->tipo);
+     screen_pintar(caracter, j->color, p.y, p.x); // ahi pinte el background del mismo color
 }
 
 unsigned char screen_color_jugador(jugador_t *j){
     
-    return j->color;
+    return j->colorLetra;
 }
 
 unsigned char screen_caracter_pirata(unsigned int tipo){
@@ -340,8 +344,8 @@ void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int c
 void screen_pintar_puntajes(){
     unsigned int puntajeJ1 = jugadores[0].puntaje;
     unsigned int puntajeJ2 = jugadores[1].puntaje;
-    print_dec(puntajeJ1,4,47,36,C_FG_WHITE);
-    print_dec(puntajeJ2,4,47,41,C_FG_WHITE);
+    print_dec(puntajeJ1,3,47,36,C_FG_WHITE);
+    print_dec(puntajeJ2,3,47,41,C_FG_WHITE);
 }
  
 //void screen_inicializar(); // creo que esto es inic_video
@@ -356,7 +360,20 @@ void screen_stop_game_show_winner(jugador_t *j){
     unsigned int inicioX = VIDEO_COLS/2 - 15;
     unsigned int inicioY = VIDEO_FILS/2 - 10 ;
     screen_pintar_rect('a', j->color, inicioY, inicioX, 20 , 30); // rectangulo de 20x30 con el color del jugador 
-    print_dec((unsigned int)(j->puntaje),4, inicioY + 10, inicioX + 13, C_FG_WHITE); // escribo el puntaje calculando 4 pixeles para el mismo 
+    print_dec((unsigned int)(j->puntaje),3, inicioY + 10, inicioX + 13, C_FG_WHITE); // escribo el puntaje calculando 3 pixeles para el mismo 
 }  
 
+void screen_inicializar_reloj_pirata(){
+    unsigned int i;
+    unsigned int columna1 = 4;
+    unsigned int columna2 = 59;
+    for(i=1;i<9;i++){
+        print_dec(i,1,columna1,46,C_FG_WHITE);
+        print_dec(i,1,columna2,46,C_FG_WHITE);
+        screen_pintar('-',C_FG_WHITE, 48, columna1 );
+        screen_pintar('-',C_FG_WHITE, 48, columna2 );
+        columna1 += 2;
+        columna2 += 2;
+    }
+}  
 
