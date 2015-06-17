@@ -425,7 +425,7 @@ unsigned char ganador;
             if (botines[i][2] != 0)
                 haybotines = 1;
         }
-   	if (tiempo_sin_juego == MAX_SIN_CAMBIOS || debug == 2 || haybotines){
+   	if ((tiempo_sin_juego < MAX_SIN_CAMBIOS && haybotines){
     	return;
     }
     if(jugadores[1].puntaje < jugadores[0].puntaje){
