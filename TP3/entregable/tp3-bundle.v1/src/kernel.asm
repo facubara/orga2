@@ -127,15 +127,12 @@ BITS 32
     call habilitar_pic
 
     ; Cargar tarea inicial
-    xchg bx,bx
         mov ax, selector_Inicial
         ltr ax
 
     ; Habilitar interrupciones
     sti
-    
     ; Saltar a la primera tarea: Idle
-    xchg bx,bx
     jmp selector_Idle:0
 
     ; Ciclar infinitamente (por si algo sale mal...)

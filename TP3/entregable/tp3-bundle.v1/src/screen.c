@@ -359,8 +359,8 @@ void screen_pintar_puntajes(){
 void screen_stop_game_show_winner(jugador_t *j){
     unsigned int inicioX = VIDEO_COLS/2 - 15;
     unsigned int inicioY = VIDEO_FILS/2 - 10 ;
-    screen_pintar_rect('a', j->color, inicioY, inicioX, 20 , 30); // rectangulo de 20x30 con el color del jugador 
-    print_dec((unsigned int)(j->puntaje),3, inicioY + 10, inicioX + 13, C_FG_WHITE); // escribo el puntaje calculando 3 pixeles para el mismo 
+    screen_pintar_rect(' ', C_BG_BLUE, inicioY, inicioX, 20 , 30); // rectangulo de 20x30 con el color del jugador 
+    print_dec((unsigned int)(j->puntaje),3 , inicioX + 13, inicioY + 10,  C_FG_WHITE); // escribo el puntaje calculando 3 pixeles para el mismo 
 }  
 
 void screen_inicializar_reloj_pirata(){
