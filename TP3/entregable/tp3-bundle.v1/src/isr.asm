@@ -23,6 +23,7 @@ extern imprime_tecla
 extern game_syscall_manejar
 extern game_ver_si_termina
 extern sched_proximo_indice
+extern tiempo_sin_juego
 
 ;;
 ;; Definición de MACROS
@@ -514,6 +515,7 @@ _isr32:
     jmp .end
 
     .nojump:
+      add dword [tiempo_sin_juego], 1
       call fin_intr_pic1
 
     .end:
