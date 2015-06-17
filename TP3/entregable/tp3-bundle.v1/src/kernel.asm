@@ -21,8 +21,8 @@ iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
 %define dir_kernel_addr 0x27000
-%define selector_Inicial 0x006b ;0000000001101011
-%define selector_Idle 0x073 ;0000 0000 0111 0011
+%define selector_Inicial 0x0068 ;0000000001101011
+%define selector_Idle 0x070 ;0000 0000 0111 0011
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -127,7 +127,7 @@ BITS 32
     call habilitar_pic
 
     ; Cargar tarea inicial
-
+    xchg bx,bx
         mov ax, selector_Inicial
         ltr ax
 
@@ -135,8 +135,7 @@ BITS 32
     sti
     
     ; Saltar a la primera tarea: Idle
-    mov ax, selector_Idle
-    mov es, ax 
+    xchg bx,bx
     jmp selector_Idle:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
