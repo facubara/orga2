@@ -15,7 +15,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #define POS_INIT_B_Y          MAPA_ALTO - 2
 
 #define CANT_POSICIONES_VISTAS            9
-#define MAX_SIN_CAMBIOS                 999
+#define MAX_SIN_CAMBIOS                 20
 
 #define BOTINES_CANTIDAD 8
 
@@ -48,7 +48,7 @@ void inic_game(){
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
                 .color = C_FG_MAGENTA,
-                .colorletra = C_BG_RED
+                .colorLetra = C_BG_RED
 	};
 	
 	jugador_t j2 = (jugador_t){
@@ -57,7 +57,7 @@ void inic_game(){
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
                 .color = C_FG_CYAN,
-                .colorletra = C_BG_BLUE
+                .colorLetra = C_BG_BLUE
                 
 	};
         int j;
