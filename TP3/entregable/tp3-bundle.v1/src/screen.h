@@ -60,5 +60,9 @@ void imprime_nombre_grupo();
 void mostrar_clock(unsigned int indice);
 void screen_inicializar_reloj_pirata();
 unsigned char corregirPosicion(jugador_t *j, pirata_t * pirata);
+void screen_mostrar_debug();
+void screen_copiar_pantalla();
+void screen_restaurar_pantalla();
+unsigned int videoCache;
 //void inic_video();
 #endif  /* !__SCREEN_H__ */

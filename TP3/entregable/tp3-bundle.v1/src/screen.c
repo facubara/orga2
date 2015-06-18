@@ -7,6 +7,7 @@ definicion de funciones del scheduler
 
 #include "screen.h"
 #include "sched.h"
+#include "mmu.h"
 
 
 extern jugador_t jugadorA, jugadorB;
@@ -86,6 +87,7 @@ void print_dec(uint numero, int size, uint x, uint y, unsigned short attr) {
 
 void inic_video(){
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+    videoCache = obtener_pagina_libre();
 
 
     int x = 0;
@@ -386,4 +388,121 @@ void screen_inicializar_reloj_pirata(){
         columna2 += 2;
     }
 }  
+void screen_copiar_pantalla(){
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+    ca (*q)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) videoCache;
+    int y, x;
+    for(y=8; y<44; y++){
+        for(x=25; x<55; x++){
+            q[y][x].c = p[y][x].c;
+            q[y][x].a = p[y][x].a;
+        }
+    }
+}
+void screen_restaurar_pantalla(){
+    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+    ca (*q)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) videoCache;
+    int y, x;
+    for(y=8; y<44; y++){
+        for(x=25; x<55; x++){
+            p[y][x].c = q[y][x].c;
+            p[y][x].a = q[y][x].a;
+        }
+    }
+}
+
+void screen_mostrar_debug(unsigned int numero, unsigned int ebp, unsigned int edi, unsigned int esi
+                            , unsigned int edx, unsigned int ecx, unsigned int ebx, unsigned int eax
+                            , unsigned int ds, unsigned int es, unsigned int fs, unsigned int gs
+                            , unsigned int errorCode, unsigned int eip, unsigned int cs, unsigned int eflags
+                            , unsigned int *esp, unsigned int ss){
+    unsigned int inicioC = 25;
+    unsigned int inicioF = 8;
+    unsigned int alto = 36;
+    unsigned int ancho = 30;
+
+    if(debug==1){
+        screen_copiar_pantalla();
+        screen_pintar_rect(' ',C_BG_BLACK,inicioF, inicioC, alto , ancho); // pinto el rectangulo externo en negro
+        screen_pintar_rect(' ',C_BG_LIGHT_GREY,inicioF+1, inicioC+1, alto -2 , ancho -2); // pinto el rectangulo gris
+        screen_pintar_linea_h(' ',C_BG_RED,inicioF+1,inicioC+1,ancho-2);
+        
+        unsigned int columna1= inicioC + 3;
+        unsigned int columna2= inicioC + 16;
+        unsigned int fila = inicioF + 3;
+
+        unsigned int cr0 = rcr0();
+        unsigned int cr2 = rcr2();
+        unsigned int cr3 = rcr3();
+        unsigned int cr4 = rcr4();
+        
+        //void print_hex(uint numero, int size, uint x, uint y, unsigned short attr)
+
+        print( "eax", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(eax,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print( "cr0", columna2, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(cr0,8,columna2 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "ebx", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(ebx,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print( "cr2", columna2, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(cr2,8,columna2 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "ecx", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(ecx,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print( "cr3", columna2, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(cr3,8,columna2 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "edx", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(edx,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print( "cr4", columna2, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(cr4,8,columna2 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "esi", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(esi,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "edi", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(edi,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "ebp", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(ebp,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "esp", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex((unsigned int)esp,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "eip", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(eip,8,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=1;
+        print( "stack", columna2, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        fila +=1;
+        print( "cs", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(cs,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "ds", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        
+        // aca printear las cosas de stack
+        print_hex(esp[0],8,columna2 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print_hex(esp[1],8,columna2 + 4, fila + 1, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print_hex(esp[2],8,columna2 + 4, fila + 2, C_FG_WHITE|C_BG_LIGHT_GREY );
+        print_hex(esp[3],8,columna2 + 4, fila + 3, C_FG_WHITE|C_BG_LIGHT_GREY );
+
+        print_hex(ds,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "es", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(es,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "fs", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(fs,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "gs", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(gs,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "ss", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(ss,4,columna1 + 4, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+        fila +=2;
+        print( "eflags", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
+        print_hex(eflags,8,columna1 + 6, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
+
+    }
+}
 
