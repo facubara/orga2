@@ -57,7 +57,7 @@ void inic_game(){
 		.puntaje = 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
-                .color = C_FG_CYAN,
+                .color = C_BG_CYAN,
                 .vivos = 0,
                 .colorLetra = C_BG_BLUE
                 
