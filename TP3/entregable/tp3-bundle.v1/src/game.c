@@ -291,7 +291,7 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 
 uint game_syscall_pirata_mover(direccion dir)
 {
-    /*int signo;
+ /*   int signo;
        pirata_t pir;
     if (jugadorJugando == 0){
        pir = piratasA[actual];
@@ -302,7 +302,7 @@ uint game_syscall_pirata_mover(direccion dir)
        }
        posicion pos = pir.posicion;
 
-       unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 0x80000;
+       unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 80 * 0x1000;
        posicion pos_dst;
        switch(dir){
 		case IZQ:
@@ -337,13 +337,14 @@ uint game_syscall_pirata_mover(direccion dir)
                         pos_dst.y = pos.y+1;
 			}
 			break;
-	}
+	}*/
+
+
     //if(pir.tipo == 1) //si es minero tiene que estar mapeada la pos, sino no hay drama
     //int i;   
     //for(i = 0, i<jugadores[jugadorJugando].ult_indice_vis, i++)
        //{
        
-    return 0;*/
     return 0;
 }
 
@@ -418,6 +419,7 @@ uint game_syscall_pirata_posicion(int idx)
              return res;
              }
          }
+
 }
 
 uint game_syscall_manejar(uint syscall, uint param1)
@@ -555,9 +557,8 @@ void game_atender_teclado(unsigned char tecla)
 		case 0x15: // Y
 			if(debug == 0){//0 -> desactivado, 1-> activo(espera inter), 2-> mostrando
 				debug = 1;
-				//screen_indicar_debug_activo();
 			}else if(debug == 2){
-				//restaurar_pantalla();
+				screen_restaurar_pantalla();
 				debug = 1;
 			}
 			break;
