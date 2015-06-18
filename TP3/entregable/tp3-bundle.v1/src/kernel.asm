@@ -87,7 +87,7 @@ BITS 32
 
 
     ; Inicializar el juego
-
+    call inic_game
     ; Inicializar pantalla
 
     call inic_video
@@ -162,3 +162,4 @@ extern tarea_al_mapa
 extern mmu_mapear_pagina
 extern inicializar_scheduler
 extern tss_inicializar
+extern inic_game
