@@ -567,7 +567,7 @@ _isr70:
     ;~ xchg bx,bx
 	;pushad
 	push eax
-    push ecx
+        push ecx
 	call game_syscall_manejar
 	call fin_intr_pic1
 	pop eax

@@ -307,7 +307,7 @@ uint game_syscall_pirata_mover(direccion dir)
        switch(dir){
 		case IZQ:
                         if(pos.x == 1){
-                        pos_dst = pos;
+                        game_matar_pirata_interrupt();
                         }else{
 			pos_dst.x = pos.x-1;
 			pos_dst.y = pos.y;
@@ -315,7 +315,7 @@ uint game_syscall_pirata_mover(direccion dir)
 			break;
 		case DER:
                         if(pos.x == 78){
-                        pos_dst = pos;
+                        game_matar_pirata_interrupt();
                         }else{
 			pos_dst.x = pos.x+1;
 			pos_dst.y = pos.y;
@@ -323,7 +323,7 @@ uint game_syscall_pirata_mover(direccion dir)
 			break;
 		case ARR:
                         if(pos.y == 1){
-                        pos_dst = pos;
+                        game_matar_pirata_interrupt();
                         }else{
                         pos_dst.x = pos.x;
                         pos_dst.y = pos.y-1;
@@ -331,7 +331,7 @@ uint game_syscall_pirata_mover(direccion dir)
 			break;
 		case ABA:
                         if(pos.y == 43){
-                        pos_dst = pos;
+                        game_matar_pirata_interrupt();
                         }else{
                         pos_dst.x = pos.x;
                         pos_dst.y = pos.y+1;
@@ -465,6 +465,16 @@ void game_matar_pirata_interrupt(){
 	
 	mostrar_clock(actual);
 	
+        //ACA HAY QUE LLAMAR A FUNCION BORRAR PIRATA
+       /*
+        jugador_t j = jugadores[jugadorJugando];
+        pirata_t p;
+        if(jugadorJugando == 0){
+          p = piratasA[actual];
+         } else {
+          p = piratasB[actual];
+         }
+        screen_borrar_pirata(&j, &pirata);*/
 	//pirata_t pir;
 	//if(jugadorJugando == 0){
 //		pir = piratasA[actual];
