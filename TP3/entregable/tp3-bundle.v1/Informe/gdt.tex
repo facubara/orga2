@@ -8,4 +8,13 @@ Los descriptores de segmento de código llevan un 8 en su campo type (EXECUTE ON
 
 \item[c)] Asignamos la entrada 12 de la GDT para el área de pantalla. Se establece la base en {\tt 0xB8000} y su límite en {\tt 0x1000}, el campo type se define como 2 (READ/WRITE) y el bit S en 1. Una vez hecho esto, movemos el selector de esta entrada al registro de segmento FS.
 
-\item[d)] Utilizamos la funcion {\tt inic_video} para limpiar la pantalla e inicializarla como muestra la figura "sacar screenshot". Hacemos uso de la estructura que se encuentra en {\tt screen.h} para ir asignando los distintos caracteres y sus atributos (color de caracter y su color de fondo). Para esto usamos la dirección física del buffer de video {\tt 0xB8000}.
+\item[d)] Utilizamos la funcion {\tt inic_video} para limpiar la pantalla e inicializarla como muestra la figura \ref{fig:pantalla}. Hacemos uso de la estructura que se encuentra en {\tt screen.h} para ir asignando los distintos caracteres y sus atributos (color de caracter y su color de fondo). Para esto usamos la dirección física del buffer de video {\tt 0xB8000}.
+
+\begin{figure}[h]
+	  \centering
+	    \includegraphics[ width=0.25\textwidth]{imagenes/pantallainicial.png}
+	     \caption{Pantalla inicializada}
+	  \label{fig:pantalla}
+%	  \vspace{-15pt}
+	\end{figure}
+%	\FloatBarrier
