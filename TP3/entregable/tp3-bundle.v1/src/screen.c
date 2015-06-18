@@ -290,23 +290,33 @@ void mostrar_clock(unsigned int indice) {
 		piratasB[indice].clock = (pirata.clock + 1) % 4;;
 	}
 }
+unsigned char corregirPosicion(jugador_t *j, pirata_t *pirata){
+    // miro si es el jugador 1 o el dos a traves del puerto
+    if (j->puerto.x==1){
+        return pirata->posicion.y + 1;
+    }else {
+        return pirata->posicion.y;
+    }
+}
 
 void screen_pintar_pirata(jugador_t *j, pirata_t *pirata){
-    posicion p = pirata->posicion;
+    unsigned char y = corregirPosicion(j,pirata);
+    unsigned char x = pirata->posicion.x;
     unsigned char color = screen_color_jugador(j);
     unsigned char colorFondo= j->color;
     unsigned char caracter = screen_caracter_pirata(pirata->tipo);
    
-    screen_pintar_rect('q', colorFondo, p.y - 1, p.x - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
-    screen_pintar(caracter, C_FG_WHITE , p.y, p.x); // ahi puse el caracter en el medio
-    screen_pintar(' ', color, p.y, p.x); //ahi le puse de background el color del pirata
+    screen_pintar_rect('q', colorFondo, y - 1, x - 1, 3, 3); // pinte un rectangulo con el color del jugador de 3x3
+    screen_pintar(caracter,(C_FG_WHITE | color), y, x); // ahi puse el caracter en el medio
+    
 }
 
 void screen_borrar_pirata(jugador_t *j, pirata_t *pirata){
-     //borra la posicion actual 
-     posicion p = pirata->posicion;
+     unsigned int y= corregirPosicion(j,pirata);
+     unsigned int x = pirata->posicion.x;
+
      unsigned char caracter = screen_caracter_pirata(pirata->tipo);
-     screen_pintar(caracter, j->color, p.y, p.x); // ahi pinte el background del mismo color
+     screen_pintar(caracter, j->color, y, x); // ahi pinte el background del mismo color
 }
 
 unsigned char screen_color_jugador(jugador_t *j){

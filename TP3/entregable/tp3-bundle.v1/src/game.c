@@ -15,7 +15,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #define POS_INIT_B_Y          MAPA_ALTO - 2
 
 #define CANT_POSICIONES_VISTAS            9
-#define MAX_SIN_CAMBIOS                 20
+#define MAX_SIN_CAMBIOS                 999
 
 #define BOTINES_CANTIDAD 8
 
@@ -47,7 +47,7 @@ void inic_game(){
 		.puntaje = 0,
                 .m_pendientes = 0,
                 .ult_indice_vis = 0,
-                .color = C_FG_MAGENTA,
+                .color = C_BG_GREEN,
                 .colorLetra = C_BG_RED,
                 .vivos = 0
 	};
@@ -516,6 +516,7 @@ unsigned char ganador;
         jugador_t jg = jugadores[ganador];
         jugador_t *jp = &jg;
         screen_stop_game_show_winner(jp);
+        hlt();
 	
 }
 void game_terminar_si_es_hora()

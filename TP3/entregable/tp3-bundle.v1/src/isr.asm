@@ -419,6 +419,8 @@ _isr12:;Stack Fault Exception
     pushad
 
     imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
+
+    popad
     
     jmp $
 
@@ -442,6 +444,7 @@ _isr13:
 
     imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
     
+    popad
     jmp $
 
 _isr14:
