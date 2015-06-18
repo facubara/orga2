@@ -569,12 +569,12 @@ _isr70:
     ;iret
     ;~ xchg bx,bx
 	;pushad
-	push eax
-        push ecx
+	push ecx
+        push eax
 	call game_syscall_manejar
 	call fin_intr_pic1
-	pop eax
-        pop ecx
+	pop ecx
+        pop eax
 	;popad
 	;~ xchg bx,bx
 	iret
