@@ -524,6 +524,10 @@ rgbAhsl:
             pslldq xmm8, 4                   ; xmm8 = l | 0 | 0 | 0    (float)
             mulps xmm8, [mascara8]           ; xmm8 = l*2 | 0 | 0 | 0 (float)
             subps xmm8, [mascara9]           ; xmm8 = l*2-1 | 0 | 0 | 0 (float)
+
+            ;no lo creo segun lo que entendi funciona con la fpu y modifica stack 0 asi q probablemente uses max de nuevo
+            ;la de max me gusto, en una linea andeas 0x7fff (reseteo el signo)
+
             fabs                             ; no se bien comom funciona pero supongamos que deja fabs xmm8
             pslldq xmm7, 12                  ; xmm7 = d | 0 | 0 | 0
             divps xmm7, xmm8                 ; xmm7 = d /fabs(l*2-1) | 0 | 0 | 0
@@ -552,6 +556,7 @@ hslArgb:
 
         ;xmm12 = p_l | p_s | p_h | p_a
         ;fmod(h/60, 2) es hacer h/60 - ((h/60)/2)
+        ;esto es casi cierto te falta el *2 osea fmod(x,y)= x - truncar(x/y)*y
 
         movdqu xmm2, xmm12 
         psrldq xmm2, 12      
@@ -563,7 +568,7 @@ hslArgb:
         psrldq xmm4, 4
         pand xmm4, [mascara0]   ; xmm4 = 0 | 0 | 0 | p1_h
         pand xmm12, [mascara0]  ; xmm12 = 0 | 0 | 0 | p1_a
-
+; hasta aca prepare los pixeles xmm(2,3,4,12)->(l s h a) en ese orden.
         ;CALCULO C
 
         movdqu xmm11, xmm2      ; xmm11 = 0 | 0 | 0 | p1_l    (respaldo para calcular m)
@@ -590,6 +595,9 @@ hslArgb:
         movdqu xmm7, xmm5          ;xmm7 = 0 | 0 | 0 | p1_h / 60.0
         divps xmm7, [mascara5]     ;xmm7 = 0 | 0 | 0 | (p1_h / 60.0) /2.0
         roundps xmm8, xmm7, 1      ;xmm7 = 0 | 0 | 0 | (p1_h / 60.0) /2.0 redondeado hacia abajo (el 1 indica redondeo hacia abajo)
+
+        ;aca falto multiplicar por lo que puse arriba
+
         subps xmm5, xmm8           ;xmm5 = 0 | 0 | 0 | fmod( p1_h / 60.0, 2.0)
         addps xmm5, [mascara17]    ;xmm5 = 0 | 0 | 0 | fmod( p1_h / 60.0, 2.0) -1.0
         ;FALTA ALGO PARA FMOD TENDRIA QUE SER p1_h/60 - p1_h/60/2 * p1_h/60
@@ -602,6 +610,10 @@ hslArgb:
 
         movdqu xmm5, xmm6          ; xmm5 = 0 | 0 | 0 | C
         divps xmm5, [mascara5]     ; xmm5 = 0 | 0 | 0 | C/2
+
+        ; aca xmm2 me parece que lo backupeaste en xmm11 y dsp lo modificas
+        ;osea falto restaurarlo
+
         subps xmm2, xmm5           ; xmm2 = 0 | 0 | 0 | M
 
         ;xmm6 = 0 | 0 | 0 | C   xmm8 = 0 | 0 | 0 | X    xmm2 = 0 | 0 | 0 | M
@@ -619,6 +631,12 @@ hslArgb:
         
         ;VOY A USAR XMM11 PARA GUARDAR EL RESULTADO DE TODAS ESTAS COMPARACIONES
         ;CREO QUE POR COMO LO HAGO NO SE PISAN LOS VALORES
+
+        ;aca si se pisa todo porque los casos son no disjuntos por ejem sea h = 70
+        ; h es mayor a 0 y mayor a 60 y el resto de los casos no importan
+        ;pero entonces en xmm11 tengo primero x|0|c|0 y a eso le hago un or con
+        ;c|x|0|0 imaginate c = 0x0001 y x = 0x0010 el or me deja 0x0011|x|c|0 tiene sentido? 
+
         ; P = p_b | p_g | p_r | p_a
         ;si 0<=h <60 P = X | 0 | C | 0
         shufps xmm6, xmm8, 01100010b        ; 01 es pongo X, 10 es pongo 0, 00 es pongo C y 10 es pongo 0
