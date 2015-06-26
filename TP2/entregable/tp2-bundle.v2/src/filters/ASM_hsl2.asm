@@ -390,6 +390,7 @@ ASM_hsl2:
 
 ;rgbAhsl (*src, *float dst)
 rgbAhsl:
+; aca me llega en xmm1 un pixel con cada uno de los a r g b ocupando dw 
 
             movdqu xmm2, xmm1
             psrldq xmm2, 4                    
@@ -400,6 +401,8 @@ rgbAhsl:
             movdqu xmm4, xmm1
             psrldq xmm4, 12
             pand xmm4, [mascara0]             ; xmm4 = 0 | 0 | 0 | p1_b
+
+;hasta aca prepare los pixeles 
 
             ;BUSCO MAXIMO
             movdqu xmm5, xmm2                 ; xmm5 = 0 | 0 | 0 | p1_r
@@ -416,6 +419,8 @@ rgbAhsl:
             movdqu xmm7, xmm5
             psubd xmm7, xmm6                  ; xmm7 = 0 | 0 | 0 | d = max(b,g,r) - min(b,g,r)
             cvtdq2ps xmm7, xmm7                ; xmm7 = 0 | 0 | 0 | d (en floats)
+
+;xmm2,3,4 r g b respectivamente xmm5 tiene max xmm6 tiene el min xmm7 tiene la d 
 
             ;CALCULO H
           
@@ -455,6 +460,7 @@ rgbAhsl:
             pcmpeqd xmm11, xmm4                ; xmm11 = 0 | 0 | 0 | max= b?
             pand xmm10, xmm11                  ; xmm10 = 0 | 0 | 0 | ((r-g)/d + 4) * 60 SI MAX = B SINO 0
 
+;aca no hice else if sino if solo, xmm8, xmm9, xmm10 contienen los posibles resultados
             ;pxor xmm1, xmm1;                   
             ;movdqu xmm1, xmm8
             ;pxor xmm1, xmm9
@@ -469,16 +475,30 @@ rgbAhsl:
 
             movdqu xmm11, xmm5                 ; xmm11 = 0 | 0 | 0 | max
             pcmpeqd xmm11, xmm6                ; xmm11 = 0 | 0 | 0 | max = min?
+            
+            ;esto pinta no tener sentido si es true (not(true))and(true) = false
+            ;si no not(false)and(false)= false
+            
             pandn xmm11, xmm11                 ; xmm11 = 0 | 0 | 0 | not(max = min)
             pslldq xmm11, 4                    ; xmm11 = 0 | 0 | not(max = min) | 0
             pxor xmm11, [mascara0]             ; xmm11 = 0 | 0 | not(max = min) | 1s
 
+            ;no entiendo por que checkeas max = min ahora, si max = min d = 0 y exploto al dividir 0
+            ;creo que la idea era actualizar solo ver si era 0 y poner 0 
+            ;pero tenias que fijarte antes de dividir
+            
             ;ACA xmm8, xmm9, xmm10 quedan libres
             pand xmm1, xmm11                  ; xmm1 = 0 | 0 | h | p1_a
             movdqu xmm8, xmm1
+
+            ;360 es un int h es float probablemente 360 en float
+
             pcmpeqd xmm8, [mascara7]          ; xmm8 = 0 | 0 | h=360? | p1_a
 
             movdqu xmm9, xmm1                 ; xmm9 = 0 | 0 | h | p1_a
+
+            ;idem arriba 
+
             pcmpgtd xmm9, [mascara7]          ; xmm9 = 0 | 0 | h>360? | basura
             pxor xmm9, xmm8                   ; xmm9 = 0 | 0 | h>=360? | basura
             pand xmm9, [mascara7]             ; xmm9 = 0 | 0 | 360 si h>=360 0 sino | 0
@@ -492,9 +512,12 @@ rgbAhsl:
             movdqu xmm8, xmm5
             paddd xmm8, xmm6                 ; xmm8 = 0 | 0 | 0 | max + min
             cvtdq2ps xmm8, xmm8
+
+            ;mascara2 tiene 510 en int poner float
+
             divps xmm8, [mascara2]           ; xmm8 = 0 | 0 | 0 | (max + min) / 510 (float)
             pslldq xmm8, 8                   ; xmm8 = 0 | l | 0 | 0
-            pxor xmm1, xmm8                  ; xmm8 = 0 | l | h | p1_a
+            pxor xmm1, xmm8                  ; xmm1 = 0 | l | h | p1_a
 
             ;CALCULO S
 
@@ -507,6 +530,11 @@ rgbAhsl:
             divps xmm7, [mascara3]           ; xmm7 = d / fabs (l*2-1) / 255.0001 | 0 | 0 | 0 (float)
          
             pcmpeqd xmm5, xmm6               ; xmm5 = 0 | 0 | 0 | max = min?
+
+            ;probablemente el mismo error que antes  con respecto al not 
+            ;creo q la idea es q si max = min? true pasa el valor si  no es 0 
+            ; por lo tanto esa linea de pandn no es necesaria
+
             pandn xmm5, xmm5                 ; xmm5 = 0 | 0 | 0 | not (max = min?)
             pslldq xmm5, 12                  ; xmm5 = not (max = min?) | 1s | 1s | 1s
             
