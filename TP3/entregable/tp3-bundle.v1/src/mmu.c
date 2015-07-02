@@ -179,7 +179,7 @@ unsigned int mmu_inic_dir_pirata(){
 	return cr3;
 }	
 	
-unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo){
+unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo, unsigned char nuevo){
 	//int signo, x;
         
         //unsigned int posicion_mapa;
@@ -206,12 +206,12 @@ unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigne
         }
         //unsigned char* codigo_tarea = (unsigned char*) (0x10000);
         //codigo primer tarea, para probar
-        
-        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000, tipo);
+        //LOGICA (0x0881000 deberia ir variando)
+        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000, tipo, jugador, nuevo);
 	return cr3;
 }
 
-void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica, unsigned char tipo){
+void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica, unsigned char tipo, unsigned char jugador, unsigned char nuevo){
 	//unsigned int temp;
 	
 	//CODIGO EN LA 0x400000
