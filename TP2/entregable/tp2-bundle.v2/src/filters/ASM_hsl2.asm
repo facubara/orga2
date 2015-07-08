@@ -8,12 +8,12 @@
 section .data
 mascara0: dd 0xFFFFFFFF, 0x0, 0x0, 0x0           ;le
 mascara1: dd 60.0, 0x0, 0x0, 0x0                 ;le
-mascara2: dd 510, 0x0, 0x0, 0x0                  ;le
+mascara2: dd 510.0, 0x0, 0x0, 0x0                  ;le
 mascara3: dd 0x0, 0x0, 0x0, 255.0001             ;le
 mascara4: dd 6.0, 0x0, 0x0, 0x0                  ;le
 mascara5: dd 2.0, 0x0, 0x0, 0x0                  ;le
 mascara6: dd 4.0, 0x0, 0x0, 0x0                  ;le
-mascara7: dd 0x0, 360, 0x0, 0x0                  ;le
+mascara7: dd 0x0, 360.0, 0x0, 0x0                ;le
 mascara8: dd 0x0, 0x0, 0x0, 2.0                  ;le
 mascara9: dd 0x0, 0x0, 0x0, 1.0                  ;le
 mascara10: dd 0x0,0xFFFFFFFF,0x0,0x0             ;le
@@ -421,7 +421,9 @@ rgbAhsl:
             cvtdq2ps xmm7, xmm7                ; xmm7 = 0 | 0 | 0 | d (en floats)
 
 ;xmm2,3,4 r g b respectivamente xmm5 tiene max xmm6 tiene el min xmm7 tiene la d 
-
+            pxor xmm8, xmm8
+            ptest xmm7, xmm8                  ; d = 0?
+            jz .h 
             ;CALCULO H
           
             ;G-B
@@ -476,22 +478,18 @@ rgbAhsl:
             movdqu xmm11, xmm5                 ; xmm11 = 0 | 0 | 0 | max
             pcmpeqd xmm11, xmm6                ; xmm11 = 0 | 0 | 0 | max = min?
             
-            ;esto pinta no tener sentido si es true (not(true))and(true) = false
-            ;si no not(false)and(false)= false
             
-            pandn xmm11, xmm11                 ; xmm11 = 0 | 0 | 0 | not(max = min)
+            pandn xmm11, [mascara0]            ; xmm11 = 0 | 0 | 0 | not(max = min)
+            ;pandn xmm11, xmm11                 ; xmm11 = 0 | 0 | 0 | not(max = min)
             pslldq xmm11, 4                    ; xmm11 = 0 | 0 | not(max = min) | 0
             pxor xmm11, [mascara0]             ; xmm11 = 0 | 0 | not(max = min) | 1s
 
-            ;no entiendo por que checkeas max = min ahora, si max = min d = 0 y exploto al dividir 0
-            ;creo que la idea era actualizar solo ver si era 0 y poner 0 
-            ;pero tenias que fijarte antes de dividir
+
+           .hfin:
             
             ;ACA xmm8, xmm9, xmm10 quedan libres
-            pand xmm1, xmm11                  ; xmm1 = 0 | 0 | h | p1_a
+            pand xmm1, xmm11                  ; xmm1 = 0 | 0 | h | p1_a  O 0 | 0 | 0 | p1_a (si h = 0 )
             movdqu xmm8, xmm1
-
-            ;360 es un int h es float probablemente 360 en float
 
             pcmpeqd xmm8, [mascara7]          ; xmm8 = 0 | 0 | h=360? | p1_a
 
@@ -502,7 +500,6 @@ rgbAhsl:
             pcmpgtd xmm9, [mascara7]          ; xmm9 = 0 | 0 | h>360? | basura
             pxor xmm9, xmm8                   ; xmm9 = 0 | 0 | h>=360? | basura
             pand xmm9, [mascara7]             ; xmm9 = 0 | 0 | 360 si h>=360 0 sino | 0
-            cvtdq2ps xmm9, xmm9               ; convierto a float
             subps xmm1, xmm9                  ; xmm1 = 0 | 0 | h | p1_a
             
             ;YA CALCULE H
@@ -512,8 +509,6 @@ rgbAhsl:
             movdqu xmm8, xmm5
             paddd xmm8, xmm6                 ; xmm8 = 0 | 0 | 0 | max + min
             cvtdq2ps xmm8, xmm8
-
-            ;mascara2 tiene 510 en int poner float
 
             divps xmm8, [mascara2]           ; xmm8 = 0 | 0 | 0 | (max + min) / 510 (float)
             pslldq xmm8, 8                   ; xmm8 = 0 | l | 0 | 0
@@ -546,10 +541,13 @@ rgbAhsl:
             pand xmm1, xmm5                  ; xmm1 = p1_l | p1_s | p1_h | p1_a
             
             ;PIXEL 1 PASADO A HSL
+            ret
+            .h0:
 
-   
+            movdq xmm11, [mascara0]                      ; xmm11 = 0 | 0 | 0 | 1s 
+            jmp .hfin 
+              
 
-ret
 
 ;hslArgb ( *float src, *dst)
 hslArgb:
@@ -575,7 +573,7 @@ hslArgb:
 
         mulps xmm2, [mascara5]   ; xmm2 = 0 | 0 | 0 | p1_l * 2
         addps xmm2, [mascara17]  ; xmm2 = 0 | 0 | 0 | (p1_l * 2) -1  SUME UN -1 (supongo que cuenta como restar)
-        
+        ;USAR PSIGN
         ;CALCULO FABS((p1_l *2) -1)  = max ( ((p1_l *2) -1) , - ((p1_l *2) -1))
         movdqu xmm5, xmm2        ; xmm5 = 0 | 0 | 0 | (p1_l *2) -1
         mulps xmm5, [mascara17]  ; xmm5 = 0 | 0 | 0 | (p1_l *2) -1                       TENDRIA QUE SER UN ADDPS? SINO ESTOY MULTIPLICANDO POR -1
