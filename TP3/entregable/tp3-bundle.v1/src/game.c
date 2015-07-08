@@ -293,12 +293,15 @@ uint game_syscall_pirata_mover(direccion dir)
 {
  /*   int signo;
        pirata_t pir;
+	   unsiged int *visitadas;
     if (jugadorJugando == 0){
        pir = piratasA[actual];
        signo = 1; 
+		visitadas = visitadasA;
        }else{
        pir = piratasB[actual];
        signo = -1;
+		visitadas = visitadasB;
        }
        posicion pos = pir.posicion;
 
@@ -338,12 +341,29 @@ uint game_syscall_pirata_mover(direccion dir)
 			}
 			break;
 	}*/
-
-
-    //if(pir.tipo == 1) //si es minero tiene que estar mapeada la pos, sino no hay drama
-    //int i;   
-    //for(i = 0, i<jugadores[jugadorJugando].ult_indice_vis, i++)
-       //{
+			// pos_dst posicion actual y pir el pirata moviendose
+			unsigned int virtualDst = posicionToVirtual(pos_dst);
+			unsigned int miCr3 = pir.tss->cr3;
+			copiar_codigo(miCr3,virtualDst,mi_codigo(pir.tipo));
+			mapear_a_todos(virtualDst);
+			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
+			jugadores[jugadorJugando]ult_indice_vis ++;
+			int i;
+			for (i=0;i<BOTINESCANTIDAD;i++){
+				bool inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
+				bool inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
+				if (inRangeX && inRangeY){
+					
+					game_jugador_lanzar_pirata(jugadorJugando,1);
+				}
+				
+				
+					
+				
+			}
+			
+			
+			
        
     return 0;
 }
@@ -373,6 +393,7 @@ uint game_syscall_pirata_mover(direccion dir)
     unsigned int valor = game_valor_tesoro(x_a, y_a);
     if(valor == 0){
     //ACA MATO A LA TAREA MINERO
+	game_matar_pirata_interrupt();
 	}else{
     jugadores[jugadorJugando].puntaje++; //aumento puntaje
        for (i = 0; i < BOTINES_CANTIDAD; i++)
@@ -457,8 +478,10 @@ pirata_t* game_pirata_en_posicion(uint x, uint y)
 void game_matar_pirata(){
 	if(jugadorJugando == 0){
 		piratasA[actual].vivo = 0;
+        jugadores[jugadorJugando].vivos = jugadores[jugadorJugando].vivos-1;
 	}else{
 		piratasB[actual].vivo = 0;
+        jugadores[jugadorJugando].vivos = jugadores[jugadorJugando].vivos-1;
 	}
 }
 
@@ -542,14 +565,14 @@ void game_atender_teclado(unsigned char tecla)
         unsigned char jugador;
 	switch (tecla) {
 		case 0x2a: // LShift
-			if(debug != 2){ //agregar atributo vivos para que no tire de mas){
+			if(debug != 2){ 
                                 jugador = 0;
 				game_jugador_lanzar_pirata(jugador, tipo);
-                        //game_jugador_lanza_pirata(jugador, tipo)
+           
 			}
 			break;
 		case 0x36: // RShift
-			if(debug != 2){ //agregar atributo vivos){
+			if(debug != 2){ 
                                 jugador = 1;
 				game_jugador_lanzar_pirata(jugador, tipo);
 			}
@@ -568,8 +591,33 @@ void game_atender_teclado(unsigned char tecla)
 
 }
 
+unsigned int mi_codigo(tipo){
+	if (jugadorJugando ==1){
+		if (tipo == 0){
+			return 0x10000
+		}else{
+			return 0x11000
+		}
+	}else {
+		if (tipo == 1){
+			return 0x12000
+		}else{
+			return 0x13000
+		}
+}
 
-
+void mapear_a_todos(unsiged int virtualDst){
+	pirata * arreglo;
+	if (jugadorJugando == 1){
+		arreglo = piratasA;
+	}else{
+		arreglo = piratasB;
+	}
+	int i = 0;
+	for (i = 0;i < 8 arreglo;i++){
+		mapear_alrededores((x.tss)->cr3,virtualDst,mi_codigo(x.tipo));
+	}
+}
 #define KB_w_Aup    0x11 // 0x91
 #define KB_s_Ado    0x1f // 0x9f
 #define KB_a_Al     0x1e // 0x9e
