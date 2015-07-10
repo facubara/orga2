@@ -229,13 +229,13 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
      i++;
    }
    virtualSrc = 0x10000;
-   virtualDst = 0x500000 + 81 * 0x1000; 
+   virtualDst = 0x800000 + 81 * 0x1000; 
  }else{
     while (piratasB[i].vivo !=0){
     i++;
     }
     virtualSrc = 0x12000;
-    virtualDst = 0x121FFFF - 81 * 0x1000;
+    virtualDst = 0x1520000 - 81 * 0x1000;
   }
   
    if(tipo == 1){
@@ -246,7 +246,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
     
    unsigned int cr3 = mmu_inic_dir_pirata();
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
-   copiar_codigo(cr3, jug, tipo, x, y);
+   copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    tarea_al_mapa(cr3,virtualDst,virtualSrc); 
    
 posicion pos;
@@ -290,7 +290,6 @@ if(jug == 0){//breakpoint();
    p = piratasB[i];
   }
  screen_pintar_pirata(&j,&p);
- breakpoint();
 }
 void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y)
 {
@@ -305,14 +304,18 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 void game_syscall_pirata_mover(direccion dir)
 {
   
-       pirata_t pir;
+       pirata_t  pir;
+       pirata_t *pirata;
+       jugador_t *juega = &jugadores[jugadorJugando];
 	   unsigned int *visitadas;
     if (jugadorJugando == 0){
        pir = piratasA[actual];
+	pirata = &piratasA[actual];
       
 		visitadas =  (unsigned int *) visitadasA;
        }else{
        pir = piratasB[actual];
+	pirata = &piratasA[actual];
       
 		visitadas = (unsigned int *) visitadasB;
        }
@@ -359,10 +362,16 @@ void game_syscall_pirata_mover(direccion dir)
 			break;
 	}
 			// pos_dst posicion actual y pir el pirata moviendose
+			
+			pirata->posicion = pos_dst;
+			
 			unsigned int virtualDst = posicionToVirtual(pos_dst);
 			unsigned int miCr3 = pir.tss->cr3;
 			copiar_codigo(miCr3,virtualDst,mi_codigo(pir.tipo),0,0);
 			mapear_a_todos(virtualDst);
+			
+		
+			
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
 			int i;
@@ -380,6 +389,8 @@ void game_syscall_pirata_mover(direccion dir)
 					
 				
 			}
+			screen_pintar_pirata(juega,pirata);
+			
 			
 			
 			
@@ -612,14 +623,14 @@ void game_atender_teclado(unsigned char tecla)
 }
 
 unsigned int mi_codigo(unsigned char tipo){
-	if (jugadorJugando ==1){
+	if (jugadorJugando ==0){
 		if (tipo == 0){
 			return 0x10000;
 		}else{
 			return 0x11000;
 		}
 	}else {
-		if (tipo == 1){
+		if (tipo == 0){
 			return 0x12000;
 		}else{
 			return 0x13000;
@@ -628,7 +639,7 @@ unsigned int mi_codigo(unsigned char tipo){
 }
 void mapear_a_todos(unsigned int virtualDst){
 	pirata_t * arreglo;
-	if (jugadorJugando == 1){
+	if (jugadorJugando == 0){
 		arreglo = piratasA;
 	}else{
 		arreglo = piratasB;

@@ -11,7 +11,7 @@
 
 void task(int x, int y) {
     /* Tarea */
-    breakpoint();
+	breakpoint();
     int restantex = MAPA_ANCHO-3;
     int restantey = MAPA_ALTO-3;
 
@@ -19,7 +19,7 @@ void task(int x, int y) {
     {
         int i;
         for (i = 0; i < restantex; i++)
-            breakpoint();
+            //breakpoint();
             syscall_mover(DER);
 
         restantex = restantex - 3;

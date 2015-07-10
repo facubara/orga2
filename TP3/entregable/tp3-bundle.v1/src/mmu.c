@@ -79,7 +79,7 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 	page_dir_entry page_dir_entrada = page_dir[dir_indice];
 
 	// Si no estaba presente, cargo todo y busco una pagina libre
-	if (page_dir_entrada.p == 0) {
+	if (page_dir_entrada.p == 0) { 
 		page_dir_entrada = page_dir[dir_indice] = (page_dir_entry) {
 			.p = 1,
 			.rw = rw,
@@ -271,18 +271,18 @@ void copiar_codigo(unsigned int cr3, unsigned int virtualDst, unsigned int virtu
 	int i;
         unsigned char* ptDst = (unsigned char*) virtualDst;
         unsigned char* ptSrc = (unsigned char*) virtualSrc;
-	for (i = 0; i < 0x1000 - 12; i++) {
+	for (i = 0; i < 0x1000 - 0xC; i++) {
 					
 		ptDst[i] = ptSrc[i];
 	}
 	
 	// hasta ahi copia ahora pasaje de parametros
-	unsigned int * pos = (unsigned int*) ptDst + i;
+	unsigned int * pos = (unsigned int*) (ptDst + i);
 	pos[0] = x;
 	pos[1] = y;
-				
-	mmu_unmapear_pagina(virtualDst, cr3Actual);				//desmapeo virtualDest del cr3  actual
-	
+	if (cr3Actual == 0x27000){	
+		mmu_unmapear_pagina(virtualDst, cr3Actual);				//desmapeo virtualDest del cr3  actual
+	}
 	//CODIGO EN LA 0x400000
         
 	mmu_mapear_pagina(0x400000, cr3, virtualSrc, 1, 1);//codigo
@@ -299,7 +299,7 @@ void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
        
     mmu_mapear_pagina(virtualDst, cr3, fisicaCodigo, 0, 1); //centro        
 
-	mmu_mapear_pagina(virtualDst+0x1000, cr3, fisicaCodigo + 0x1000, 0, 1); //adelante
+	mmu_mapear_pagina(virtualDst + 0x1000, cr3, fisicaCodigo + 0x1000, 0, 1); //adelante
 	
 	mmu_mapear_pagina(virtualDst-0x1000, cr3, fisicaCodigo - 0x1000, 0, 1); //atrás
 	

@@ -513,7 +513,6 @@ _isr32:
     je .nojump
     mov [selector], ax
     call fin_intr_pic1
-    xchg bx,bx
     jmp far [offset]
 
     jmp .end
@@ -571,6 +570,7 @@ _isr70:
 	;pushad
 	push ecx
         push eax
+	
 	call game_syscall_manejar
 	call fin_intr_pic1
 	pop ecx
