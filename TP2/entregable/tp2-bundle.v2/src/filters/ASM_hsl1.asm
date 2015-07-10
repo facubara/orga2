@@ -248,16 +248,7 @@ ASM_hsl1:
             pand xmm13, xmm8            ;xmm13 = 1.0 (si pi_l+ll >= 1? y pi_l+ll >= 0?), l+ll si(si pi_l+ll < 1? y pi_l+ll >= 0?), 0 sino | CORRECTOSS | CORRECTOHH | pi_A   (como floats)
 
 
-            ;pxor xmm6, xmm7
-            ;pand xmm6, [maskLLunoi]      ;xmm6 = 1 si pi_l+ll>= 1, 0 sino | 0 | 0 | 0
-            ;pxor xmm8, xmm9             ;xmm8 = 1s si pi_l+11>=0, 0s sino | 0 | 0 | 0
-            ;pnand xmm8, xmm8           ;xmm8 = 1s si pi_l+ll<0, 0s sino | 0 | 0 | 0
-            ;movdqu xmm10, xmm0
-            ;pand xmm8, xmm10           ;xmm8 = pi_l+ll si l+ll>=0, 0 sino | 0 | 0 | 0
-            ;pand xmm10, [mascara7]     ;xmm10 = 0 | pi_s+ss | pi_h+hh | pi_A
-            ;pxor xmm10, xmm6           ;xmm10 = 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
-            ;pxor xmm10, xmm8           ;xmm10 = pi_l+ll si l+ll>=0, 1 si l+ll>=1, 0 sino | pi_s+ss | pi_h+hh | pi_A
-            ;pand xmm10, [maskLL]
+            
 
             ;APLICO CAMBIOS
              movdqu xmm15, xmm13         ;;xmm13 = CORRECTOSLL | CORRECTOSS| CORRECTOHH | pi_A   (como floats)
