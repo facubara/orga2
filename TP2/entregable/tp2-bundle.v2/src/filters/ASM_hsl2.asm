@@ -423,7 +423,7 @@ rgbAhsl:
 ;xmm2,3,4 r g b respectivamente xmm5 tiene max xmm6 tiene el min xmm7 tiene la d 
             pxor xmm8, xmm8
             ptest xmm7, xmm8                  ; d = 0?
-            jz .h 
+            jz .h0 
             ;CALCULO H
           
             ;G-B
@@ -544,7 +544,7 @@ rgbAhsl:
             ret
             .h0:
 
-            movdq xmm11, [mascara0]                      ; xmm11 = 0 | 0 | 0 | 1s 
+            movdqu xmm11, [mascara0]                      ; xmm11 = 0 | 0 | 0 | 1s 
             jmp .hfin 
               
 

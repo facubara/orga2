@@ -353,13 +353,8 @@ uint game_syscall_pirata_mover(direccion dir)
 				bool inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
 				bool inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
 				if (inRangeX && inRangeY){
-					
 					game_jugador_lanzar_pirata(jugadorJugando,1);
-				}
-				
-				
-					
-				
+				}	
 			}
 			
 			
