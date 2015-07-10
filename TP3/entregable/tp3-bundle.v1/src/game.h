@@ -87,7 +87,7 @@ void game_pirata_habilitar_posicion(jugador_t *j, pirata_t *pirata, int x, int y
 void game_pirata_exploto(uint id);
 
 //void game_jugador_inicializar(jugador_t *j);
-void game_jugador_lanzar_pirata(unsigned char, unsigned char);
+void game_jugador_lanzar_pirata(unsigned char, unsigned char, unsigned int, unsigned int);
 pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo);
 void game_jugador_anotar_punto(jugador_t *j);
 void game_explorar_posicion(jugador_t *jugador, int x, int y);
@@ -97,7 +97,7 @@ void game_calcular_posiciones_vistas(int *vistas_x, int *vistas_y, int x, int y)
 pirata_t* game_pirata_en_posicion(uint x, uint y);
 
 uint game_syscall_pirata_posicion(int idx);
-uint game_syscall_pirata_mover(direccion key);
+void game_syscall_pirata_mover(direccion key);
 uint game_syscall_manejar(uint syscall, uint param1);
 void game_tick(uint id_pirata);
 void game_terminar_si_es_hora();
@@ -107,4 +107,6 @@ void game_ver_si_termina();
 void game_syscall_cavar();        //por ahora es void
 void game_matar_pirata();
 void game_matar_pirata_interrupt();
+void mapear_a_todos(unsigned int virtualDst);
+unsigned int mi_codigo(unsigned char tipo);
 #endif  /* !__GAME_H__ */

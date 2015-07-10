@@ -513,7 +513,7 @@ _isr32:
     je .nojump
     mov [selector], ax
     call fin_intr_pic1
-
+    xchg bx,bx
     jmp far [offset]
 
     jmp .end

@@ -7,7 +7,7 @@
 
 #include "mmu.h"
 #include "i386.h"
-
+#include "sched.h"
 
 /* Atributos paginas */
 /* -------------------------------------------------------------------------- */
@@ -179,15 +179,15 @@ unsigned int mmu_inic_dir_pirata(){
 	return cr3;
 }	
 	
-unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo, unsigned char nuevo){
+//unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo, unsigned char nuevo){
 	//int signo, x;
         
         //unsigned int posicion_mapa;
         //0x500000 puerto jugador 1 supongo
-	    unsigned char* posicion_mapa; // = (unsigned char*) (0x500000);  //+ 0x1000;
-	    unsigned char* codigo_tarea; 
+	    //unsigned char* posicion_mapa; // = (unsigned char*) (0x500000);  //+ 0x1000;
+	    //unsigned char* codigo_tarea; 
         //posicion mapa = salida del puerto digamos
-       if(jugador == 0){                //jugador 1
+       /*if(jugador == 0){                //jugador 1
             posicion_mapa = (unsigned char*) (0x500000 + 81*0x1000);   //puerto jugador 1
             
                  if(tipo == 0){  //explorador
@@ -210,8 +210,8 @@ unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigne
         tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000, tipo, jugador, nuevo);
 	return cr3;
 }
-
-void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, /*int signo*/ unsigned int logica, unsigned char tipo, unsigned char jugador, unsigned char nuevo){
+*/
+/*void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, unsigned int logica, unsigned char tipo, unsigned char jugador, unsigned char nuevo){
 	//unsigned int temp;
 	
 	//CODIGO EN LA 0x400000
@@ -253,48 +253,42 @@ void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisi
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS
 	
-}
-
+//}
+*/
 
 unsigned int obtener_pagina_libre() {
 	return 0x100000 + (contador_paginas_ocupadas++) * 0x1000; //area libre 
 	//~ contador_paginas_ocupadas++;
 }
-l 
 
-void copiar_codigo(unsigned int cr3, unsigned int virtualDst ,unsigned int virtualSrc){
+
+void copiar_codigo(unsigned int cr3, unsigned int virtualDst, unsigned int virtualSrc, unsigned int x, unsigned int y){
 	// funcion de copiado de codigos, presupone que soy kernel y no tengo mapeada la destination.
 	
 	unsigned int cr3Actual = rcr3();
-	unsigned int fisica = 0x500000 + (virtualDest - 0x800000) 		 // calculo de la direccion fisica
-	mmu_mapear_pagina(VirtualDest, cr3Actual, (unsigned int) fisica, 1, 0);  //mapea la direccion virtual a la fisica
+	unsigned int fisica = 0x500000 + (virtualDst - 0x800000); 		 // calculo de la direccion fisica
+	mmu_mapear_pagina(virtualDst, cr3Actual, (unsigned int) fisica, 1, 0);  //mapea la direccion virtual a la fisica
 	int i;
+        unsigned char* ptDst = (unsigned char*) virtualDst;
+        unsigned char* ptSrc = (unsigned char*) virtualSrc;
 	for (i = 0; i < 0x1000 - 12; i++) {
 					
-		virtualDst[i] = virtualSrc[i];
+		ptDst[i] = ptSrc[i];
 	}
 	
 	// hasta ahi copia ahora pasaje de parametros
-
-	posicion posicionActual;
-	if (jugadorJugando == 0){
-		posicionActual = piratasA[actual].posicion;
-	}else{
-		posicionActual = piratasB[actual].posicion;
-	}
-	
-	unsigned int * pos = virtualDst + i;
-	pos[0] = posicionActual.x;
-	pos[1] = posicionActual.y;
+	unsigned int * pos = (unsigned int*) ptDst + i;
+	pos[0] = x;
+	pos[1] = y;
 				
-	mmu_unmapear_pagina(virtualDest, cr3Actual);				//desmapeo virtualDest del cr3  actual
+	mmu_unmapear_pagina(virtualDst, cr3Actual);				//desmapeo virtualDest del cr3  actual
 	
 	//CODIGO EN LA 0x400000
         
 	mmu_mapear_pagina(0x400000, cr3, virtualSrc, 1, 1);//codigo
 }
 
-void mapear_alrededores(unsigned int cr3, unsigned int virtualDst, unsigned int virtualSrc){
+void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
 	//la idea es que esta sirve para mapear y para mover porque mapea los alrededores del "virtualDst", ojo que hasta aca le paso direcciones virtuales 
 
 
@@ -311,7 +305,7 @@ void mapear_alrededores(unsigned int cr3, unsigned int virtualDst, unsigned int 
 	
 	mmu_mapear_pagina(virtualDst- (0x1000*80), cr3, fisicaCodigo - (0x1000*80), 0, 1); //izquierda
 	
-	mmu_mapear_pagina(virtualDst- (0x1000*79), cr3, fiscaCodigo - (0x1000*79), 0, 1); //adelante izquierda
+	mmu_mapear_pagina(virtualDst- (0x1000*79), cr3, fisicaCodigo - (0x1000*79), 0, 1); //adelante izquierda
 	
 	mmu_mapear_pagina(virtualDst- (0x1000*81), cr3, fisicaCodigo - (0x1000*81), 0, 1); //atrás izquierda
 	
@@ -326,22 +320,22 @@ void mapear_alrededores(unsigned int cr3, unsigned int virtualDst, unsigned int 
 }
 
 unsigned int posicionToVirtual(posicion p){
-	return 0x800000+p.x*0x1000+p.y*81*0x1000;
+	return 0x800000+p.x*0x1000+p.y*80*0x1000;
 }
 
 void tarea_al_mapa(unsigned int cr3, unsigned int virtualDst, unsigned int virtualSrc){
-	copiar_codigo(cr3,virtualDst,virtualSrc);
-	mapear_alrededores(cr3,virtualDst,virtualSrc);
+	//copiar_codigo(cr3,virtualDst,virtualSrc);
+	mapear_alrededores(cr3,virtualDst);
 	unsigned int *visitadas;
 	if (jugadorJugando == 0){
-		visitadas = visitadasA;
+		visitadas = (unsigned int *) visitadasA;
 	}else{
-		visitadas = visitadasB;
+		visitadas = (unsigned int *) visitadasB;
 	}
 	int i;
-	for (i=0; i < jugadores[jugadorJugando].ult_indice_vis, i++){
-		unsigned int fisica = 0x500000 + (x-0x800000);
-		mmu_mapear_pagina(x,cr3,fisica,0,1);
+	for (i=0; i < jugadores[jugadorJugando].ult_indice_vis; i++){
+		unsigned int fisica = 0x500000 + (visitadas[i]-0x800000);
+		mmu_mapear_pagina(visitadas[i],cr3,fisica,0,1);
 	}
 
 }

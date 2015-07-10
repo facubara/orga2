@@ -205,7 +205,7 @@ void tss_inicializar_tareas_piratas(tss *mi_tss) {
 	mi_tss->ecx      = 0;
 	mi_tss->edx      = 0;
 	mi_tss->ebx      = 0;
-	mi_tss->esp      = 0x400000+0x1000; //0x8000000+0x1000;
+	mi_tss->esp      = 0x400000+0x1000-12; //0x8000000+0x1000;
 	mi_tss->ebp      = 0x400000+0x1000; //0x8000000+0x1000;
 	mi_tss->esi      = 0;
 	mi_tss->edi      = 0;
