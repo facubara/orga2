@@ -278,8 +278,8 @@ void copiar_codigo(unsigned int cr3, unsigned int virtualDst, unsigned int virtu
 	
 	// hasta ahi copia ahora pasaje de parametros
 	unsigned int * pos = (unsigned int*) (ptDst + i);
-	pos[0] = x;
-	pos[1] = y;
+	pos[0] = 20;
+	pos[1] = 20;
 	if (cr3Actual == 0x27000){	
 		mmu_unmapear_pagina(virtualDst, cr3Actual);				//desmapeo virtualDest del cr3  actual
 	}

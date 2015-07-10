@@ -368,9 +368,9 @@ void game_syscall_pirata_mover(direccion dir)
 			unsigned int virtualDst = posicionToVirtual(pos_dst);
 			unsigned int miCr3 = pir.tss->cr3;
 			copiar_codigo(miCr3,virtualDst,mi_codigo(pir.tipo),0,0);
-			mapear_a_todos(virtualDst);
 			
-		
+                        if(pir.tipo == 0){
+                        mapear_a_todos(virtualDst);
 			
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
@@ -387,7 +387,7 @@ void game_syscall_pirata_mover(direccion dir)
 				
 				
 					
-				
+	                }
 			}
 			screen_pintar_pirata(juega,pirata);
 			
@@ -400,6 +400,7 @@ void game_syscall_pirata_mover(direccion dir)
 
 /*uint*/ void game_syscall_cavar()
 {   
+   
 	posicion pos;
     if(jugadorJugando == 0){
     //actual es el indice en la gdt de la tss actual, hacer la cuenta necesaria para obtener 
@@ -474,7 +475,7 @@ uint game_syscall_pirata_posicion(int idx)
 
 }
 
-uint game_syscall_manejar(uint syscall, uint param1)
+uint game_syscall_manejar(uint syscall, int param1)
 {
 
     if (syscall == 0x1) //mover
