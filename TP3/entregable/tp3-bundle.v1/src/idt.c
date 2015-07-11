@@ -60,7 +60,11 @@ void idt_inicializar() {
     IDT_ENTRY(12);//Stack Fault Exception
     IDT_ENTRY(13);
     IDT_ENTRY(14);
+    IDT_ENTRY(15);
+    IDT_ENTRY(16);
     IDT_ENTRY(17);
+    IDT_ENTRY(18);
+    IDT_ENTRY(19);
 
     IDT_ENTRY(32); //reloj
     IDT_ENTRY(33); //teclado

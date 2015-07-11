@@ -291,7 +291,7 @@ void copiar_codigo(unsigned int cr3, unsigned int virtualDst, unsigned int virtu
 void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
 	//la idea es que esta sirve para mapear y para mover porque mapea los alrededores del "virtualDst", ojo que hasta aca le paso direcciones virtuales 
 
-
+        breakpoint();
 
 	unsigned int fisicaCodigo = 0x500000 + (virtualDst - 0x800000);
 	
@@ -314,7 +314,8 @@ void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
 	mmu_mapear_pagina(virtualDst+ (0x1000*80), cr3, fisicaCodigo + (0x1000*80), 0, 1); //derecha
 	
 	mmu_mapear_pagina(virtualDst+ (0x1000*79), cr3, fisicaCodigo + (0x1000*79), 0, 1); //atrás derecha
-
+        breakpoint();
+        return;
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS	
 }
