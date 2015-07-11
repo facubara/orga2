@@ -259,7 +259,7 @@ void mostrar_clock(unsigned int indice) {
 	int y = VIDEO_FILS-2;
 	int x = (2*pirata.indice);
 	if (pirata.jugador == 0){
-		x =  3 + x;
+		x =  2 + x;
 	}else{
 		x = 59 + x;
 	}
