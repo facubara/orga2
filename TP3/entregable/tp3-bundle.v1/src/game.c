@@ -315,7 +315,7 @@ void game_syscall_pirata_mover(direccion dir)
 		visitadas =  (unsigned int *) visitadasA;
        }else{
        pir = piratasB[actual];
-	pirata = &piratasA[actual];
+	pirata = &piratasB[actual];
       
 		visitadas = (unsigned int *) visitadasB;
        }
