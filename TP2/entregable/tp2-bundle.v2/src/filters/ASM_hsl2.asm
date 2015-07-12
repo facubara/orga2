@@ -1,13 +1,16 @@
-    ; ************************************************************************* ;
+; ************************************************************************* ;
 ; Organizacion del Computador II                                            ;
 ;                                                                           ;
-;   Implementacion de la funcion HSL 1                                      ;
+;   Implementacion de la funcion HSL 2                                      ;
 ;                                                                           ;
 ; ************************************************************************* ;
+
+
 extern rgbTOhsl
 extern hslTOrgb
 extern malloc
 extern free
+
 section .data
 align 16
 maskHH: dd 0x0,0xFFFFFFFF,0x0,0x0              ;le
@@ -23,10 +26,17 @@ mascara7: dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0x0   ;le
 mascara8: dd 0xFFFFFFFF,0x0,0xFFFFFFFF,0xFFFFFFFF
 maskSSUnof: dd 0.0,0.0,1.0,0.0
 maskLLUnof: dd 0.0,0.0,0.0,1.0
+
 section .text
 ; void ASM_hsl1(uint32_t w, uint32_t h, uint8_t* data, float hh, float ss, float ll)
-global ASM_hsl1
-ASM_hsl1:
+
+
+global ASM_hsl2
+global hago_suma
+global rgbTOhsl_asm
+global hslTOrgb_asm
+
+ASM_hsl2:
   ;rdi = ancho en pixels
   ;rsi = alto 
   ;rdx = puntero imagen
@@ -101,7 +111,10 @@ ASM_hsl1:
 			;xmm11 -> l2,s2,h2,a2
 			;xmm12 -> l0,s0,h0,a0
             
-			call hago_suma
+			;call hago_suma
+			
+			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+
 			;en xmm15 tengo el pixel resultado
 						
 			sub rsp,16
@@ -124,7 +137,10 @@ ASM_hsl1:
 			movd xmm11, eax
 			pslldq xmm11, 4				;xmm11 -> basura|basura|p3 procesado|0
 						
-			call hago_suma
+			;call hago_suma
+
+			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+
 			;en xmm15 tengo el pixel resultado
 						
 			sub rsp,16
@@ -147,7 +163,10 @@ ASM_hsl1:
 			movd xmm11, eax
 			pslldq xmm11, 4				;xmm11 -> basura|p3 procesado|p2 procesado|0
 
-			call hago_suma
+			;call hago_suma
+			
+			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+
 			;en xmm15 tengo el pixel resultado
 						
 			sub rsp,16
@@ -170,7 +189,10 @@ ASM_hsl1:
 			movd xmm11, eax
 			pslldq xmm11, 4				;xmm11 -> p3 procesado|p2 procesado|p1 procesado|0
 
-			call hago_suma
+			;call hago_suma
+			
+			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+
 			;en xmm15 tengo el pixel resultado
 						
 			sub rsp,16
@@ -190,7 +212,6 @@ ASM_hsl1:
             add rsp,16
 						
 			movd xmm11, eax				;xmm11 -> p3 procesado|p2 procesado|p1 procesado|p0 procesado
-
 					
 			movdqu [rbx], xmm11
 
@@ -240,6 +261,7 @@ rgbTOhsl_asm:
   punpckhbw xmm1, xmm3          ; xmm1 -> b3,b2|b1,b0|g3,g2|g1,g0
 
   movdqu xmm2, xmm1
+	movdqu xmm11, xmm0
 
   punpckhwd xmm0, xmm3          ; xmm0 -> r3|r2|r1|r0
   punpcklwd xmm1, xmm3          ; xmm1 -> g3|g2|g1|g0
@@ -412,10 +434,10 @@ rgbTOhsl_asm:
   movdqu xmm3, xmm9             ;xmm3 = h
   
 
-  pslldq xmm1, xmm1, 4          ;L2,L1,L0,0
+  pslldq xmm1, 4          ;L2,L1,L0,0
   blendps xmm1, xmm7, 5         ;L2,S2,L0,S0
 
-  pslldq xmm3, xmm3, 4          ;h2,h1,h0,0
+  pslldq xmm3, 4          ;h2,h1,h0,0
   blendps xmm3, xmm11, 5        ;h2,a2,h0,a0  
 
   movdqu xmm2, xmm3 
@@ -429,10 +451,10 @@ rgbTOhsl_asm:
   movdqu xmm4, xmm9             ;xmm4 = h
   
 
-  psrldq xmm1, xmm1, 4          ;0,l3,l2,l1
+  psrldq xmm1, 4          ;0,l3,l2,l1
   blendps xmm1, xmm7, 0xA       ;s3,l3,s1,l1
 
-  psrldq xmm4, xmm4, 4          ;0,h3,h2,h1
+  psrldq xmm4, 4          ;0,h3,h2,h1
   blendps xmm4, xmm11, 0xA      ;a3,h3,a1,h1  
 
   movdqu xmm5, xmm4 
@@ -459,6 +481,9 @@ rgbTOhsl_asm:
 ;-----------------------------------------------------------------------------------------
 
 hago_suma:
+
+	push rbp
+	mov rbp, rsp
 		
 			; h 
 			addps xmm0, xmm3           ;xmm0 = pi_l | pi_s | pi_h + hh | pi_A                         
@@ -478,22 +503,29 @@ hago_suma:
           
             ;COMPARACIONES SOBRE H
             ;h + hh = 360?
+
             movdqu xmm5, xmm0
             pcmpeqd xmm5, [mask360i]   ;pi_h+hh = 360? todo lo demas quede en 0 probablemente
             movdqu xmm6, xmm5          
             pand xmm6, [maskHH]      ; xmm6 = 0 | 0 | h+hh = 360? | 0
+
             ;h + hh > 360?
+
             movdqu xmm5, xmm0
             pcmpgtd xmm5, [mask360i]   ;pi_h+hh > 360?
             movdqu xmm7, xmm5          
             pand xmm7, [maskHH]      ; xmm7 = 0 | 0 | h+hh > 360? | 0
+
             ;h<<<<< + hh = 0?
+
             movdqu xmm5, xmm14
             pcmpeqd xmm5, [mascara8]   ;pi_h+hh = 0?
             movdqu xmm8, xmm5          
             pand xmm8, [maskHH]      ; xmm8 = 0 | 0 | h+hh= 0? | 0
+
             ;jz .sumo360
             ;h + hh > 0?
+
             movdqu xmm5, xmm14
             pcmpgtd xmm5, [mascara8]   ;pi_h+hh > 0?
             movdqu xmm9, xmm5          
@@ -501,6 +533,7 @@ hago_suma:
             
             ;PARA SABER SI h+hh <0 me fijo si h+hh>0 y si h+hh=0, los sumo y despues hago un pnand para negar, si da 1s es que es menor, sino era o mayor o igual
             ;PARA SABER SI h+hh >= 360 me fijo si h+hh=360 y si h+hh>360, hago pxor entre eso y me fijo si da 1s es que es alguna de las dos opciones sino es menor
+
             pxor xmm6, xmm7
             pand xmm6, [maskHH]          ;CREO QUE NO ES NECESARIO 
             pand xmm6, [mask360i]      ;xmm6 = 0 | 0 | 360 si h+hh>=360, 0 sino | 0
@@ -520,21 +553,28 @@ hago_suma:
 
             ;COMPARACIONES SOBRE S
             ;s+ss = 1?
+
             movdqu xmm5, xmm0
             pcmpeqd xmm5, [maskSSUnoi]
             movdqu xmm6, xmm5
             pand xmm6, [maskSS]      ;xmm6 = 0 | s+ss = 1? | 0 | 0
+
             ;s+ss > 1?
+
             movdqu xmm5, xmm0
             pcmpgtd xmm5, [maskSSUnoi]
             movdqu xmm7, xmm5
             pand xmm7, [maskSS]      ;xmm7 = 0 | s+ss>1? | 0 | 0
+
             ;s+ss = 0?
+
             movdqu xmm5, xmm14
             pcmpeqd xmm5, [mascara6]
             movdqu xmm8, xmm5
             pand xmm8, [maskSS]      ;xmm8 = 0 | s+ss=0? | 0 | 0
+
             ;s+ss > 0?
+
             movdqu xmm5, xmm14
             pcmpgtd xmm5, [mascara6]
             movdqu xmm9, xmm5
@@ -567,21 +607,28 @@ hago_suma:
 
             ;COMPARACIONES SOBRE L
             ;l+ll = 1?
+
             movdqu xmm5, xmm0
             pcmpeqd xmm5, [maskLLunoi]
             movdqu xmm6, xmm5
             pand xmm6, [maskLL]      ;xmm6 = l+ll=1? | 0 | 0 | 0
+
             ;l+ll > 1?
+
             movdqu xmm5, xmm0
             pcmpgtd xmm5, [maskLLunoi]
             movdqu xmm7, xmm5
             pand xmm7, [maskLL]      ;xmm7 = l+ll>1? | 0 | 0 | 0
+
             ;l+ll = 0?
+
             movdqu xmm5, xmm14
             pcmpeqd xmm5, [mascara7]
             movdqu xmm8, xmm5
             pand xmm8, [maskLL]      ;xmm8 = l+ll=0? | 0 | 0 | 0
+
             ;l+ll > 0?
+
             movdqu xmm5, xmm14
             pcmpgtd xmm5, [mascara7]
             movdqu xmm9, xmm5
@@ -600,6 +647,9 @@ hago_suma:
 
             ;APLICO CAMBIOS
              movdqu xmm15, xmm13         ;;xmm13 = CORRECTOSLL | CORRECTOSS| CORRECTOHH | pi_A   (como floats)
+
+	pop rbp
+	ret
 	
 ;------------------------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------------------------
