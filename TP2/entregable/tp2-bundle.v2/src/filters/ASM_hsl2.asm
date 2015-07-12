@@ -744,7 +744,7 @@ subps xmm2,xmm1						;xmm1 -> basura|basura|1-fabs(fmod(h/60.0 , 2) -1)|basura
 
 mulps xmm2, xmm4					;xmm1 -> basura|basura|c*(1-fabs(fmod(h/60.0 , 2) -1))|bas
 
-shufps xmm2, xmm2, 0xaa				;xmm2 -> x|x|x|x
+shufps xmm2, xmm2, 01010101b		;xmm2 -> x|x|x|x
 
 ;-------------------------------------------------------------------------------------------
 ;en xmm4 esta c|c|c|c|
