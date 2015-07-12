@@ -222,9 +222,9 @@ ASM_hsl2:
             jmp .ciclocolumnas
             
 
-            .avanzo:
-              inc r14
-              jmp .ciclofilas
+        .avanzo:
+        inc r14
+        jmp .ciclofilas
             
 .fin:
  
