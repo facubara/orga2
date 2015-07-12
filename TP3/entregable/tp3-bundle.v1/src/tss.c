@@ -189,7 +189,7 @@ void tss_inicializar_tarea_idle() {
 void tss_inicializar_tareas_piratas(tss *mi_tss) {
 	mi_tss->ptl      = 0;
 	mi_tss->unused0  = 0;
-	mi_tss->esp0     = obtener_pagina_libre()+0x1000;
+	mi_tss->esp0     = obtener_pagina_libre();//+0x1000;
 	mi_tss->ss0      = 0x0050;
 	mi_tss->unused1  = 0;
 	mi_tss->esp1     = 0;

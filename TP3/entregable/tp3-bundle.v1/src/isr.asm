@@ -48,7 +48,11 @@ global _isr11
 global _isr12
 global _isr13
 global _isr14
+global _isr15
+global _isr16
 global _isr17
+global _isr18
+global _isr19
 global _isr1
 global _isr2
 global _isr3
@@ -138,6 +142,7 @@ _isr0:
 
 
     imprimir_texto_mp int0_capturada, int0_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr1:
@@ -161,6 +166,7 @@ _isr1:
     ;call game_matar_pirata_interrupt
 
     imprimir_texto_mp int1_capturada, int1_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr2:
@@ -184,6 +190,7 @@ _isr2:
     ;call game_matar_pirata_interrupt 
 
     imprimir_texto_mp int2_capturada, int2_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr3:
@@ -207,6 +214,7 @@ _isr3:
      ;call game_matar_pirata_interrupt
 
     imprimir_texto_mp int3_capturada, int3_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr4:
@@ -230,6 +238,7 @@ _isr4:
      ;call game_matar_pirata_interrupt
 
     imprimir_texto_mp int4_capturada, int4_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr5:;BOUND Range Exceeded Exception
@@ -253,6 +262,7 @@ _isr5:;BOUND Range Exceeded Exception
      ;call game_matar_pirata_interrupt
 
     imprimir_texto_mp int5_capturada, int5_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr6:
@@ -276,6 +286,7 @@ _isr6:
      ;call game_matar_pirata_interrupt
  
     imprimir_texto_mp int6_capturada, int6_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr7:
@@ -300,6 +311,7 @@ _isr7:
 
 
     imprimir_texto_mp int7_capturada, int7_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr8:;Double Fault Exception
@@ -323,7 +335,7 @@ _isr8:;Double Fault Exception
      ;call game_matar_pirata_interrupt
     
     imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
-    
+    xchg bx,bx
     
     jmp $
 
@@ -349,6 +361,7 @@ _isr9:;Coprocessor Segment Overrun
 
 
     imprimir_texto_mp int9_capturada, int9_capturada_len, 0x07, 20, 30
+    xchg bx,bx
     jmp $
 
 _isr10:;invalid TSS
@@ -373,7 +386,7 @@ _isr10:;invalid TSS
 
 
     imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
-    
+    xchg bx,bx
     jmp $
 
 _isr11:;Segment Not Present
@@ -397,7 +410,7 @@ _isr11:;Segment Not Present
      ;call game_matar_pirata_interrupt
    
     imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    
+    xchg bx,bx
     jmp $
 
 _isr12:;Stack Fault Exception
@@ -419,7 +432,7 @@ _isr12:;Stack Fault Exception
     pushad
 
     imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
-
+    xchg bx,bx
     popad
     
     jmp $
@@ -443,7 +456,7 @@ _isr13:
     pushad
 
     imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
-    
+    xchg bx,bx
     popad
     jmp $
 
@@ -467,11 +480,57 @@ _isr14:
 
 
     imprimir_texto_mp int14_capturada, int14_capturada_len, 0x07, 20, 30
-    
+    xchg bx,bx
     
     jmp $
     
+_isr15:;
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
+    push ebp
+    mov ebp, esp
+    pushad
 
+     ;call game_matar_pirata_interrupt
+   
+    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    xchg bx,bx
+    jmp $
+
+_isr16:;
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
+    push ebp
+    mov ebp, esp
+    pushad
+
+     ;call game_matar_pirata_interrupt
+   
+    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    xchg bx,bx
+    jmp $
 _isr17:
     ;push gs
     ;push fs
@@ -491,16 +550,63 @@ _isr17:
     pushad
 
     imprimir_texto_mp int17_capturada, int17_capturada_len, 0x07, 20, 30
-   
+    xchg bx,bx
     jmp $
 
+_isr18:;
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
+    push ebp
+    mov ebp, esp
+    pushad
+
+     ;call game_matar_pirata_interrupt
+   
+    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    xchg bx,bx
+    jmp $
+
+_isr19:;Segment Not Present
+    ;push gs
+    ;push fs
+    ;push es
+    ;push ds
+    ;push eax
+    ;push ebx
+    ;push ecx
+    ;push edx
+    ;push esi
+    ;push edi
+    ;push ebp
+    ;mov eax, %1
+    ;push eax
+    push ebp
+    mov ebp, esp
+    pushad
+
+     ;call game_matar_pirata_interrupt
+   
+    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    xchg bx,bx
+    jmp $
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 _isr32:
 
     pushad
-
+    call fin_intr_pic1
     call screen_actualizar_reloj_global
 
     call game_ver_si_termina
@@ -512,7 +618,7 @@ _isr32:
     cmp ax, bx
     je .nojump
     mov [selector], ax
-    call fin_intr_pic1
+    ;call fin_intr_pic1
     jmp far [offset]
 
     jmp .end
@@ -583,4 +689,19 @@ _isr70:
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 
+
+global cambiar_tarea_ya
+cambiar_tarea_ya:
+	;~ pushad
+	;~ xchg bx,bx
+        push ebp
+        mov ebp, esp
+	mov eax, [ebp+8]
+        ;xchg bx,bx
+	mov [selector], ax
+	jmp far [offset]
+	
+        pop ebp
+	;~ popad
+	ret
 

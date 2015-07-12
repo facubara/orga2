@@ -109,4 +109,5 @@ void game_matar_pirata();
 void game_matar_pirata_interrupt();
 void mapear_a_todos(unsigned int virtualDst);
 unsigned int mi_codigo(unsigned char tipo);
+void cambiar_tarea_ya(unsigned short idle);
 #endif  /* !__GAME_H__ */

@@ -368,29 +368,33 @@ void game_syscall_pirata_mover(direccion dir)
 			unsigned int virtualDst = posicionToVirtual(pos_dst);
 			unsigned int miCr3 = pir.tss->cr3;
 			copiar_codigo(miCr3,virtualDst,mi_codigo(pir.tipo),0,0);
-			
+			//breakpoint();
                         if(pir.tipo == 0){
+                        //breakpoint();
                         mapear_a_todos(virtualDst);
-			
+			//breakpoint();
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
-			int i;
-			for (i=0;i<BOTINES_CANTIDAD;i++){
+			//int i;
+			/*for (i=0;i<BOTINES_CANTIDAD;i++){
 				unsigned char inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
 				unsigned char inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
                                   
 				if (inRangeX && inRangeY){
 					unsigned int x = botines[i][0];
                                         unsigned int y = botines[i][1]; 
-					game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
+					//game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
 				}
 				
 				
 					
-	                }
+	                }*/
 			}
 			screen_pintar_pirata(juega,pirata);
-			
+                        
+                        //YA SE MOVIO AHORA PASO A LA IDLE
+			unsigned short idle = pasar_a_idle();
+	               cambiar_tarea_ya(idle);
 			
 			
 			
@@ -649,9 +653,10 @@ void mapear_a_todos(unsigned int virtualDst){
 	for (i = 0;i < 8;i++){
                if(arreglo[i].vivo == 1){
 		mapear_alrededores((arreglo[i].tss)->cr3,virtualDst);
+                breakpoint();
                }
 	}
-
+return;
 }
 
 #define KB_w_Aup    0x11 // 0x91
