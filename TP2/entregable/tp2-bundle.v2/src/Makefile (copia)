@@ -5,7 +5,7 @@
 #                                                                           #
 # ************************************************************************* #
 
-all: makes correrTest
+all: makes tp2
 
 CFLAGS=-Wall -Wextra -pedantic -O0 -ggdb -lm -std=c99
 
@@ -14,15 +14,15 @@ makes:
 	make -C tools
 	make -C filters
 
-%.o: %.c test.h 
+%.o: %.c run.h 
 	gcc $(CFLAGS) -c -o $@ $<
 	
-correrTest: test.o correrTest.o makes
-	gcc $(CFLAGS) correrTest.o test.o filters/*.o bmp/*.o -o correrTest -lm
-	cp correrTest ../bin/
+tp2: run.o tp2.o makes
+	gcc $(CFLAGS) tp2.o run.o filters/*.o bmp/*.o -o tp2 -lm
+	cp tp2 ../bin/
 	
 clean:
 	make -C bmp clean
 	make -C tools clean
 	make -C filters clean
-	rm  -f *.o correrTest
+	rm  -f *.o tp2
