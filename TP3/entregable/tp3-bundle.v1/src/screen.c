@@ -261,7 +261,7 @@ void mostrar_clock(unsigned int indice) {
 	if (pirata.jugador == 0){
 		x =  2 + x;
 	}else{
-		x = 59 + x;
+		x = 57 + x;
 	}
 	
 	p[y][x].a = (unsigned char) C_FG_LIGHT_GREY | (unsigned char) C_BG_BLACK;
@@ -297,7 +297,7 @@ unsigned char corregirPosicion(jugador_t *j, pirata_t *pirata){
     if (j->puerto.x==1){
         return pirata->posicion.y + 1;
     }else {
-        return pirata->posicion.y;
+        return pirata->posicion.y + 1;
     }
 }
 
@@ -411,21 +411,22 @@ void screen_restaurar_pantalla(){
     }
 }
 
-void screen_mostrar_debug(unsigned int numero, unsigned int ebp, unsigned int edi, unsigned int esi
+void screen_muestra_error(char *error, unsigned int ebp, unsigned int edi, unsigned int esi
                             , unsigned int edx, unsigned int ecx, unsigned int ebx, unsigned int eax
                             , unsigned int ds, unsigned int es, unsigned int fs, unsigned int gs
-                            , unsigned int errorCode, unsigned int eip, unsigned int cs, unsigned int eflags
-                            , unsigned int *esp, unsigned int ss){
+                            , unsigned int errorCode, unsigned int eip, unsigned int cs
+			    , unsigned int eflags, unsigned int *esp, unsigned int ss){
     unsigned int inicioC = 25;
     unsigned int inicioF = 8;
     unsigned int alto = 36;
     unsigned int ancho = 30;
-
-    if(debug==1){
+    breakpoint();
+   
         screen_copiar_pantalla();
         screen_pintar_rect(' ',C_BG_BLACK,inicioF, inicioC, alto , ancho); // pinto el rectangulo externo en negro
         screen_pintar_rect(' ',C_BG_LIGHT_GREY,inicioF+1, inicioC+1, alto -2 , ancho -2); // pinto el rectangulo gris
         screen_pintar_linea_h(' ',C_BG_RED,inicioF+1,inicioC+1,ancho-2);
+	print(error, inicioC+1, inicioF+1,C_FG_BLACK|C_BG_RED);
         
         unsigned int columna1= inicioC + 3;
         unsigned int columna2= inicioC + 16;
@@ -503,6 +504,6 @@ void screen_mostrar_debug(unsigned int numero, unsigned int ebp, unsigned int ed
         print( "eflags", columna1, fila, C_FG_BLACK|C_BG_LIGHT_GREY);
         print_hex(eflags,8,columna1 + 6, fila, C_FG_WHITE|C_BG_LIGHT_GREY );
 
-    }
+    
 }
 

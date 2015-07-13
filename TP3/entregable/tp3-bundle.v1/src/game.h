@@ -41,6 +41,7 @@ typedef struct pirata_t
     unsigned char jugador;
     unsigned char indice; //ESTO PARA EL CLOCK
     unsigned char tipo; // 0 explorador 1 minero
+    posicion dest;
     //unsigned char vivos[8];
     // id unica, posicion, tipo, reloj
 } pirata_t;
