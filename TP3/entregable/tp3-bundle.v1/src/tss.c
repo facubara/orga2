@@ -189,7 +189,7 @@ void tss_inicializar_tarea_idle() {
 void tss_inicializar_tareas_piratas(tss *mi_tss) {
 	mi_tss->ptl      = 0;
 	mi_tss->unused0  = 0;
-	mi_tss->esp0     = obtener_pagina_libre();//+0x1000;
+	mi_tss->esp0     = obtener_pagina_libre()+0x1000;
 	mi_tss->ss0      = 0x0050;
 	mi_tss->unused1  = 0;
 	mi_tss->esp1     = 0;
@@ -206,7 +206,7 @@ void tss_inicializar_tareas_piratas(tss *mi_tss) {
 	mi_tss->edx      = 0;
 	mi_tss->ebx      = 0;
 	mi_tss->esp      = 0x400000+0x1000-12; //0x8000000+0x1000;
-	mi_tss->ebp      = 0x400000+0x1000; //0x8000000+0x1000;
+	mi_tss->ebp      = 0x400000+0x1000-4; //0x8000000+0x1000;
 	mi_tss->esi      = 0;
 	mi_tss->edi      = 0;
 	mi_tss->es       = 0x005B;

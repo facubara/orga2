@@ -179,82 +179,7 @@ unsigned int mmu_inic_dir_pirata(){
 	return cr3;
 }	
 	
-//unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata,*/ unsigned char jugador/* unsigned short y*/, unsigned char tipo, unsigned char nuevo){
-	//int signo, x;
-        
-        //unsigned int posicion_mapa;
-        //0x500000 puerto jugador 1 supongo
-	    //unsigned char* posicion_mapa; // = (unsigned char*) (0x500000);  //+ 0x1000;
-	    //unsigned char* codigo_tarea; 
-        //posicion mapa = salida del puerto digamos
-       /*if(jugador == 0){                //jugador 1
-            posicion_mapa = (unsigned char*) (0x500000 + 81*0x1000);   //puerto jugador 1
-            
-                 if(tipo == 0){  //explorador
-                 codigo_tarea = (unsigned char*) (0x10000);
-                 }else{   //minero
-                 codigo_tarea = (unsigned char*) (0x11000);
-                      }
-                   }
-            else{
-            posicion_mapa = (unsigned char*) (0x121FFFF - 81* 0x1000);  // puerto jugador 2}
-            if(tipo == 0){
-            codigo_tarea = (unsigned char*) (0x12000);
-            }else{
-            codigo_tarea = (unsigned char*) (0x13000);
-            }
-        }
-        //unsigned char* codigo_tarea = (unsigned char*) (0x10000);
-        //codigo primer tarea, para probar
-        //LOGICA (0x0881000 deberia ir variando)
-        tarea_al_mapa(cr3, codigo_tarea, posicion_mapa, 0x0881000, tipo, jugador, nuevo);
-	return cr3;
-}
-*/
-/*void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1, unsigned int logica, unsigned char tipo, unsigned char jugador, unsigned char nuevo){
-	//unsigned int temp;
-	
-	//CODIGO EN LA 0x400000
 
-                unsigned int cr3Actual = rcr3();
-				mmu_mapear_pagina(0x0400000, cr3Actual, (unsigned int) fisica1, 1, 0);
-                   
-				
-				unsigned char* cod_tarea_dest = (unsigned char*) 0x0400000;
-				unsigned char* cod_tarea_origen = (unsigned char*) 0x10000;
-				int i;
-				for (i = 0; i < 0x1000; i++) {
-					
-					cod_tarea_dest[i] = cod_tarea_origen[i];
-				}
-				
-				mmu_unmapear_pagina(0x0400000, cr3Actual);
-        
-	mmu_mapear_pagina(0x400000, cr3, (unsigned int) fisica0, 1, 1);//codigo
-        if(tipo == 0){ //explorador
-        mmu_mapear_pagina(logica, cr3, (unsigned int) fisica1, 0, 1); //centro        
-
-	mmu_mapear_pagina(logica+0x1000, cr3, (unsigned int)fisica1 + 0x1000, 0, 1); //adelante
-	
-	mmu_mapear_pagina(logica-0x1000, cr3, (unsigned int)fisica1 - 0x1000, 0, 1); //atrás
-	
-	mmu_mapear_pagina(logica- (0x1000*80), cr3, (unsigned int)fisica1 - (0x1000*80), 0, 1); //izquierda
-	
-	mmu_mapear_pagina(logica- (0x1000*79), cr3, (unsigned int)fisica1 - (0x1000*79), 0, 1); //adelante izquierda
-	
-	mmu_mapear_pagina(logica- (0x1000*81), cr3, (unsigned int)fisica1 - (0x1000*81), 0, 1); //atrás izquierda
-	
-	mmu_mapear_pagina(logica+ (0x1000*81), cr3, (unsigned int)fisica1 + (0x1000*81), 0, 1); //adelante derecha
-	
-	mmu_mapear_pagina(logica+ (0x1000*80), cr3, (unsigned int)fisica1 + (0x1000*80), 0, 1); //derecha
-	
-	mmu_mapear_pagina(logica+ (0x1000*79), cr3, (unsigned int)fisica1 + (0x1000*79), 0, 1); //atrás derecha
-        }
-        //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
-        // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS
-	
-//}
-*/
 
 unsigned int obtener_pagina_libre() {
 	return 0x100000 + (contador_paginas_ocupadas++) * 0x1000; //area libre 
@@ -267,31 +192,53 @@ void copiar_codigo(unsigned int cr3, unsigned int virtualDst, unsigned int virtu
 	
 	unsigned int cr3Actual = rcr3();
 	unsigned int fisica = 0x500000 + (virtualDst - 0x800000); 		 // calculo de la direccion fisica
-	mmu_mapear_pagina(virtualDst, cr3Actual, (unsigned int) fisica, 1, 0);  //mapea la direccion virtual a la fisica
+        //unsigned int fisica1 = 0x500000 + (virtualSrc - 0x800000);
+	//mmu_unmapear_pagina(virtualDst,cr3Actual);
+	mmu_mapear_pagina(virtualDst, cr3Actual,fisica,1,1);  //mapea la direccion virtual a la fisica
+	//mmu_mapear_pagina(virtualDst-0x1000, cr3Actual,fisica1,1, 1); 
+
+        //ANTES MAPEABAMOS SIEMPRE DESDE LA FISICA DEL CODIGO DE LA TAREA Y AHI "ANDABA" hasta cierto punto
 	int i;
-        unsigned char* ptDst = (unsigned char*) virtualDst;
-        unsigned char* ptSrc = (unsigned char*) virtualSrc;
-	for (i = 0; i < 0x1000 - 0xC; i++) {
-					
+        unsigned char* ptDst = (unsigned char *) virtualDst;
+        unsigned char* ptSrc = (unsigned char *) virtualSrc;
+        
+	for (i = 0; i < 4096; i++) {
+       	        
 		ptDst[i] = ptSrc[i];
 	}
+        breakpoint();
+	int a = x;
+        int b = y;
+        asm ("movl %0, %%ecx;"
+         :
+         :"r"(a)
+         //:"%ecx"
+         );
+         breakpoint();
+        asm ("movl %0, %%ecx;"
+         :
+         :"r"(b)
+         //:"%ecx"
+         );
+         a = a + b;
+         /*unsigned int* pepe;
+          pepe = (unsigned int*) (&ptDst[0x1000-4]);
+          pepe[0] = y;
+          pepe[1] = x;*/ 
+        //*((unsigned int*)(&ptDst[0x1000-4])) = y;
+        //*((unsigned int*)(&ptDst[0x1000-8])) = x;
 	
 	// hasta ahi copia ahora pasaje de parametros
-	unsigned int * pos = (unsigned int*) (ptDst + i);
-	pos[0] = 20;
-	pos[1] = 20;
-	if (cr3Actual == 0x27000){	
-		mmu_unmapear_pagina(virtualDst, cr3Actual);				//desmapeo virtualDest del cr3  actual
-	}
+	
+	
 	//CODIGO EN LA 0x400000
-        
-	mmu_mapear_pagina(0x400000, cr3, virtualSrc, 1, 1);//codigo
+        mmu_unmapear_pagina(0x500000, cr3Actual);
+	mmu_mapear_pagina(0x400000, cr3, fisica, 1, 1);//codigo
+        breakpoint();
 }
 
 void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
 	//la idea es que esta sirve para mapear y para mover porque mapea los alrededores del "virtualDst", ojo que hasta aca le paso direcciones virtuales 
-
-        breakpoint();
 
 	unsigned int fisicaCodigo = 0x500000 + (virtualDst - 0x800000);
 	
@@ -314,20 +261,19 @@ void mapear_alrededores(unsigned int cr3, unsigned int virtualDst){
 	mmu_mapear_pagina(virtualDst+ (0x1000*80), cr3, fisicaCodigo + (0x1000*80), 0, 1); //derecha
 	
 	mmu_mapear_pagina(virtualDst+ (0x1000*79), cr3, fisicaCodigo + (0x1000*79), 0, 1); //atrás derecha
-        breakpoint();
-        return;
+
         //MAPEE LAS POSICIONES CORRESPONDIENTES A LA TAREA EN EL AREA DE MEM DE LA TAREA EN CUESTION
         // VER QUE ONDA EL MAPEO DE ESTO MISMO A LAS OTRAS TAREAS	
 }
 
 unsigned int posicionToVirtual(posicion p){
-	return 0x800000+p.x*0x1000+p.y*80*0x1000;
+	return 0x800000+p.x*0x1000+(p.y)*80*0x1000;
 }
 
 void tarea_al_mapa(unsigned int cr3, unsigned int virtualDst, unsigned int virtualSrc){
 	//copiar_codigo(cr3,virtualDst,virtualSrc);
 	mapear_alrededores(cr3,virtualDst);
-	unsigned int *visitadas;
+	/*unsigned int *visitadas;
 	if (jugadorJugando == 0){
 		visitadas = (unsigned int *) visitadasA;
 	}else{
@@ -337,11 +283,7 @@ void tarea_al_mapa(unsigned int cr3, unsigned int virtualDst, unsigned int virtu
 	for (i=0; i < jugadores[jugadorJugando].ult_indice_vis; i++){
 		unsigned int fisica = 0x500000 + (visitadas[i]-0x800000);
 		mmu_mapear_pagina(visitadas[i],cr3,fisica,0,1);
-	}
+	}*/
 
 }
 
-// TODO fijarse que es mas comodo pasar las posiciones o pasar las direcciones virtuales por otra parte quizas estaria
-// bueno que cada pirata sepa donde esta su codigo porque se usa todo el tiempo.
-// el uso de la funcion mapear alrededores al mover es muy simple, le paso la direccion del codigo, el cr3 de la tarea y la direcc a donde quiero moverla, esta puede ser la posicion como tipo
-// posicion luego de llamada posicionToVirtual(posicion p)

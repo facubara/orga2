@@ -25,6 +25,10 @@ extern game_ver_si_termina
 extern sched_proximo_indice
 extern tiempo_sin_juego
 extern game_atender_teclado
+extern pasar_a_idle
+extern debug
+extern game_matar_pirata_interrupt
+extern screen_muestra_error
 
 ;;
 ;; Definición de MACROS
@@ -63,52 +67,52 @@ global _isr32
 global _isr33
 global _isr70
 
-int0_capturada: db "Divide Error Exception"
+int0_capturada: db "Divide Error Exception",0
 int0_capturada_len equ $ - int0_capturada
 
-int1_capturada: db "Debug Exception"
+int1_capturada: db "Debug Exception",0
 int1_capturada_len equ $ - int1_capturada
 
 int2_capturada: db "NMI Interrupt",0
 int2_capturada_len equ $ - int2_capturada
 
-int3_capturada: db "Breakpoint Exception"
+int3_capturada: db "Breakpoint Exception",0
 int3_capturada_len equ $ - int3_capturada
 
-int4_capturada: db "Overflow Exception"
+int4_capturada: db "Overflow Exception",0
 int4_capturada_len equ $ - int4_capturada
 
-int5_capturada: db "BOUND Range Exceeded Exception!"
+int5_capturada: db "BOUND Range Exceeded Exception!",0
 int5_capturada_len equ $ - int5_capturada
 
-int6_capturada: db "Invalid Opcode Exception"
+int6_capturada: db "Invalid Opcode Exception",0
 int6_capturada_len equ $ - int6_capturada
 
-int7_capturada: db "Device Not Available Exception!"
+int7_capturada: db "Device Not Available Exception!",0
 int7_capturada_len equ $ - int7_capturada
 
-int8_capturada: db "Double Fault Exception"
+int8_capturada: db "Double Fault Exception",0
 int8_capturada_len equ $ - int8_capturada
 
-int9_capturada: db "Coprocessor Segment Overrun"
+int9_capturada: db "Coprocessor Segment Overrun",0
 int9_capturada_len equ $ - int9_capturada
 
-int10_capturada: db "invalid TSS"
+int10_capturada: db "invalid TSS",0
 int10_capturada_len equ $ - int10_capturada
 
-int11_capturada: db "Segment Not Present"
+int11_capturada: db "Segment Not Present",0
 int11_capturada_len equ $ - int11_capturada
 
-int12_capturada: db "Stack Fault Exception!"
+int12_capturada: db "Stack Fault Exception!",0
 int12_capturada_len equ $ - int12_capturada
 
-int14_capturada: db "Page-Fault Exception"
+int14_capturada: db "Page-Fault Exception",0
 int14_capturada_len equ $ - int14_capturada
 
-int13_capturada: db "General Protection"
+int13_capturada: db "General Protection",0
 int13_capturada_len equ $ - int13_capturada
 
-int17_capturada: db "Alignment Check Exception"
+int17_capturada: db "Alignment Check Exception",0
 int17_capturada_len equ $ - int17_capturada
 ;;
 ;; Datos
@@ -121,491 +125,797 @@ tecla: db 0x00
 ;; -------------------------------------------------------------------------- ;;
 ;ISR 0
 _isr0:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
  
-    ;call game_matar_pirata_interrupt
+    call game_matar_pirata_interrupt
 
 
-    imprimir_texto_mp int0_capturada, int0_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int0_capturada, int0_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+     
 
 _isr1:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    ;call game_matar_pirata_interrupt
+    call game_matar_pirata_interrupt
 
-    imprimir_texto_mp int1_capturada, int1_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int1_capturada, int1_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+     
 
 _isr2:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    ;call game_matar_pirata_interrupt 
+    call game_matar_pirata_interrupt 
 
-    imprimir_texto_mp int2_capturada, int2_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int2_capturada, int2_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+
+     
 
 _isr3:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
 
-    imprimir_texto_mp int3_capturada, int3_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int3_capturada, int3_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+
+     
 
 _isr4:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
 
-    imprimir_texto_mp int4_capturada, int4_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int4_capturada, int4_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+
+     
 
 _isr5:;BOUND Range Exceeded Exception
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
 
-    imprimir_texto_mp int5_capturada, int5_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int5_capturada, int5_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+     
 
 _isr6:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
  
-    imprimir_texto_mp int6_capturada, int6_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int6_capturada, int6_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+     
 
 _isr7:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    ;call game_matar_pirata_interrupt
+    call game_matar_pirata_interrupt
 
 
-    imprimir_texto_mp int7_capturada, int7_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int7_capturada, int7_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
 
 _isr8:;Double Fault Exception
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
     
-    imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
 
 _isr9:;Coprocessor Segment Overrun
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
 
 
-    imprimir_texto_mp int9_capturada, int9_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int9_capturada, int9_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr10:;invalid TSS
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
 
 
-    imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr11:;Segment Not Present
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
    
-    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error	
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr12:;Stack Fault Exception
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
+    call game_matar_pirata_interrupt
+
+    ;imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
     xchg bx,bx
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
     popad
-    
-    jmp $
 
 _isr13:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
+    call game_matar_pirata_interrupt
+
+    ;imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
     xchg bx,bx
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error	
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
     popad
-    jmp $
 
 _isr14:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
-    ;mov eax, %1
-    ;push eax
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
     push ebp
+    ;mov eax, %1
+    mov eax, int14_capturada
+	push eax
     mov ebp, esp
-    pushad
+    ;pushad
 
-
-    imprimir_texto_mp int14_capturada, int14_capturada_len, 0x07, 20, 30
-    xchg bx,bx
     
-    jmp $
+    call game_matar_pirata_interrupt
+
+    ;imprimir_texto_mp int14_capturada, int14_capturada_len, 0x07, 20, 30
+    xchg bx,bx
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+
     
 _isr15:;
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
    
-    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $	
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr16:;
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
    
-    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error	
+	
+     ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
 _isr17:
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-    imprimir_texto_mp int17_capturada, int17_capturada_len, 0x07, 20, 30
+    call game_matar_pirata_interrupt
+
+    ;imprimir_texto_mp int17_capturada, int17_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr18:;
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
    
-    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error	
+	 ;jmp $
+	.salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
+    
 
 _isr19:;Segment Not Present
-    ;push gs
-    ;push fs
-    ;push es
-    ;push ds
-    ;push eax
-    ;push ebx
-    ;push ecx
-    ;push edx
-    ;push esi
-    ;push edi
-    ;push ebp
+    push gs
+    push fs
+    push es
+    push ds
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
     ;mov eax, %1
-    ;push eax
+    push eax
     push ebp
     mov ebp, esp
     pushad
 
-     ;call game_matar_pirata_interrupt
+     call game_matar_pirata_interrupt
    
-    imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
+    ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
     xchg bx,bx
-    jmp $
+    cmp byte [debug], 0
+	je .salir
+	mov byte [debug], 2 ;modo mostrando
+
+    call screen_muestra_error
+	
+     ;jmp $
+    .salir:
+
+    call pasar_a_idle
+    push eax
+    call cambiar_tarea_ya
+    add esp, 13*4
+        
+    iret
+    sti
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 _isr32:
 
     pushad
+    xchg bx,bx
     call fin_intr_pic1
     call screen_actualizar_reloj_global
 
@@ -630,8 +940,6 @@ _isr32:
     .end:
       popad
       iret
-    popad
-    iret
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
@@ -669,20 +977,26 @@ _isr70:
     ;mov ebp, esp
     ;call fin_intr_pic1
     ;mov eax, 0x42
-
+    
     ;pop ebp
     ;iret
-    ;~ xchg bx,bx
-	;pushad
+    ;xchg bx,bx
+	pushad
+	;call fin_intr_pic1
 	push ecx
         push eax
-	
+	;xchg bx,bx
 	call game_syscall_manejar
-	call fin_intr_pic1
+        ;call fin_intr_pic1
+        ;xchg bx,bx
+	call pasar_a_idle
+	mov [selector], ax
+        ;xchg bx,bx
+	jmp far [offset]
 	pop ecx
         pop eax
-	;popad
-	;~ xchg bx,bx
+	popad
+	;xchg bx,bx
 	iret
     
 ;;
@@ -693,12 +1007,13 @@ _isr70:
 global cambiar_tarea_ya
 cambiar_tarea_ya:
 	;~ pushad
-	;~ xchg bx,bx
+	;xchg bx,bx
         push ebp
         mov ebp, esp
 	mov eax, [ebp+8]
         ;xchg bx,bx
 	mov [selector], ax
+        ;xchg bx,bx
 	jmp far [offset]
 	
         pop ebp
