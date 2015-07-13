@@ -112,8 +112,20 @@ int14_capturada_len equ $ - int14_capturada
 int13_capturada: db "General Protection",0
 int13_capturada_len equ $ - int13_capturada
 
+int15_capturada: db "Reserved",0
+int15_capturada_len equ $ - int15_capturada
+
+int16_capturada: db "Coprocessor Error",0
+int16_capturada_len equ $ - int16_capturada
+
 int17_capturada: db "Alignment Check Exception",0
 int17_capturada_len equ $ - int17_capturada
+
+int18_capturada: db "Reserved",0
+int18_capturada_len equ $ - int18_capturada
+
+int19_capturada: db "Reserved",0
+int19_capturada_len equ $ - int19_capturada
 ;;
 ;; Datos
 ;; -------------------------------------------------------------------------- ;;
@@ -137,6 +149,7 @@ _isr0:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int0_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -178,6 +191,7 @@ _isr1:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int1_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -217,6 +231,7 @@ _isr2:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int2_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -257,6 +272,7 @@ _isr3:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int3_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -297,6 +313,7 @@ _isr4:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int4_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -337,6 +354,7 @@ _isr5:;BOUND Range Exceeded Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int5_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -376,6 +394,7 @@ _isr6:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int6_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -415,6 +434,7 @@ _isr7:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int7_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -454,6 +474,7 @@ _isr8:;Double Fault Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int8_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -492,6 +513,7 @@ _isr9:;Coprocessor Segment Overrun
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int9_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -532,6 +554,7 @@ _isr10:;invalid TSS
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int10_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -572,6 +595,7 @@ _isr11:;Segment Not Present
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int11_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -611,6 +635,7 @@ _isr12:;Stack Fault Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int12_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -650,6 +675,7 @@ _isr13:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int13_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -729,6 +755,7 @@ _isr15:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int15_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -768,6 +795,7 @@ _isr16:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int16_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -806,6 +834,7 @@ _isr17:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int17_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -845,6 +874,7 @@ _isr18:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int18_capturada
     push eax
     push ebp
     mov ebp, esp
@@ -884,6 +914,7 @@ _isr19:;Segment Not Present
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int19_capturada
     push eax
     push ebp
     mov ebp, esp
