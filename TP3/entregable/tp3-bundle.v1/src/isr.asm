@@ -1024,6 +1024,10 @@ _isr70:
 	mov [selector], ax
         ;xchg bx,bx
 	jmp far [offset]
+
+    ;NO ESTARIAMOS DEVOLVIENDO LA POSICION EN CASO DE QUE SE LLAMARA A ESA
+
+
 	pop ecx
         pop eax
 	popad
