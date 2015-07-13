@@ -44,9 +44,6 @@ ASM_hsl2:
   ;xmm1 = ss
   ;xmm2 = ll
 
-  ;ASUMO QUE xmm0,xmm1,xmm2 tienen basura ademas de hh ss y ll asi que los limpio
-  ;tienen que quedar xmm0 = 0 | 0 | hh | 0   xmm1 = 0 | ss | 0 | 0  xmm2 = ll | 0 | 0 | 0
-
   push rbp
   mov rbp, rsp
   push rbx
@@ -69,12 +66,8 @@ ASM_hsl2:
   pand xmm1, [maskSS]                ;xmm1 = 0 | ss | 0 | 0
   pslldq xmm2,12
   pand xmm2, [maskLL]                ;xmm2 = ll | 0 | 0 | 0
-  ;movdqu xmm15, [mask360i]            ;xmm15 = 0 | 0 | 360 | 0    (en ints)
-  ;movdqu xmm14, [maskSSUnoi]            ;xmm14 = 0 | 1 | 0 | 0      (en ints)
-  ;movdqu xmm13, [maskLLunoi]            ;xmm13 = 1 | 0 | 0 | 0      (en ints)
-  ;cvtdq2ps xmm15, xmm15               ;xmm15 = 0 | 0 | 360 | 0    (en floats)
-  ;cvtdq2ps xmm14, xmm14               ;xmm14 = 0 | 1 | 0 | 0      (en floats)
-  ;cvtdq2ps xmm13, xmm13               ;xmm13 = 1 | 0 | 0 | 0      (en floats)
+
+
 
   .ciclofilas:
      cmp r14,r13                       ;termine?
@@ -86,7 +79,7 @@ ASM_hsl2:
             jz .avanzo
 
 			movdqu xmm0, [rbx]			;xmm0 -> p3|p2|p1|p0
- 
+
             sub rsp,16
             movdqu [rsp], xmm3          ;push xmm3
             sub rsp,16
@@ -103,21 +96,19 @@ ASM_hsl2:
             add rsp,16
             movdqu xmm3, [rsp]          ;pop xmm3
             add rsp,16
-            
+     
 			;Ahora tengo
 
 			;xmm0  -> l3,s3,h3,a3
 			;xmm10 -> l1,s1,h1,a1
 			;xmm11 -> l2,s2,h2,a2
 			;xmm12 -> l0,s0,h0,a0
-            
-			;call hago_suma
-			
-			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+       
+			call hago_suma
 
 			;en xmm15 tengo el pixel resultado
 						
-			sub rsp,16
+						sub rsp,16
             movdqu [rsp], xmm3          ;push xmm3
             sub rsp,16
             movdqu [rsp], xmm1          ;push xmm1
@@ -134,12 +125,10 @@ ASM_hsl2:
             add rsp,16
 						
 			movdqu xmm0, xmm11			;xmm0 -> l2,s2,h2,a2
-			movd xmm11, eax
+			pinsrd xmm11, eax, 0
 			pslldq xmm11, 4				;xmm11 -> basura|basura|p3 procesado|0
 						
-			;call hago_suma
-
-			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+			call hago_suma
 
 			;en xmm15 tengo el pixel resultado
 						
@@ -160,12 +149,10 @@ ASM_hsl2:
             add rsp,16
 						
 			movdqu xmm0, xmm10			;xmm0 -> l1,s1,h1,a1
-			movd xmm11, eax
+			pinsrd xmm11, eax, 0
 			pslldq xmm11, 4				;xmm11 -> basura|p3 procesado|p2 procesado|0
 
-			;call hago_suma
-			
-			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+			call hago_suma
 
 			;en xmm15 tengo el pixel resultado
 						
@@ -186,12 +173,10 @@ ASM_hsl2:
             add rsp,16
 						
 			movdqu xmm0, xmm12			;xmm0 -> l0,s0,h0,a0
-			movd xmm11, eax
+			pinsrd xmm11, eax, 0
 			pslldq xmm11, 4				;xmm11 -> p3 procesado|p2 procesado|p1 procesado|0
 
-			;call hago_suma
-			
-			movdqu xmm15, xmm0									;ESTA LINEA ES PARA TESTS, DESPUES SE BORRA
+			call hago_suma
 
 			;en xmm15 tengo el pixel resultado
 						
@@ -210,9 +195,10 @@ ASM_hsl2:
             add rsp,16
             movdqu xmm3, [rsp]          ;pop xmm3
             add rsp,16
-						
-			movd xmm11, eax				;xmm11 -> p3 procesado|p2 procesado|p1 procesado|p0 procesado
-					
+			
+			
+			pinsrd xmm11, eax, 0				;xmm11 -> p3 procesado|p2 procesado|p1 procesado|p0 procesado
+
 			movdqu [rbx], xmm11
 
             ;ACA YA TERMINE DE PROCESAR ESE PIXEL Y SE INSERTA EN LA IMAGEN
@@ -253,6 +239,8 @@ rgbTOhsl_asm:
 
 ;xmm0 -> p3|p2|p1|p0
 
+;Preparo---------------------------------------------------------------------
+
   pshufb xmm0, [Maskshuffle]    ;xmm0 -> b3,b2,b1,b0|g3,g2,g1,g0|r3,r2,r1,r0|a3,a2,a1,a0
   movdqu xmm1, xmm0
   pxor xmm3, xmm3
@@ -268,6 +256,8 @@ rgbTOhsl_asm:
   punpckhwd xmm2, xmm3          ; xmm2 -> b3|b2|b1|b0
   punpcklwd xmm11, xmm3         ; xmm11 -> a3|a2|a1|a0
 
+	cvtdq2ps xmm11, xmm11
+
   movdqu xmm3, xmm0
   movdqu xmm4, xmm0
 
@@ -281,8 +271,9 @@ rgbTOhsl_asm:
 
   psubd xmm5, xmm4              ; xmm5 -> d3 | d2 |d1 | d0
 
+;-------------------------------------------------------------------------------------------
 
-  ;Calculo de L
+;Calculo de L----------------------------------------------------------------------------------
 
   movdqu xmm6, xmm3
   paddd xmm6, xmm4              ; xmm6 -> (cmax+cmin)3|...|(cmax+cmin)0
@@ -296,8 +287,9 @@ rgbTOhsl_asm:
 
   divps xmm6, xmm7              ; xmm6 -> (cmax+cmin)_3 /510 |...|(cmax+cmin)_0 /510
                                 ; xmm6 -> L3|L2|L1|L0
+;----------------------------------------------------------------------------------------------
 
-  ;Calculo de S 
+;Calculo de S------------------------------------------------------------------------------ 
 
   pcmpeqd xmm7, xmm7            ; xmm7 -> todos unos
   movdqu xmm8, xmm3
@@ -328,8 +320,10 @@ rgbTOhsl_asm:
   divps xmm7, xmm9              ; xmm9 -> d / (1 - fabs(2*L3 - 1)) / 255.0001|...| d/ (1 - fabs( 2*L0 - 1)) / 255.0001
 
   pand xmm7,xmm8                ; xmm7 -> S3| S2| S1| S0
+;--------------------------------------------------------------------------------------------------
 
-  ;Calculo de H
+
+;Calculo de H--------------------------------------------------------------------------------
 
   pcmpeqd xmm8, xmm8            ; xmm8 -> todos unos
   movdqu xmm9, xmm3
@@ -387,6 +381,7 @@ rgbTOhsl_asm:
   ; libres xmm15 , xmm4 , xmm5 , xmm10, xmm15
 
   pcmpeqd xmm0, xmm3            ; xmm0 -> cmax3 = r?|...| cmax0 = r?
+	pcmpeqd xmm1, xmm3						; xmm1 -> cmax3 = g?|...| cmax0 = g?
   pcmpeqd xmm2, xmm3            ; xmm2 -> cmax3 = b?|...| cmax0 = b?
 
   movdqu xmm10, xmm0
@@ -420,7 +415,9 @@ rgbTOhsl_asm:
 
   subps xmm9, xmm13             ; xmm9 -> H3|H2|H1|H0
 
-  ;REACOMODO EN xmm0, xmm10, xmm11 y xmm12 lo que hay en l=xmm6, s=xmm7, h=xmm9 y a=xmm11
+;---------------------------------------------------------------------------------------------
+
+;REACOMODO EN xmm0, xmm10, xmm11 y xmm12 lo que hay en l=xmm6, s=xmm7, h=xmm9 y a=xmm11-------
 
 
 ; H3|H2|H1|H0
@@ -461,6 +458,8 @@ rgbTOhsl_asm:
 
   shufps xmm4, xmm1, 00010001b  ;l1,s1,h1,a1
   shufps xmm5, xmm1, 10111011b  ;l3,s3,h3,a3
+
+;------------------------------------------------------------------------------------------
 
   ;finalmente tengo mis pixeles asi p0 p1 p2 p3 xmm2 xmm4 xmm3 xmm5
 
@@ -653,12 +652,12 @@ hago_suma:
 	
 ;------------------------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------------------------
-;--------------------------------funcion rgb to hsl con sus mascaras ----------------------------
+;--------------------------------funcion HSL -> RGB -----------------------------------------------
 ;-------------------------------------------------------------------------------------------------
 ;---------------------------------------------------------------------------------------------------
 
 
-;Falta hacer esta, toma las cosas por xmm15, y no toca los xmm0, xmm10, xmm11 y xmm12
+;Toma las cosas por xmm15, y no toca los xmm0, xmm10, xmm11 y xmm12
 
 
 hslTOrgb_asm: 
@@ -730,10 +729,10 @@ subps xmm1, xmm3					;x - (roundps para abajo(divps(x, y)) * y) = fmod(x,y)
 									;xmm1 -> basura|basura|fmod(h/60.0 , 2)|basura
 
 
-mov r9d, 2
+mov r9d, 1
 movd xmm2, r9d
 pshufd xmm2, xmm2, 0
-cvtdq2ps xmm2, xmm2					;xmm2 -> 2.0|..|2.0
+cvtdq2ps xmm2, xmm2					;xmm2 -> 1.0|..|1.0
 
 subps xmm1, xmm2					;xmm1 -> basura|basura|fmod(h/60.0 , 2) -1|basura
 pxor xmm3,xmm3 						
@@ -778,12 +777,13 @@ shufps xmm3, xmm3, 0xff				;xmm3 -> m|m|m|m|
 
 ;calculo de rgb ------------------------------------------------------------------------------
 
-blendpd xmm4, xmm2, 00000100b		;xmm4 -> c|x|c|c
+
+blendps xmm4, xmm2, 00000100b		;xmm4 -> c|x|c|c
 pxor xmm2, xmm2
-blendpd xmm4, xmm2, 00001001b		;xmm4 -> 0|x|c|0
+blendps xmm4, xmm2, 00001001b		;xmm4 -> 0|x|c|0
 
 pxor xmm5, xmm5
-blendpd xmm5, xmm15, 00000010b		;xmm5 -> 0|0|h|0
+blendps xmm5, xmm15, 00000010b		;xmm5 -> 0|0|h|0
 shufps xmm5, xmm5, 01010101b		;xmm5 -> h|h|h|h
 
 pcmpeqd xmm6, xmm6					;xmm6 -> todos 1
@@ -895,10 +895,11 @@ movd xmm9, r9d
 pshufd xmm9, xmm9, 0
 cvtdq2ps xmm9, xmm9					;xmm9 -> 255.0|..|255.0
 
+shufps xmm7, xmm7, 10110100b		;ESTO ES UNA CHANCHADA, LO ARREGLE A MANO, FIJATE QUE ONDA
 mulps xmm7, xmm9					;xmm7 -> 255*(b+m)|255*(g+m)|255*(r+m)|255*(a+m)
 blendps xmm7, xmm15, 00000001b		;xmm7 -> 255*(b+m)|255*(g+m)|255*(r+m)|a original
 
-cvttps2dq xmm7, xmm7				;en xmm7 tengo bgra de a dwords en ints!!
+cvtps2dq xmm7, xmm7				;en xmm7 tengo bgra de a dwords en ints!!
 
 
 ;-------------------------------------------------------------------------------------------

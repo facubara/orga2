@@ -38,6 +38,7 @@ ASM_blur2:
     lea rax,[rax*4]               ;multiplicacion de ancho*alto*4 (tamanio bytes)
     mov rdi, rax                  ;preparo malloc
     mov rbx, rdi                  ;guardo el tamanio de la imagen en rbx
+	lea rdi,[rdi + 8]			  ;!! porque no tengo ganas !!
     call malloc                   ;tengo en rax el puntero a copy
     mov r9, rbx                   ;tam imagen a r9
     shr r9, 4                     ;tengo el tamanio de imagen en grupos de  4 pixeles
