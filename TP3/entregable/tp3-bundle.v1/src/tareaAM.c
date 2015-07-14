@@ -18,7 +18,6 @@ void task(int x_target, int y_target) {
          :"r"(pos)
          //:"%ecx"
          );
-    breakpoint();
     int x = pos & 0xFF;
     int y = pos >> 8;
     int i;

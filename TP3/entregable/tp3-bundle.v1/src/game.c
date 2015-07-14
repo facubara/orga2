@@ -445,6 +445,7 @@ void game_syscall_pirata_mover(direccion dir)
 	game_matar_pirata_interrupt();
 	}else{
     jugadores[jugadorJugando].puntaje++; //aumento puntaje
+    screen_pintar_puntajes();
        for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
 		if (botines[i][0] == x_a && botines[i][1] == y_a){
@@ -461,35 +462,32 @@ uint game_syscall_pirata_posicion(int idx)
           if(idx != -1){
              posicion pos = piratasA[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res =res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
           }else{
              posicion pos = piratasA[actual].posicion;
-             breakpoint();
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
           }
     }else{
           if(idx != -1){
              posicion pos = piratasB[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
              }else{
              posicion pos = piratasB[actual].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
              }
          }

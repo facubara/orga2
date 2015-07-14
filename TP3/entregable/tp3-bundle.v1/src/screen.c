@@ -32,8 +32,9 @@ void screen_pintar(uchar c, uchar color, uint fila, uint columna)
 {   
     if (c != 'q'){
         p[fila][columna].c = c;
+    }else if(!(p[fila][columna].c == 'M' || p[fila][columna].c == 'E')){
+        p[fila][columna].a = color;
     }
-    p[fila][columna].a = color;
 }
 
 void screen_pintar_botin(unsigned char jug,uint fila, uint columna)
@@ -365,8 +366,8 @@ void screen_pintar_linea_v(unsigned char c, unsigned char color, int fila, int c
 void screen_pintar_puntajes(){
     unsigned int puntajeJ1 = jugadores[0].puntaje;
     unsigned int puntajeJ2 = jugadores[1].puntaje;
-    print_dec(puntajeJ1,3,47,36,C_FG_WHITE);
-    print_dec(puntajeJ2,3,47,41,C_FG_WHITE);
+    print_dec(puntajeJ1,3,36,47,C_FG_WHITE);
+    print_dec(puntajeJ2,3,41,47,C_FG_WHITE);
 }
  
 //void screen_inicializar(); // creo que esto es inic_video
