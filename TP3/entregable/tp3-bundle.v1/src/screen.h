@@ -55,7 +55,7 @@ void screen_pintar_relojes();
 unsigned char imprime_tecla(unsigned char n, unsigned char prev);
 void screen_actualizar_posicion_mapa(uint x, uint y);
 void screen_stop_game_show_winner(jugador_t *j);
-
+void screen_pintar_botin(unsigned char jug, uint fila, uint columna);
 void imprime_nombre_grupo();
 void mostrar_clock(unsigned int indice);
 void screen_inicializar_reloj_pirata();

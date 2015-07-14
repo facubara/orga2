@@ -973,17 +973,17 @@ _isr70:
     ;pop ebp
     ;iret
     ;xchg bx,bx
+	sub esp, 4
+	push ebp
+	lea ebp, [esp-4]
+	; ebp apunta a donde voy a poner eax, esp no se modifico
 	pushad
-	;call fin_intr_pic1
 	push ecx
         push eax
-	;xchg bx,bx
 	call game_syscall_manejar
-        ;call fin_intr_pic1
-        ;xchg bx,bx
+        mov [ebp], eax
 	call pasar_a_idle
 	mov [selector], ax
-        ;xchg bx,bx
 	jmp far [offset]
 
     ;NO ESTARIAMOS DEVOLVIENDO LA POSICION EN CASO DE QUE SE LLAMARA A ESA
@@ -992,7 +992,8 @@ _isr70:
 	pop ecx
         pop eax
 	popad
-	;xchg bx,bx
+        pop ebp
+	pop eax
 	iret
     
 ;;

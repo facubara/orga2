@@ -398,7 +398,8 @@ void game_syscall_pirata_mover(direccion dir)
                                   
 				if (inRangeX && inRangeY){
 					unsigned int x = botines[i][0];
-               unsigned int y = botines[i][1];
+                                        unsigned int y = botines[i][1];
+                                        screen_pintar_botin(jugadorJugando,y+1,x);
 					game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
 				}	
 	       }
@@ -466,10 +467,12 @@ uint game_syscall_pirata_posicion(int idx)
              return res;
           }else{
              posicion pos = piratasA[actual].posicion;
+             breakpoint();
              uint res = 0;
              res = res || pos.y;
              res = res << 8;
              res = res || pos.x;
+             breakpoint();
              return res;
           }
     }else{
@@ -479,6 +482,7 @@ uint game_syscall_pirata_posicion(int idx)
              res = res || pos.y;
              res = res << 8;
              res = res || pos.x;
+             breakpoint();
              return res;
              }else{
              posicion pos = piratasB[actual].posicion;

@@ -36,6 +36,15 @@ void screen_pintar(uchar c, uchar color, uint fila, uint columna)
     p[fila][columna].a = color;
 }
 
+void screen_pintar_botin(unsigned char jug,uint fila, uint columna)
+{ 
+    p[fila][columna].c = 'O';
+    if(jug == 0){
+    p[fila][columna].a = C_FG_BLACK | C_BG_GREEN;
+    }else{
+    p[fila][columna].a = C_FG_BLACK | C_BG_CYAN;
+}
+}
 uchar screen_valor_actual(uint fila, uint columna)
 {
     return p[fila][columna].c;
