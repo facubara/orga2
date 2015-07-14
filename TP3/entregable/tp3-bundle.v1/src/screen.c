@@ -32,9 +32,8 @@ void screen_pintar(uchar c, uchar color, uint fila, uint columna)
 {   
     if (c != 'q'){
         p[fila][columna].c = c;
-    }else if(!(p[fila][columna].c == 'M' || p[fila][columna].c == 'E')){
-        p[fila][columna].a = color;
     }
+    p[fila][columna].a = color;
 }
 
 void screen_pintar_botin(unsigned char jug,uint fila, uint columna)
