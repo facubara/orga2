@@ -112,8 +112,20 @@ int14_capturada_len equ $ - int14_capturada
 int13_capturada: db "General Protection",0
 int13_capturada_len equ $ - int13_capturada
 
+int15_capturada: db "Reserved",0
+int15_capturada_len equ $ - int15_capturada
+
+int16_capturada: db "Coprocessor Error",0
+int16_capturada_len equ $ - int16_capturada
+
 int17_capturada: db "Alignment Check Exception",0
 int17_capturada_len equ $ - int17_capturada
+
+int18_capturada: db "Reserved",0
+int18_capturada_len equ $ - int18_capturada
+
+int19_capturada: db "Reserved",0
+int19_capturada_len equ $ - int19_capturada
 ;;
 ;; Datos
 ;; -------------------------------------------------------------------------- ;;
@@ -137,9 +149,8 @@ _isr0:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int0_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
  
     call game_matar_pirata_interrupt
@@ -178,9 +189,8 @@ _isr1:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int1_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -217,9 +227,8 @@ _isr2:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int2_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt 
@@ -257,9 +266,8 @@ _isr3:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int3_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -297,9 +305,8 @@ _isr4:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int4_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -337,9 +344,8 @@ _isr5:;BOUND Range Exceeded Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int5_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -376,9 +382,8 @@ _isr6:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int6_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -415,9 +420,8 @@ _isr7:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int7_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -454,9 +458,8 @@ _isr8:;Double Fault Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int8_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -492,9 +495,8 @@ _isr9:;Coprocessor Segment Overrun
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int9_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -532,9 +534,8 @@ _isr10:;invalid TSS
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int10_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -572,9 +573,8 @@ _isr11:;Segment Not Present
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int11_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -611,9 +611,8 @@ _isr12:;Stack Fault Exception
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int12_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -650,9 +649,8 @@ _isr13:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int13_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -729,9 +727,8 @@ _isr15:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int15_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -768,9 +765,8 @@ _isr16:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int16_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -806,9 +802,8 @@ _isr17:
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int17_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -845,9 +840,8 @@ _isr18:;
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int18_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -884,9 +878,8 @@ _isr19:;Segment Not Present
     push edi
     push ebp
     ;mov eax, %1
+    mov eax, int19_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -915,7 +908,6 @@ _isr19:;Segment Not Present
 _isr32:
 
     pushad
-    xchg bx,bx
     call fin_intr_pic1
     call screen_actualizar_reloj_global
 
@@ -981,22 +973,27 @@ _isr70:
     ;pop ebp
     ;iret
     ;xchg bx,bx
+	sub esp, 4
+	push ebp
+	lea ebp, [esp-4]
+	; ebp apunta a donde voy a poner eax, esp no se modifico
 	pushad
-	;call fin_intr_pic1
 	push ecx
         push eax
-	;xchg bx,bx
 	call game_syscall_manejar
-        ;call fin_intr_pic1
-        ;xchg bx,bx
+        mov [ebp], eax
 	call pasar_a_idle
 	mov [selector], ax
-        ;xchg bx,bx
 	jmp far [offset]
+
+    ;NO ESTARIAMOS DEVOLVIENDO LA POSICION EN CASO DE QUE SE LLAMARA A ESA
+
+
 	pop ecx
         pop eax
 	popad
-	;xchg bx,bx
+        pop ebp
+	pop eax
 	iret
     
 ;;

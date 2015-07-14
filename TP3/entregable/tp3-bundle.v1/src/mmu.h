@@ -33,12 +33,13 @@ void mmu_inicializar_dir_kernel();
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica, char rw, char su);
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3);
 unsigned int mmu_inic_dir_pirata();
-//unsigned int copiar_codigo(unsigned int cr3,/*, unsigned short pirata, */ unsigned char jugador, /*unsigned short y,*/ unsigned char tipo, unsigned char nuevo, unsigned int x, unsigned int y);
-//void tarea_al_mapa(unsigned int cr3, unsigned char* fisica0, unsigned char* fisica1,/* int signo,*/ unsigned int logica, unsigned char tipo, unsigned char jugador, unsigned char nuevo);
 unsigned int obtener_pagina_libre();
 void mapear_alrededores(unsigned int cr3, unsigned int virtualDst);
 void copiar_codigo(unsigned int cr3, unsigned int virtualDst ,unsigned int virtualSrc, unsigned int x, unsigned int y);
-void tarea_al_mapa(unsigned int cr3, unsigned int virtualDst, unsigned int virtualSrc);
+void mapea_visitadas(unsigned int cr3, unsigned int virtualDst);
 unsigned int posicionToVirtual(posicion p);
+unsigned int virtualToFisica(unsigned int virtual);
+unsigned int fisicaToVirtual(unsigned int fisica);
+
 
 #endif	/* !__MMU_H__ */

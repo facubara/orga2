@@ -135,4 +135,5 @@ clean:
 	rm -f *.tsk
 	rm -f $(DISK_IMG)
 	rm -rf *~
+	rm -f bochs.log
 	@echo ''

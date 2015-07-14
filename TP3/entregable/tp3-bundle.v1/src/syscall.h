@@ -58,7 +58,7 @@ LS_INLINE unsigned int syscall_posicion(int idx) {
         : "m" (idx)
         : "eax"
     );
-
+      
     __asm __volatile("mov %%eax, %0" : "=r" (ret));
 
     return ret;
