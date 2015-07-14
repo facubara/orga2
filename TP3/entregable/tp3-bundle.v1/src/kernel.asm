@@ -163,3 +163,4 @@ extern mmu_mapear_pagina
 extern inicializar_scheduler
 extern tss_inicializar
 extern inic_game
+extern copiar_fisico

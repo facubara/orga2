@@ -151,8 +151,6 @@ _isr0:
     ;mov eax, %1
     mov eax, int0_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
  
     call game_matar_pirata_interrupt
@@ -193,8 +191,6 @@ _isr1:
     ;mov eax, %1
     mov eax, int1_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -233,8 +229,6 @@ _isr2:
     ;mov eax, %1
     mov eax, int2_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt 
@@ -274,8 +268,6 @@ _isr3:
     ;mov eax, %1
     mov eax, int3_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -315,8 +307,6 @@ _isr4:
     ;mov eax, %1
     mov eax, int4_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -356,8 +346,6 @@ _isr5:;BOUND Range Exceeded Exception
     ;mov eax, %1
     mov eax, int5_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -396,8 +384,6 @@ _isr6:
     ;mov eax, %1
     mov eax, int6_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -436,8 +422,6 @@ _isr7:
     ;mov eax, %1
     mov eax, int7_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -476,8 +460,6 @@ _isr8:;Double Fault Exception
     ;mov eax, %1
     mov eax, int8_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -515,8 +497,6 @@ _isr9:;Coprocessor Segment Overrun
     ;mov eax, %1
     mov eax, int9_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -556,8 +536,6 @@ _isr10:;invalid TSS
     ;mov eax, %1
     mov eax, int10_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -597,8 +575,6 @@ _isr11:;Segment Not Present
     ;mov eax, %1
     mov eax, int11_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -637,8 +613,6 @@ _isr12:;Stack Fault Exception
     ;mov eax, %1
     mov eax, int12_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -677,8 +651,6 @@ _isr13:
     ;mov eax, %1
     mov eax, int13_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -757,8 +729,6 @@ _isr15:;
     ;mov eax, %1
     mov eax, int15_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -797,8 +767,6 @@ _isr16:;
     ;mov eax, %1
     mov eax, int16_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -836,8 +804,6 @@ _isr17:
     ;mov eax, %1
     mov eax, int17_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
     call game_matar_pirata_interrupt
@@ -876,8 +842,6 @@ _isr18:;
     ;mov eax, %1
     mov eax, int18_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -916,8 +880,6 @@ _isr19:;Segment Not Present
     ;mov eax, %1
     mov eax, int19_capturada
     push eax
-    push ebp
-    mov ebp, esp
     pushad
 
      call game_matar_pirata_interrupt
@@ -946,7 +908,6 @@ _isr19:;Segment Not Present
 _isr32:
 
     pushad
-    xchg bx,bx
     call fin_intr_pic1
     call screen_actualizar_reloj_global
 

@@ -253,11 +253,12 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
     
    unsigned int cr3 = mmu_inic_dir_pirata();
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
-   
-    tarea_al_mapa(cr3,virtualDst,virtualSrc); 
+  
+  if (tipo == 0) mapear_alrededores(cr3, virtualDst);
+   mapea_visitadas(cr3,virtualDst); 
 	copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    
-   //breakpoint();
+   
 	posicion pos;
 	if(jug == 0){
    		pos = jugadores[jug].puerto;
@@ -265,7 +266,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
 	else{
    		pos = jugadores[jug].puerto;
   	}
-if(jug == 0){//breakpoint();
+if(jug == 0){
 		tss_inicializar_tareas_piratas(piratasA[i].tss);
 		piratasA[i].tss->cr3 = cr3;// | 3;
 		piratasA[i].tipo = tipo;
@@ -313,16 +314,12 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 
 
 void game_syscall_pirata_mover(direccion dir)
-{    //breakpoint();
+{    
        
        pirata_t  pir;
        pirata_t *pirata;
        jugador_t *juega = &jugadores[jugadorJugando];
 	   unsigned int *visitadas;
-	posicion antigua = (posicion){
-		.x = pir.posicion.x,
-		.y = pir.posicion.y
-	};
     if (jugadorJugando == 0){
        pir = piratasA[actual];
 	pirata = &piratasA[actual];
@@ -335,7 +332,10 @@ void game_syscall_pirata_mover(direccion dir)
 		visitadas = (unsigned int *) visitadasB;
        }
        posicion pos = pir.posicion;
-
+        posicion antigua = (posicion){
+         .x = pir.posicion.x,
+         .y = pir.posicion.y
+  };
        //unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 80 * 0x1000;
        posicion pos_dst;
        switch(dir){
@@ -382,13 +382,13 @@ void game_syscall_pirata_mover(direccion dir)
 			
 			unsigned int virtualDst = posicionToVirtual(pos_dst);
 			unsigned int miCr3 = pir.tss->cr3;
-                        //breakpoint();
+                        
 			copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
-			//breakpoint();
-                        if(pir.tipo == 0){
-                        //breakpoint();
-                        	mapear_a_todos(virtualDst);
-			//breakpoint();
+			
+      if(pir.tipo == 0){
+                        
+         mapear_a_todos(virtualDst);
+			
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
 			int i;
@@ -398,14 +398,10 @@ void game_syscall_pirata_mover(direccion dir)
                                   
 				if (inRangeX && inRangeY){
 					unsigned int x = botines[i][0];
-                                        unsigned int y = botines[i][1];
-                                        breakpoint();
+               unsigned int y = botines[i][1];
 					game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
-				}
-				
-				
-					
-	                }
+				}	
+	       }
 			}
 			screen_pintar_pirata(juega,pirata);
                         
@@ -543,26 +539,7 @@ void game_matar_pirata_interrupt(){
 	game_matar_pirata();
 	
 	mostrar_clock(actual);
-	
-        //ACA HAY QUE LLAMAR A FUNCION BORRAR PIRATA
-       /*
-        jugador_t j = jugadores[jugadorJugando];
-        pirata_t p;
-        if(jugadorJugando == 0){
-          p = piratasA[actual];
-         } else {
-          p = piratasB[actual];
-         }
-        screen_borrar_pirata(&j, &pirata);*/
-	//pirata_t pir;
-	//if(jugadorJugando == 0){
-//		pir = piratasA[actual];
-//	}else{
-//		pir = piratasB[actual];
-//	}
-	//posicion pos = pir.posicion;
-	
-	//screen_mover_zombie(pos,pos,1, _zombie/*no necesario, pero no da sobrecargar por la diferencia*/);
+
 }
 void game_jugador_anotar_punto(jugador_t *j)
 {
@@ -669,10 +646,9 @@ void mapear_a_todos(unsigned int virtualDst){
 	}
 	int i = 0;
 	for (i = 0;i < 8;i++){
-               if(arreglo[i].vivo == 1){
-		mapear_alrededores((arreglo[i].tss)->cr3,virtualDst);
-                //breakpoint();
-               }
+    if(arreglo[i].vivo == 1){
+		  mapear_alrededores((arreglo[i].tss)->cr3,virtualDst);           
+    }
 	}
 return;
 }
