@@ -255,7 +255,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
   
   if (tipo == 0) mapear_alrededores(cr3, virtualDst);
-   mapea_visitadas(cr3,virtualDst); 
+   mapea_visitadas(cr3); 
 	copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    
    
@@ -385,7 +385,7 @@ void game_syscall_pirata_mover(direccion dir)
                         
 			copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
 			
-      if(pir.tipo == 0){
+         if(pir.tipo == 0){
                         
          mapear_a_todos(virtualDst);
 			

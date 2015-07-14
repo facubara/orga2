@@ -253,7 +253,7 @@ unsigned int fisicaToVirtual(unsigned int fisica){
 	return fisica;
 }
 
-void mapea_visitadas(unsigned int cr3, unsigned int virtualDst){
+void mapea_visitadas(unsigned int cr3){
 	unsigned int *visitadas;
 	unsigned int fisica; 
 	if (jugadorJugando == 0){
