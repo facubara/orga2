@@ -96,10 +96,22 @@ FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
 \section{Blur}
 
 \subsection{Idea de las implementaciones}
-A continuación se explicará un ciclo
+A continuación se explicará un ciclo de ejecución de cada una de las implementaciones de Blur:
+
 \subsubsection{Implementación 1}
 
+Debido a que este filtro usa pixeles de otras posiciones de la imágen original para modificar cada pixel, se tiene una copia de la imágen cuyo objetivo es tener un lugar seguro que no "ensucia" los datos de entrada de cada pixel debo modificar. Esto se hace antes de un ciclo de ejecución del algoritmo, pero es importante remarcarlo. Ahora si, una vez dentro de un ciclo de ejecución, lo primero que hace nuestro algoritmo es cargar en tres xmm pixeles de manera tal de tener en un xmm los vecinos superiores, y un pixel extra, en otro xmm los vecinos inferiores y un pixel extra, y en otro los vecinos del pixel a modificar y un pixel extra, como muestra "la Figura 1".
+
+
+Figura 1 muy parecida a la que hay en el enunciado
+
+
+Esto lo cargamos desde la imagen copia. Como tomamos un pixel que no tiene nada que ver con el filtro, lo transformamos en 0 y desempaquetamos los tres xmm. Luego se realiza una suma vertical entre todos los xmm, obteniendo asi un xmm que tiene en una mitad la suma de una parte de los vecinos, y en la otra mitad la suma de la otra parte de los vecinos. Desempaquetamos ese xmm en dos xmm y realizamos nuevamente una suma vertical, obteniendo asi un xmm con la suma de todos los vecinos del pixel a modificar. Convertimos ese numero a float, lo dividimos por nueve (que son la cantidad de vecinos del pixel), lo volvemos a convertir a int, y luego empaquetamos el resultado hasta tener el tamaño original del pixel en un sector de un xmm. Luego, utilizando la función movmaskdqu, insertamos en la imagen original el pixel modificado, y seteamos los registros para volver a entrar a la iteración para modificar el próximo píxel.  
+
 \subsubsection{Implementación 2}
+
+Esta implementación es similar a la anterior, con la excepción de que se procesaran 4 píxeles por iteración en vez de uno. Al igual que en la implementación anterior, se copiará la imágen previamente, y luego se entrará al ciclo. Dentro del ciclo,para procesar el primer pixel, se cargaran en tres xmm pixeles de manera tal de tener en un xmm los vecinos superiores, y un pixel extra, en otro xmm los vecinos inferiores y un pixel extra, y en otro los vecinos del pixel a modificar y un pixel extra, de igual manera que en blur 1. Luego, se procesará de igual manera que en blur 1 pero en vez de empaquetarlo y cambiarlo en la imágen, se guardará el resultado en un xmm. Se hará lo mismo con el procesamiento del segundo pixel. Para el píxel tres se cargarán xmm inicialmente de la misma forma, pero se hará una copia de los xmm cargados, para ser usados en el pixel 4. Se procesa el pixel 3 de igual manera que el pixel dos y uno. Para procesar el pixel cuatro, se reacomodarán las copias de los xmm cargados en el procesamiento del pixel 3, de manera tal de "simular" que se hubieran cargado los pixels como en blur 1. Para eso, notemos que el pixel extra del procesamiento del pixel 3, es un vecino del pixel 4, y que el primer vecino de cada xmm del pixel 3, es el pixel extra del 4. Despues de este reordenamiento, se procederá de igual manera que con los pixeles 1, 2 y 3.
+Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de manera tal de tener los 4 pixeles en un xmm y se insertan en la imágen original.
 
 \subsection{Diferencias de performance en Blur}
 
@@ -114,10 +126,12 @@ A continuación se explicará un ciclo
 \section{Merge}
 
 \subsection{Idea de las implementaciones}
-
+A continuación se explicará un ciclo de ejecución de cada una de las implementaciones de Merge (tener en cuenta que este filtro toma una imágen original, y una imágen que filtra):
 \subsubsection{Implementación 1}
-
+De las dos imagenes, tomamos 4 pixeles y los insertamos en un xmm(uno por imágen). A cada uno de estos, los desempaquetamos hasta obtener en 4 xmm, los cuatro pixeles de una imagen, y en otros 4 xmm los píxeles de la segunda imágen. Cada uno de los xmm anteriores, los convertimos en floats.Luego, multiplicamos los xmm correspondientes a la imágen original por value y a los xmm de la imágen filtro por 1-value. Después de esto, sumamos los xmm que representan un pixel de una imágen con su correspondiente xmm de la otra imágen(o sea, aquel que representa el mismo número de píxel) y los guardamos en xmm, obteniendo 4 xmm que representan los 4 píxeles filtrados. Los convertimos nuevamente a int, y los empaquetamos de manera tal de tener en un xmm los 4 píxeles. Luego los insertamos en la imágen original.
 \subsubsection{Implementación 2}
+
+
 
 \subsection{Diferencias de performance en Merge}
 
