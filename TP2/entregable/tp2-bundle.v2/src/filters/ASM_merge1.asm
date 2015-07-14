@@ -23,6 +23,43 @@ ASM_merge1:
   push r14
   push r15
 
+;Para pruebas aritmeticas--------------------------------------------------------------------
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;--------------------------------------------------------------------------------------------
+
+;Para pruebas de memoria---------------------------------------------------------------------
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;--------------------------------------------------------------------------------------------
 
   ;rdi = ancho
   ;rsi = alto

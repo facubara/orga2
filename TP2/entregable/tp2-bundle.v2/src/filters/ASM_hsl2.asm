@@ -54,6 +54,44 @@ ASM_hsl2:
   sub rsp, 8
 
 
+;Para pruebas aritmeticas--------------------------------------------------------------------
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;--------------------------------------------------------------------------------------------
+
+;Para pruebas de memoria---------------------------------------------------------------------
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;--------------------------------------------------------------------------------------------
+
   xor r14, r14                         ;contador filas
   xor r15, r15                         ;contador columnas
   mov qword r12, rdi                   ;respaldo ancho en pixels

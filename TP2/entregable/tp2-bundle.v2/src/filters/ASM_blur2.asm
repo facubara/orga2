@@ -29,6 +29,45 @@ ASM_blur2:
     sub rsp,8
     ; Fin seteo
 
+;Para pruebas aritmeticas--------------------------------------------------------------------
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;	add rdx, rdx
+;	sub rdx, rdx
+;--------------------------------------------------------------------------------------------
+
+;Para pruebas de memoria---------------------------------------------------------------------
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;	push rax
+;	pop rax
+;--------------------------------------------------------------------------------------------
+
+
     mov r13, rdx                  ;backup puntero
     mov r14, rdi                  ;backup  columnas
     mov r15,rsi                   ;backup filas
