@@ -36,7 +36,7 @@ unsigned int mmu_inic_dir_pirata();
 unsigned int obtener_pagina_libre();
 void mapear_alrededores(unsigned int cr3, unsigned int virtualDst);
 void copiar_codigo(unsigned int cr3, unsigned int virtualDst ,unsigned int virtualSrc, unsigned int x, unsigned int y);
-void mapea_visitadas(unsigned int cr3, unsigned int virtualDst);
+void mapea_visitadas(unsigned int cr3);
 unsigned int posicionToVirtual(posicion p);
 unsigned int virtualToFisica(unsigned int virtual);
 unsigned int fisicaToVirtual(unsigned int fisica);

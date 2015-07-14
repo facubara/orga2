@@ -52,7 +52,7 @@ typedef struct jugador_t
     //uint index;
     //pirata_t piratas[MAX_CANT_PIRATAS_VIVOS];
     //FALTARIA UN ARRAY DE BOOLS PARA LOS VIVOS?
-    unsigned char puntaje;
+    unsigned int puntaje;
     posicion puerto;
     unsigned char m_pendientes;
     //unsigned int visitadas[3520];

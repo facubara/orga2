@@ -255,7 +255,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
   
   if (tipo == 0) mapear_alrededores(cr3, virtualDst);
-   mapea_visitadas(cr3,virtualDst); 
+   mapea_visitadas(cr3); 
 	copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    
    
@@ -385,7 +385,7 @@ void game_syscall_pirata_mover(direccion dir)
                         
 			copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
 			
-      if(pir.tipo == 0){
+         if(pir.tipo == 0){
                         
          mapear_a_todos(virtualDst);
 			
@@ -445,6 +445,7 @@ void game_syscall_pirata_mover(direccion dir)
 	game_matar_pirata_interrupt();
 	}else{
     jugadores[jugadorJugando].puntaje++; //aumento puntaje
+    screen_pintar_puntajes();
        for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
 		if (botines[i][0] == x_a && botines[i][1] == y_a){
@@ -461,35 +462,32 @@ uint game_syscall_pirata_posicion(int idx)
           if(idx != -1){
              posicion pos = piratasA[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res =res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
           }else{
              posicion pos = piratasA[actual].posicion;
-             breakpoint();
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
           }
     }else{
           if(idx != -1){
              posicion pos = piratasB[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
              }else{
              posicion pos = piratasB[actual].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
              }
          }

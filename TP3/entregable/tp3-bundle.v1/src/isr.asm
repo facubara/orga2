@@ -30,6 +30,7 @@ extern debug
 extern game_matar_pirata_interrupt
 extern screen_muestra_error
 
+%define OFFSET_EAX  36
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -972,16 +973,11 @@ _isr70:
     
     ;pop ebp
     ;iret
-    ;xchg bx,bx
-	sub esp, 4
-	push ebp
-	lea ebp, [esp-4]
-	; ebp apunta a donde voy a poner eax, esp no se modifico
 	pushad
 	push ecx
-        push eax
+    push eax
 	call game_syscall_manejar
-        mov [ebp], eax
+    mov [esp + OFFSET_EAX], eax
 	call pasar_a_idle
 	mov [selector], ax
 	jmp far [offset]
@@ -990,10 +986,8 @@ _isr70:
 
 
 	pop ecx
-        pop eax
+    pop eax
 	popad
-        pop ebp
-	pop eax
 	iret
     
 ;;
