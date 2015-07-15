@@ -46,7 +46,7 @@ void inic_game(){
                 .puerto = pos1,
 		.puntaje = 0,
                 .m_pendientes = 0,
-                .ult_indice_vis = 0,
+                .ult_indice_vis = 1,
                 .color = C_BG_GREEN,
                 .colorLetra = C_BG_RED,
                 .vivos = 0
@@ -56,14 +56,16 @@ void inic_game(){
                 .puerto = pos2,
 		.puntaje = 0,
                 .m_pendientes = 0,
-                .ult_indice_vis = 0,
+                .ult_indice_vis = 1,
                 .color = C_BG_CYAN,
                 .vivos = 0,
                 .colorLetra = C_BG_BLUE
                 
 	};
         int j;
-        for(j=0; j<3520;j++){
+        visitadasA[0]=0x851000;
+        visitadasB[0]=0x800000 + 78 * 0x1000 + 42 * 80 * 0x1000;
+        for(j=1; j<3520;j++){
                 visitadasA[j] = 0;
                 visitadasB[j] = 0;
         }
@@ -255,7 +257,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
   
   if (tipo == 0) mapear_alrededores(cr3, virtualDst);
-   mapea_visitadas(cr3); 
+  	mapea_visitadas(cr3); 
 	copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    
    
@@ -316,110 +318,108 @@ void game_explorar_posicion(jugador_t *jugador, int c, int f)
 void game_syscall_pirata_mover(direccion dir)
 {    
        
-       pirata_t  pir;
-       pirata_t *pirata;
-       jugador_t *juega = &jugadores[jugadorJugando];
-	   unsigned int *visitadas;
+    pirata_t  pir;
+    pirata_t *pirata;
+    jugador_t *juega = &jugadores[jugadorJugando];
+	unsigned int *visitadas;
     if (jugadorJugando == 0){
-       pir = piratasA[actual];
-	pirata = &piratasA[actual];
-      
-		visitadas =  (unsigned int *) visitadasA;
-       }else{
-       pir = piratasB[actual];
-	pirata = &piratasB[actual];
-      
+    	pir = piratasA[actual];
+		pirata = &piratasA[actual];
+    	visitadas =  (unsigned int *) visitadasA;
+    }else{
+    	pir = piratasB[actual];
+		pirata = &piratasB[actual];
 		visitadas = (unsigned int *) visitadasB;
-       }
-       posicion pos = pir.posicion;
-        posicion antigua = (posicion){
-         .x = pir.posicion.x,
-         .y = pir.posicion.y
-  };
+    }
+    posicion pos = pir.posicion;
+    posicion antigua = (posicion){
+        .x = pir.posicion.x,
+        .y = pir.posicion.y
+  	};
        //unsigned int pos_fisica = 0x500000 + pos.x * 0x1000 + pos.y * 80 * 0x1000;
-       posicion pos_dst;
-       switch(dir){
+    posicion pos_dst;
+    switch(dir){
 		case IZQ:
-                        if(pos.x == 1){
-                        game_matar_pirata_interrupt();
-                        return;
-                        }else{
-			pos_dst.x = pos.x-1;
-			pos_dst.y = pos.y;
+            if(pos.x == 1){
+            	game_matar_pirata_interrupt();
+                return;
+            }else{
+				pos_dst.x = pos.x-1;
+				pos_dst.y = pos.y;
 			}
 			break;
 		case DER:
-                        if(pos.x == 78){
-                        game_matar_pirata_interrupt();
-                        return;
-                        }else{
-			pos_dst.x = pos.x+1;
-			pos_dst.y = pos.y;
+            if(pos.x == 78){
+            	game_matar_pirata_interrupt();
+            	return;
+            }else{
+				pos_dst.x = pos.x+1;
+				pos_dst.y = pos.y;
 			}
 			break;
 		case ARR:
-                        if(pos.y == 1){
-                        game_matar_pirata_interrupt();
-                        return;
-                        }else{
-                        pos_dst.x = pos.x;
-                        pos_dst.y = pos.y-1;
+            if(pos.y == 1){
+            	game_matar_pirata_interrupt();
+            	return;
+            }else{
+            	pos_dst.x = pos.x;
+            	pos_dst.y = pos.y-1;
 			}
 			break;
 		case ABA:
-                        if(pos.y == 42){
-                        game_matar_pirata_interrupt();
-                        return;
-                        }else{
-                        pos_dst.x = pos.x;
-                        pos_dst.y = pos.y+1;
+            if(pos.y == 42){
+            	game_matar_pirata_interrupt();
+            	return;
+            }else{
+            	pos_dst.x = pos.x;
+            	pos_dst.y = pos.y+1;
 			}
 			break;
 	}
-			// pos_dst posicion actual y pir el pirata moviendose
+	// pos_dst posicion actual y pir el pirata moviendose
 			
-			pirata->posicion = pos_dst;
+	pirata->posicion = pos_dst;
 			
-			unsigned int virtualDst = posicionToVirtual(pos_dst);
-			unsigned int miCr3 = pir.tss->cr3;
+	unsigned int virtualDst = posicionToVirtual(pos_dst);
+	unsigned int miCr3 = pir.tss->cr3;
                         
-         if(pir.tipo==1){
-         if(revisar_mapeadas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++)==0){
-            game_matar_pirata_interrupt();
-            return;
-         }
+    if(pir.tipo==1){
+    	if(revisar_mapeadas_mineros(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++) == 0){
+			game_matar_pirata_interrupt();
+			return;
+    	}
                         
-			}	
-                        copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
-         if(pir.tipo == 0){
-                        
-            mapear_a_todos(virtualDst);
-			
+	}
+	//revisar_mapeadas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++)	
+	copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
+	if(pir.tipo == 0){
+
+        mapear_a_todos(virtualDst);
+
+		if (revisar_mapeadas_piratas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++) == 0){	
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
-			int i;
-			for (i=0;i<BOTINES_CANTIDAD;i++){
-				unsigned char inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
-				unsigned char inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
+		}
+		int i;
+		for (i=0;i<BOTINES_CANTIDAD;i++){
+			unsigned char inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
+			unsigned char inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
                                   
-				if (inRangeX && inRangeY && botines[i][2] != 0){
-					unsigned int x = botines[i][0];
-               unsigned int y = botines[i][1];
+			if (inRangeX && inRangeY && botines[i][2] != 0){
+				unsigned int x = botines[i][0];
+                unsigned int y = botines[i][1];
 
-               screen_pintar_botin(jugadorJugando,y+1,x);
-					game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
-				}	
-	       }
-			}
-			screen_pintar_pirata(juega,pirata);
+                screen_pintar_botin(jugadorJugando,y+1,x);
+				game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
+			}	
+		}
+	}
+	
+	screen_pintar_pirata(juega,pirata);
                         
-                        //YA SE MOVIO AHORA PASO A LA IDLE
-			//unsigned short idle = pasar_a_idle();
-	               // cambiar_tarea_ya(idle);
-			
-			
-			
-       
+    //YA SE MOVIO AHORA PASO A LA IDLE
+	//unsigned short idle = pasar_a_idle();
+	// cambiar_tarea_ya(idle);   
     return;
 }
 
@@ -444,7 +444,7 @@ void game_syscall_pirata_mover(direccion dir)
 			haybotin = 1;
 	}
     if(!haybotin){ //si no hay botin en esa pos
-    game_matar_pirata_interrup();
+    game_matar_pirata_interrupt();
     return; //NO SE QUE DEVUELVE ESTA FUNCION
     }
     unsigned int valor = game_valor_tesoro(x_a, y_a);
@@ -668,11 +668,22 @@ void pasarAIdle(){
 
 }
 
-unsigned char revisar_mapeadas(unsigned int virtualDst, unsigned int *visitadas, unsigned int tamanio){
+unsigned char revisar_mapeadas_mineros(unsigned int virtualDst, unsigned int *visitadas, unsigned int tamanio){
    int i;
    unsigned char res = 0;
    for (i = 0; i < tamanio; i++){
       if (visitadas[i]==virtualDst || visitadas[i] + 0x1000 == virtualDst || visitadas[i]-0x1000 == virtualDst ||visitadas[i] - 80*0x1000 == virtualDst || visitadas[i] - 81*0x1000 == virtualDst || visitadas[i] - 79*0x1000 == virtualDst ||visitadas[i] + 80*0x1000 == virtualDst || visitadas[i] + 81*0x1000 == virtualDst || visitadas[i] + 79*0x1000 == virtualDst){
+         res = 1;
+      }
+   }
+   return res;
+}
+
+unsigned char revisar_mapeadas_piratas(unsigned int virtualDst, unsigned int *visitadas, unsigned int tamanio){
+   int i;
+   unsigned char res = 0;
+   for (i = 0; i < tamanio; i++){
+      if (visitadas[i]==virtualDst){
          res = 1;
       }
    }

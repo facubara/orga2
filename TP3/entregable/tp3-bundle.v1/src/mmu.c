@@ -268,4 +268,21 @@ void mapea_visitadas(unsigned int cr3){
 	}
 }
 
+unsigned char estaMapeada(unsigned int cr3,unsigned int virtual){
+	// se fija si esta o no esta mapeada en el cr3 la virtual
 
+	page_dir_entry * dir = (page_dir_entry * ) cr3;
+	unsigned int dir_index = (virtual >> 22 );
+	unsigned int table_index = ((virtual >> 12) & 0x3FF);
+	if (dir[dir_index].p == 0){
+		return 0;
+	}else{
+		page_dir_entry* tab = (page_dir_entry*) (((unsigned int)dir[dir_index].base) >> 12);
+
+		if (tab[table_index].p == 0){
+			return 0;
+		}else{
+			return 1;
+		} 
+	}
+}

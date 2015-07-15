@@ -40,6 +40,7 @@ void mapea_visitadas(unsigned int cr3);
 unsigned int posicionToVirtual(posicion p);
 unsigned int virtualToFisica(unsigned int virtual);
 unsigned int fisicaToVirtual(unsigned int fisica);
+unsigned char estaMapeada(unsigned int cr3, unsigned int virtual);
 
 
 #endif	/* !__MMU_H__ */
