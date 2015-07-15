@@ -1,0 +1,13 @@
+\begin{enumerate}
+
+\item[a)] Se inicializan las variables globales proximaA y proximaB (que se usaran para indicar el indice de la proxima tarea del jugador) en 0, jugadorJugando en 0, actual (que sera el indice de la tarea que esta corriendo, será 0-8), y gdt_tss_actual en 13 (la entrada 14 corresponde a la idle y de ahi en adelante a las tareas del jugador 1 y 2).
+
+\item[b)] En este apartado nos tomamos ciertas libertas con respecto a la organización de las funciones del scheduler, a continuación detallaremos el uso de cada una. La función {\tt sched\_proxima\_a\_ejecutar} es renombrada como {\tt sched\_proximo\_indice}. Esta llama a {\tt obtener\_proxima\_viva} la cual hace los chequeos de jugadorJugando (si el jugadorJugando es 0, osea el jugador 1, buscará una tarea viva del otro jugador, y viceversa), en caso de encontrar una tarea viva del otro jugador, actualiza jugadorJugando a dicho jugador y devuelve el indice de la tarea, en caso de no encontrar una tarea viva devuelve {\tt 0xff}. El resultado de {\tt obtener\_proxima\_viva} se lo compara con {\tt 0xff} y en ese caso se llama a {\tt pasar\_a\_idle} y se retorna {\tt 0xff}. En caso contrario, se llama a {\tt cambiar\_tarea} con la proxima tarea viva, se actualiza el clock de la tarea en el mapa y se devuelve el indice en la GDT de la tss de la tarea a la que se pasa.
+
+El funcionamiento {\tt pasar\_a\_idle} pasa por revisar si actual es {\tt 0xff} y en ese retorna  {\tt 0xff} terminando con la ejecución (dado que la idle no debe ser capaz de hacer un cambio de tarea a si misma). En caso contrario, se llama a {\tt cambiar\_tarea} con {\tt 0xff} y se retorna el indice en la GDT de la TSS de la tarea IDLE.
+
+El cambio de tarea realizado por {\tt cambiar\_tarea} consta de comprobar si el parametro tomado es igual a {\tt 0xff} y en ese caso se modifica actual con este valor y gdt_tss_actual pasa a ser 1 (luego con un calculo de $gdt$_$tss$_$actual + 13 $<<$ 3$ en {\tt sched\_proximo\_indice} se obtendria el indice de la tss en la GDT). En caso contrario, actual pasa a ser igual al parámetro tomado por la función se resetean proximaA y proximaB según corresponda, en caso de superar el numero de tareas (en caso de ser mayor a 8 vuelve a 0). Por último se obtiene el indice de la tss de la tarea actual en la GDT y se lo asigna a gdt_tss_actual.
+
+\item[d)] Se modifica la rutina de atención de la interrupción {\tt 0x46} para que luego de llamar a {\tt game\_syscall\_manejar} desaloje a la tarea que la llamo mediante los siguientes pasos: se llama a {\tt pasar\_a\_idle} y un jmp far al selector que devuelve esta, con el offset 0.
+
+\item[e)]
