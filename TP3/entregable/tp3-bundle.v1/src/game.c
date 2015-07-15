@@ -383,13 +383,14 @@ void game_syscall_pirata_mover(direccion dir)
 			unsigned int virtualDst = posicionToVirtual(pos_dst);
 			unsigned int miCr3 = pir.tss->cr3;
                         
-			copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
          if(pir.tipo==1){
          if(revisar_mapeadas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++)==0){
             game_matar_pirata_interrupt();
             return;
          }
-			}
+                        
+			}	
+                        copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
          if(pir.tipo == 0){
                         
             mapear_a_todos(virtualDst);
@@ -443,6 +444,7 @@ void game_syscall_pirata_mover(direccion dir)
 			haybotin = 1;
 	}
     if(!haybotin){ //si no hay botin en esa pos
+    game_matar_pirata_interrup();
     return; //NO SE QUE DEVUELVE ESTA FUNCION
     }
     unsigned int valor = game_valor_tesoro(x_a, y_a);
