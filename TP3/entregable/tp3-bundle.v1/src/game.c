@@ -255,7 +255,7 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
    //en i tengo el indice del nuevo pirata a lanzar en el arreglo de piratas del jugador
   
   if (tipo == 0) mapear_alrededores(cr3, virtualDst);
-   mapea_visitadas(cr3,virtualDst); 
+   mapea_visitadas(cr3); 
 	copiar_codigo(cr3, virtualDst, virtualSrc, x, y);
    
    
@@ -384,10 +384,15 @@ void game_syscall_pirata_mover(direccion dir)
 			unsigned int miCr3 = pir.tss->cr3;
                         
 			copiar_codigo(miCr3,virtualDst,posicionToVirtual(antigua),pirata->dest.x,pirata->dest.y);
-			
-      if(pir.tipo == 0){
+         if(pir.tipo==1){
+         if(revisar_mapeadas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++)==0){
+            game_matar_pirata_interrupt();
+            return;
+         }
+			}
+         if(pir.tipo == 0){
                         
-         mapear_a_todos(virtualDst);
+            mapear_a_todos(virtualDst);
 			
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
@@ -396,10 +401,11 @@ void game_syscall_pirata_mover(direccion dir)
 				unsigned char inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
 				unsigned char inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
                                   
-				if (inRangeX && inRangeY){
+				if (inRangeX && inRangeY && botines[i][2] != 0){
 					unsigned int x = botines[i][0];
-                                        unsigned int y = botines[i][1];
-                                        screen_pintar_botin(jugadorJugando,y+1,x);
+               unsigned int y = botines[i][1];
+
+               screen_pintar_botin(jugadorJugando,y+1,x);
 					game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
 				}	
 	       }
@@ -445,6 +451,7 @@ void game_syscall_pirata_mover(direccion dir)
 	game_matar_pirata_interrupt();
 	}else{
     jugadores[jugadorJugando].puntaje++; //aumento puntaje
+    screen_pintar_puntajes();
        for (i = 0; i < BOTINES_CANTIDAD; i++)
 	{
 		if (botines[i][0] == x_a && botines[i][1] == y_a){
@@ -461,35 +468,32 @@ uint game_syscall_pirata_posicion(int idx)
           if(idx != -1){
              posicion pos = piratasA[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res =res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
           }else{
              posicion pos = piratasA[actual].posicion;
-             breakpoint();
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
           }
     }else{
           if(idx != -1){
              posicion pos = piratasB[idx].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
-             breakpoint();
+             res = res + pos.x;
              return res;
              }else{
              posicion pos = piratasB[actual].posicion;
              uint res = 0;
-             res = res || pos.y;
+             res = res + pos.y;
              res = res << 8;
-             res = res || pos.x;
+             res = res + pos.x;
              return res;
              }
          }
@@ -660,6 +664,17 @@ return;
 void pasarAIdle(){
 	
 
+}
+
+unsigned char revisar_mapeadas(unsigned int virtualDst, unsigned int *visitadas, unsigned int tamanio){
+   int i;
+   unsigned char res = 0;
+   for (i = 0; i < tamanio; i++){
+      if (visitadas[i]==virtualDst || visitadas[i] + 0x1000 == virtualDst || visitadas[i]-0x1000 == virtualDst ||visitadas[i] - 80*0x1000 == virtualDst || visitadas[i] - 81*0x1000 == virtualDst || visitadas[i] - 79*0x1000 == virtualDst ||visitadas[i] + 80*0x1000 == virtualDst || visitadas[i] + 81*0x1000 == virtualDst || visitadas[i] + 79*0x1000 == virtualDst){
+         res = 1;
+      }
+   }
+   return res;
 }
 
 #define KB_w_Aup    0x11 // 0x91

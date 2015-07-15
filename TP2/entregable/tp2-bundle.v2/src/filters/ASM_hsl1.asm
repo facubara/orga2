@@ -95,12 +95,7 @@ ASM_hsl1:
   pand xmm1, [maskSS]                ;xmm1 = 0 | ss | 0 | 0
   pslldq xmm2,12
   pand xmm2, [maskLL]                ;xmm2 = ll | 0 | 0 | 0
-  ;movdqu xmm15, [mask360i]            ;xmm15 = 0 | 0 | 360 | 0    (en ints)
-  ;movdqu xmm14, [maskSSUnoi]            ;xmm14 = 0 | 1 | 0 | 0      (en ints)
-  ;movdqu xmm13, [maskLLunoi]            ;xmm13 = 1 | 0 | 0 | 0      (en ints)
-  ;cvtdq2ps xmm15, xmm15               ;xmm15 = 0 | 0 | 360 | 0    (en floats)
-  ;cvtdq2ps xmm14, xmm14               ;xmm14 = 0 | 1 | 0 | 0      (en floats)
-  ;cvtdq2ps xmm13, xmm13               ;xmm13 = 1 | 0 | 0 | 0      (en floats)
+  
   mov qword rdi, 16                    ;pido 16 bytes para guardar HSL
   sub rsp,16
   movdqu [rsp], xmm3                    ;push xmm3
@@ -125,7 +120,7 @@ ASM_hsl1:
             cmp r12, r15               ;termine con la fila?
             jz .avanzo
             mov rdi, rbx               ;puntero al pixel
-            ;pxor xmm0, xmm0
+       
             mov rsi, r8                ;puntero a donde quiero que guarde p_l | p_s | p_h | p_a
             push r8
             sub rsp,8
@@ -179,7 +174,7 @@ ASM_hsl1:
             pcmpeqd xmm5, [mascara8]   ;pi_h+hh = 0?
             movdqu xmm8, xmm5          
             pand xmm8, [maskHH]      ; xmm8 = 0 | 0 | h+hh= 0? | 0
-            ;jz .sumo360
+            
             ;h + hh > 0?
             movdqu xmm5, xmm14
             pcmpgtd xmm5, [mascara8]   ;pi_h+hh > 0?
@@ -240,14 +235,6 @@ ASM_hsl1:
             pand xmm13, xmm8            ;xmm13 = pi_l + ll | 1.0 (si pi_s+ss >= 1? y pi_s+ss >= 0?), s+ss si(si pi_s+ss < 1? y pi_s+ss >= 0?), 0 sino | CORRECTOHH | pi_A   (como floats)
             
 
-            ; pxor xmm8, xmm9            ;xmm8 = 0 | 1 si pi_s+ss >= 0, 0 sino | 0 | 0
-            ; ;pnand xmm8, xmm8                                                                         ;xmm8 = 0 | 1s si s+ss<0 0s sino | 0 | 0
-            ; movdqu xmm10, xmm0
-            ; pand xmm8, xmm10           ;xmm8 = 0 | pi_s+ss si s+ss>=0, 0 sino | 0 | 0         
-            ; pand xmm10, [mascara6]     ;xmm10 = pi_l + ll | 0 | pi_h+hh | pi_A
-            ; pxor xmm10, xmm6           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 sino | 0 | 0
-            ; pxor xmm10, xmm8           ;xmm10 = pi_l + ll | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | pi_h + hh | pi_A
-            ; pand xmm10, [maskSS]     ;xmm10 = 0 | 1 si s+ss>=1, 0 si s+ss<0, pi_s+ss sino | 0 | 0
             
             ;APLICO CAMBIOS
             movdqu xmm15, xmm13         ;;xmm13 = pi_l + ll | CORRECTOSS| CORRECTOHH | pi_A   (como floats)
