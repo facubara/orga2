@@ -13,11 +13,6 @@
 void task(int x_target, int y_target) {
     /* Tarea */
     uint pos = syscall_posicion(-1);
-    asm ("movl %0, %%ecx;"
-         :
-         :"r"(pos)
-         //:"%ecx"
-         );
     int x = pos & 0xFF;
     int y = pos >> 8;
     int i;

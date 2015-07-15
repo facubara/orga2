@@ -64,8 +64,8 @@ typedef struct jugador_t
 } jugador_t;
 
 
-unsigned char visitadasA[3520];
-unsigned char visitadasB[3520];
+unsigned int visitadasA[3520];
+unsigned int visitadasB[3520];
 pirata_t piratasA[8];	// piratas del primer jugador
 pirata_t piratasB[8];	// piratas del segundo jugador
 
@@ -96,7 +96,7 @@ void game_explorar_posicion(jugador_t *jugador, int x, int y);
 uint game_valor_tesoro(uint x, uint y);
 void game_calcular_posiciones_vistas(int *vistas_x, int *vistas_y, int x, int y);
 pirata_t* game_pirata_en_posicion(uint x, uint y);
-
+unsigned char revisar_mapeadas(unsigned int virtualDst, unsigned int *visitadas, unsigned int tamanio);
 uint game_syscall_pirata_posicion(int idx);
 void game_syscall_pirata_mover(direccion key);
 uint game_syscall_manejar(uint syscall, int param1);
