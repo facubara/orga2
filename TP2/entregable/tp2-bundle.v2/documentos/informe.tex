@@ -100,13 +100,55 @@ A continuación se explicará un ciclo de ejecución de cada una de las implemen
 
 \subsubsection{Implementación 1}
 
-Debido a que este filtro usa pixeles de otras posiciones de la imágen original para modificar cada pixel, se tiene una copia de la imágen cuyo objetivo es tener un lugar seguro que no "ensucia" los datos de entrada de cada pixel debo modificar. Esto se hace antes de un ciclo de ejecución del algoritmo, pero es importante remarcarlo. Ahora si, una vez dentro de un ciclo de ejecución, lo primero que hace nuestro algoritmo es cargar en tres xmm pixeles de manera tal de tener en un xmm los vecinos superiores, y un pixel extra, en otro xmm los vecinos inferiores y un pixel extra, y en otro los vecinos del pixel a modificar y un pixel extra, como muestra "la Figura 1".
+Debido a que este filtro usa pixeles de otras posiciones de la imágen original para modificar cada pixel, se tiene una copia de la imágen cuyo objetivo es tener un lugar seguro que no "ensucia" los datos de entrada de cada pixel debo modificar. Esto se hace antes de un ciclo de ejecución del algoritmo, pero es importante remarcarlo. Ahora si, una vez dentro de un ciclo de ejecución, lo primero que hace nuestro algoritmo es cargar en tres xmm pixeles de manera tal de tener en un xmm los vecinos superiores, y un pixel extra, en otro xmm los vecinos inferiores y un pixel extra, y en otro los vecinos del pixel a modificar y un pixel extra, como se muestra a continuación.
+\vspace*{0.3cm}
 
+(cada campo tiene 32 bits)
 
-Figura 1 muy parecida a la que hay en el enunciado
+$xmm0=  basura|vecino_{sup1}|vecino_{sup2}|vecino_{sup3}$
 
+\vspace*{0.3cm}
 
-Esto lo cargamos desde la imagen copia. Como tomamos un pixel que no tiene nada que ver con el filtro, lo transformamos en 0 y desempaquetamos los tres xmm. Luego se realiza una suma vertical entre todos los xmm, obteniendo asi un xmm que tiene en una mitad la suma de una parte de los vecinos, y en la otra mitad la suma de la otra parte de los vecinos. Desempaquetamos ese xmm en dos xmm y realizamos nuevamente una suma vertical, obteniendo asi un xmm con la suma de todos los vecinos del pixel a modificar. Convertimos ese numero a float, lo dividimos por nueve (que son la cantidad de vecinos del pixel), lo volvemos a convertir a int, y luego empaquetamos el resultado hasta tener el tamaño original del pixel en un sector de un xmm. Luego, utilizando la función movmaskdqu, insertamos en la imagen original el pixel modificado, y seteamos los registros para volver a entrar a la iteración para modificar el próximo píxel.  
+$xmm1=  basura|vecino_3$           $|pixel$       $|vecino_4   $
+
+\vspace*{0.3cm}
+
+$xmm2=  basura|vecino_{inf6}|vecino_{inf7}|vecino_{inf8}$
+
+\vspace*{0.3cm}
+
+Esto lo cargamos desde la imagen copia. Como tomamos un pixel que no tiene nada que ver con el filtro, lo transformamos en 0 y desempaquetamos los tres xmm, obteniendo lo siguiente:
+
+\vspace*{0.3cm}
+
+(cada campo tiene 64 bits ; r,g,b,a tienen tamaño word cada una)
+
+\vspace*{0.3cm}
+$xmm0=  0|b_{sup1}$ $g_{sup1}$ $r_{sup1}$ $a_{sup1}$ 
+
+\vspace*{0.3cm}
+
+$xmm1=  b_{sup2}$ $g_{sup2}$ $r_{sup2}$ $a_{sup2}|b_{sup3}$ $g_{sup3}$ $r_{sup3}$ $a_{sup3}$  
+
+\vspace*{0.3cm}
+
+$xmm2=  0         |b_{4}$ $g_{4}$ $r_{4}$ $a_{4}$
+
+\vspace*{0.3cm}
+
+$xmm3=  b_{pixel}$ $g_{pixel}$ $r_{pixel}$ $a_{pixel}     |b_{5}$ $g_{5}$ $r_{5}$ $a_{5}$
+
+\vspace*{0.3cm}
+
+$xmm4=  0         |b_{inf6}$ $g_{inf6}$ $r_{inf6}$ $a_{inf6} $ 
+
+\vspace*{0.3cm}
+
+$xmm5=  b_{inf7}$ $g_{inf7}$ $r_{inf7}$ $a_{inf7}|b_{inf8}$ $g_{inf8}$ $r_{inf8}$ $a_{inf8}$
+
+\vspace*{0.3cm}
+
+Luego se realiza una suma vertical entre todos los xmm, obteniendo asi un xmm que tiene en una mitad la suma de una parte de los vecinos, y en la otra mitad la suma de la otra parte de los vecinos. Desempaquetamos ese xmm en dos xmm y realizamos nuevamente una suma vertical, obteniendo asi un xmm con la suma de todos los vecinos del pixel a modificar. Convertimos ese numero a float, lo dividimos por nueve (que son la cantidad de vecinos del pixel), lo volvemos a convertir a int, y luego empaquetamos el resultado hasta tener el tamaño original del pixel en un sector de un xmm. Luego, utilizando la función movmaskdqu, insertamos en la imagen original el pixel modificado, y seteamos los registros para volver a entrar a la iteración para modificar el próximo píxel.  
 
 \subsubsection{Implementación 2}
 
@@ -127,8 +169,57 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \subsection{Idea de las implementaciones}
 A continuación se explicará un ciclo de ejecución de cada una de las implementaciones de Merge (tener en cuenta que este filtro toma una imágen original, y una imágen que filtra):
+
 \subsubsection{Implementación 1}
-De las dos imagenes, tomamos 4 pixeles y los insertamos en un xmm(uno por imágen). A cada uno de estos, los desempaquetamos hasta obtener en 4 xmm, los cuatro pixeles de una imagen, y en otros 4 xmm los píxeles de la segunda imágen. Cada uno de los xmm anteriores, los convertimos en floats.Luego, multiplicamos los xmm correspondientes a la imágen original por value y a los xmm de la imágen filtro por 1-value. Después de esto, sumamos los xmm que representan un pixel de una imágen con su correspondiente xmm de la otra imágen(o sea, aquel que representa el mismo número de píxel) y los guardamos en xmm, obteniendo 4 xmm que representan los 4 píxeles filtrados. Los convertimos nuevamente a int, y los empaquetamos de manera tal de tener en un xmm los 4 píxeles. Luego los insertamos en la imágen original.
+De las dos imágenes, tomamos 4 píxeles y los insertamos en un xmm(uno por imágen). A cada uno de estos, los desempaquetamos hasta obtener en 4 xmm, los cuatro pixeles de una imagen, y en otros 4 xmm los píxeles de la segunda imágen. Cada uno de los xmm anteriores, los convertimos en floats.
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)
+
+Imágen original:
+
+\vspace*{0.3cm}
+
+$xmm3 = b3_{orig} | g3_{orig} | r3_{orig} | a3_{orig}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm2 = b2_{orig} | g2_{orig} | r2_{orig} | a2_{orig}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm1 = b1_{orig} | g1_{orig} | r1_{orig} | a1_{orig}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm0 = b0_{orig} | g0_{orig} | r0_{orig} | a0_{orig}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+Imágen Filtro:
+
+\vspace*{0.3cm}
+
+$xmm7 = b3_{filt} | g3_{filt} | r3_{filt} | a3_{filt}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm6 = b2_{filt} | g2_{filt} | r2_{filt} | a2_{filt}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm5 = b1_{filt} | g1_{filt} | r1_{filt} | a1_{filt}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+$xmm4 = b0_{filt} | g0_{filt} | r0_{filt} | a0_{filt}$   (cada campo es un float)
+
+\vspace*{0.3cm}
+
+Luego, multiplicamos los xmm correspondientes a la imágen original por value y a los xmm de la imágen filtro por 1-value. Después de esto, sumamos los xmm que representan un pixel de una imágen con su correspondiente xmm de la otra imágen(o sea, aquel que representa el mismo número de píxel) y los guardamos en xmm, obteniendo 4 xmm que representan los 4 píxeles filtrados. Los convertimos nuevamente a int, y los empaquetamos de manera tal de tener en un xmm los 4 píxeles. Luego los insertamos en la imágen original.
+
+\vspace*{0.3cm}
+
 \subsubsection{Implementación 2}
 
 
@@ -146,8 +237,11 @@ De las dos imagenes, tomamos 4 pixeles y los insertamos en un xmm(uno por imáge
 \section{HSL}
 
 \subsection{Idea de las implementaciones}
+A continuación se explicará un ciclo de ejecución de cada una de las implementaciones de Hsl:
 
 \subsubsection{Implementación 1}
+
+Esta implementación usa dos funciones en c, rgbtohsl y hsltorgb que hacen lo que sus respectivos nombres indican.
 
 \subsubsection{Implementación 2}
 
