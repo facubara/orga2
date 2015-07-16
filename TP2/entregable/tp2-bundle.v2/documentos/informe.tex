@@ -50,8 +50,8 @@
 \titulo{Trabajo Práctico II}
 \subtitulo{SIMD}
 \integrante{Alejandro Mignanelli}{609/11}{minga_titere@hotmail.com}
-\integrante{Facuuuuu}{XXX/xx}{chabooooon@hotmail.com}
-\integrante{Iaaaaaaan}{XXX/xx}{me_la_super_como@gmail.com}
+\integrante{Facundo Barañao}{480/11}{facundo_732@hotmail.com}
+\integrante{Iaaaaaaan}{XXX/xx}{@gmail.com}
 
 \maketitle
 \newpage
@@ -83,7 +83,7 @@ FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
 \section{Preámbulo}
 
 \subsection{Calidad de las Mediciones}
-
+Las mediciones se realizaron corriendo los filtros 1000 veces cada uno, cuyos resultados fueron podados, eliminando 200 outliers superiores y 200 outliers inferiores. Con los restantes 600 resultados, se realizó un promedio, y estos promedios son los que se pueden apreciar en los distintos gráficos.
 
 
 \newpage
@@ -157,6 +157,40 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \subsection{Diferencias de performance en Blur}
 
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtros blur en imagenes 16x16.png}
+  \caption{Figura 1}
+  \label{fig:graficoblur1}
+\end{figure}
+ \FloatBarrier
+
+
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtros blur en imagenes 200x200.png}
+  \caption{Figura 2}
+  \label{fig:graficoblur2}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion  accesos a memoria blur colores.png}
+  \caption{Figura 3}
+  \label{fig:graficoblur3}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas blur colores.png}
+  \caption{Figura 4}
+  \label{fig:graficoblur4}
+\end{figure}
+ \FloatBarrier
+
 
 \subsubsection{Resultados}
 
@@ -225,6 +259,41 @@ Luego, multiplicamos los xmm correspondientes a la imágen original por value y 
 
 
 \subsection{Diferencias de performance en Merge}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtros merge en imagenes 200x200.png}
+  \caption{Figura 5}
+  \label{fig:graficomerge1}
+\end{figure}
+ \FloatBarrier
+
+
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtros merge en lena 512x512.png}
+  \caption{Figura 6}
+  \label{fig:graficomerge2}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion accesos a memoria merge colores.png}
+  \caption{Figura 7}
+  \label{fig:graficomerge3}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas merge colores.png}
+  \caption{Figura 8}
+  \label{fig:graficomerge4}
+\end{figure}
+ \FloatBarrier
+
 
 
 \subsubsection{Resultados}
@@ -566,6 +635,38 @@ y esto devuelve la función.
 
 
 \subsection{Diferencias de performance en HSL}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtro  hsl en colores 512x512.png}
+  \caption{Figura 7}
+  \label{fig:graficohsl1}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtros hsl en imagenes 200x200.png}
+  \caption{Figura 8}
+  \label{fig:graficohsl2}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion accesos a memoria hsl colores.png}
+  \caption{Figura 9}
+  \label{fig:graficohsl3}
+\end{figure}
+ \FloatBarrier
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas hsl colores.png}
+  \caption{Figura 10}
+  \label{fig:graficohsl4}
+\end{figure}
+ \FloatBarrier
 
 \subsubsection{Resultados}
 
