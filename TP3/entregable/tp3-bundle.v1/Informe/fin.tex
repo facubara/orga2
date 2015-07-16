@@ -1,0 +1,8 @@
+El juego finalizará cuando se cumplan alguna de las condiciones listadas a continuación:
+\begin{itemize}
+\item Se agotan todos los botines del juego.
+\item Pasan 999 ciclos de clock sin que suceda ninguna acción por parte de algún jugador. Esto comprende tener tareas activas.
+\end{itemize}
+
+Para chequear estas condiciones se incorpora la linea {\tt game\_ver\_si\_termina} a la rutina de atención a la interrupción de reloj. Es necesario aclarar que esta rutina, de no producirse salto alguno, incrementa en 1 un contador denominado {\tt tiempo\_sin\_juego}, siendo reseteado al lanzar alguna tarea.
+En caso de finalizar el juego, se llamará a {\tt screen\_stop\_game\_show\_winner}, que como su nombre indica, mostrará por pantalla una ventana del color del jugador victorioso y su puntaje. 
