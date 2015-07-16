@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 %\usepackage{makeidx}
 \usepackage{paralist} %itemize inline
-
+\usepackage{placeins}
 %\usepackage{float}
 %\usepackage{amsmath, amsthm, amssymb}
 %\usepackage{amsfonts}
@@ -175,27 +175,36 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 \end{figure}
  \FloatBarrier
 
+De estas primeras dos figuras obtenemos que no se puede apreciar una diferencia notable entre las distintas imagenes con las que contamos para los experimentos, lo que parecería indicar que la complejidad del filtro es en cierta medida independiente a la imagen que se quiere modificar. Si bien no fue incluido en este informe, también se corrio una comparación, con una imagen de tamaño 16x16, entre las 3 implementaciones, dando una diferencia aproximada de 50.000 ciclos de clock entre C y las distintas ASM (cuyos valores no superaban los 10.000 ciclos de clock).
+
+Por otro lado, notamos una diferencia de performance relativamente pequeña, a favor de la implementación 2 del filtro blur, cuando se es comparada con la implementación 1 de dicho filtro. Esto no sucede cuando se compara las implementaciones en ASM con la implementación en C, donde la diferencia resulta abismal, a favor de las primeras. Resulta apropiado notar que, a medida que los tamaños de las imagenes crecen, la diferencia entre implementaciones de ASM se mantiene en cierto nivel, mientras que la diferencia con C crece proporcionalmente, siendo increiblemente ineficaz cuando se cuenta con imagenes grandes.
+
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion  accesos a memoria blur colores.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionAccesosAMemoriaBlurColores.png}
   \caption{Figura 3}
   \label{fig:graficoblur3}
 \end{figure}
  \FloatBarrier
 
+Para esta comparación, entre el filtro normal y uno al que se le agregaron 6 accesos a memoria por ciclo de ejecución, se decidió ejecutar en el contexto de una imagen de 512x512 dado que esto nos daba como resultado una gran cantidad total de accesos a memoria. El resultado, teniendo en cuenta la cantidad de ciclos de clock totales que requirió cada filtro, no fue significativa. Esto nos lleva a pensar que tal vez, estos accesos no resultan tan relevantes para la performance. Esto se podría dar, ya que al no variar demasiado las direcciones a las accedemos, estas probablemente se encuentran en la cache para acelerar el proceso de acceso. 
+
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas blur colores.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionConOperacionesAritmeticasBlurColores.png}
   \caption{Figura 4}
   \label{fig:graficoblur4}
 \end{figure}
  \FloatBarrier
 
+Aquí, se introdujeron 6 operaciones aritméticas dentro del ciclo de cada implementación ASM. Así como en el experimento anterior, se corrió sobre una imagen de 512x512 por la misma razón, sólo que aplicada a las operaciones aritméticas. Se puede observar que según como se encuentre implementado el filtro, las operaciones pueden pesar más o menos en el tiempo de ejecución, dado que para la implementación 1 los cambios son más notables que para su contraparte en ASM. Teniendo en cuenta el gráfico anterior, no se pueden apreciar diferencias significativas entre aplicar operaciones aritméticas o accesos a memoria.
 
 \subsubsection{Resultados}
 
 
 \subsubsection{Conclusiones}
+
+Hasta el momento, las conclusiones parecerían ser que la imagen a procesar no es relevante para el filtro, que la diferencia entre performance de ASM y C es considerablemente grande, no siendo el caso de la diferencia entre ASM1 y ASM2, y también que las operaciones que agreguemos no alterarán mucho estos aspectos. Más adelante trataremos de generalizar estas consideraciones analizando los otros filtros en contextos distintos, así como también contextos similares.
 
 
 \newpage
@@ -278,6 +287,8 @@ Luego, multiplicamos los xmm correspondientes a la imágen original por value y 
 \end{figure}
  \FloatBarrier
 
+Del análisis de estas dos figuras, podemos notar que, otra vez, la versión C del filtro es claramente inferior, inferioridad que no hace más que acentuarse a medida que las imagenes crecen y por otro lado, que la diferencia de imagenes no es relevante. En este caso, si se puede hacer una diferenciación entre ASM1 y ASM2, dado que ASM1, como muestran las figuras, posee un tiempo de ejecución que es claramente mejor al de ASM2. Creemos que esto se debe, en parte, a la posibilidad de que nuestro pasaje de float a int no haya sido realizado de manera óptima (contamos con un ciclo que realiza shifteos una cantidad k de veces, siendo k una variable que podría llegar hasta 127, siendo shift una instrucción que suponemos es costosa), lo que podría desembocar en que, en los lugares donde tal vez este cambio genera cambios favorables, se compensen con el tiempo que nos lleva convertir de float a int.	Notamos también que la calidad de la imagen no mejora, lo que nos lleva a pensar que el pasaje de float a int no realizó ninguna mejora a nuestro algoritmo. 
+
 \begin{figure}[h]
   \centering
     \includegraphics[width=0.75\textwidth]{imagenes/Comparacion accesos a memoria merge colores.png}
@@ -285,6 +296,7 @@ Luego, multiplicamos los xmm correspondientes a la imágen original por value y 
   \label{fig:graficomerge3}
 \end{figure}
  \FloatBarrier
+ 
 
 \begin{figure}[h]
   \centering
@@ -294,6 +306,8 @@ Luego, multiplicamos los xmm correspondientes a la imágen original por value y 
 \end{figure}
  \FloatBarrier
 
+Nuevamente, no hay ninguna diferencia que sea necesario recalcar, dado que los tiempos son prácticamente iguales. Reafirmando nuestra teoría de que en ciertos casos, las operaciones que agreguemos no alteran de manera notable la eficacia de nuestros algoritmos.
+Nos resulta curioso que en ciertos casos, el filtro que tiene presentes las operaciones resulte en un tiempo menor que el tiempo incurrido por el filtro sin operaciones. Sin embargo, dado que en general, el filtro que no presenta operaciones es mejor, nos inclinamos a pensar que esto se puede generalizar.
 
 
 \subsubsection{Resultados}
@@ -747,6 +761,10 @@ usando este xmm, y máscaras obtenidas por medio de comparaciones me fabrico cad
 \end{figure}
  \FloatBarrier
 
+Luego de ver estas dos figuras podemos decir que el filtro HSL es un caso particular. Sería el primer caso en el que una función de ASM resulta más ineficiente que la implementación en C. Creemos que esto sucede ya que la implementación 1 del filtro hace uso de funciones en C {\tt rgbTohsl} y {\tt hslTorgb}. En en aspecto del pasaje de rgb a hsl y viceversa, ambos filtros son iguales ya que usan C. La diferencia entre ambas implementaciones esta cuando se busca aplicar la función SUMA. Para esta función, ambas implementaciones son similares en el hecho de que procesan de a 1 pixel a la vez, la diferencia esta en que este procesamiento resulta mas engorroso al realizarse en ASM, dándole la ventaja a la implementación de C (que realiza los pasos de manera mas eficaz).
+Por otro lado, se nota que la implementación 2 del filtro resulta ser la más eficaz, ya que si bien la función SUMA resulta igual que en la implementación 1, podemos realizar las conversiones de formato de pixel usando ASM (lo que nos permite por un lado convertir de rgb a hsl procesando 4 pixels a la vez), optimizando los tiempos en ese aspecto.
+ 
+
 \begin{figure}[h]
   \centering
     \includegraphics[width=0.75\textwidth]{imagenes/Comparacion accesos a memoria hsl colores.png}
@@ -762,6 +780,18 @@ usando este xmm, y máscaras obtenidas por medio de comparaciones me fabrico cad
   \label{fig:graficohsl4}
 \end{figure}
  \FloatBarrier
+
+Podemos observar que tanto los accesos a memoria, como las operaciones aritméticas no produjeron un aumento significativo en la velocidad de ejecución de nuestros programas, al igual que en anteriores filtros. La conclusión sobre este tipo de experimentos se verá en el apartado Conclusiones y trabajo futuro.
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/OverheadEnHSLASM2.png}
+  \caption{Figura 11}
+  \label{fig:graficohsl5}
+\end{figure}
+ \FloatBarrier
+
+Este experimento fue diseñado especialmente para el filtro HSL2, dado que por como fue concebido (descompuesto en distintos modulos para hacer más fácil su lectura), contaba con una gran cantidad total de llamadas a funciones. Lo que se hizo fue, copiar el código de los distintos módulos, dentro de la función principal, eliminando la necesidad de realizar instrucciones {\tt CALL} y {\tt RET}. Estas instrucciones fueron reemplazadas por saltos {\tt JMP}, que a diferencia de los saltos condicionales, cuya cantidad permaneció intacta, resultan predictivos en su funcionamiento lo que tiene como consecuencia cierta estabilidad en la complejidad temporal de nuestras implementaciones.
 
 \subsubsection{Resultados}
 
