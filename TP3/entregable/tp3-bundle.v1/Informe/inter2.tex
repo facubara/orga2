@@ -1,5 +1,5 @@
 \begin{enumerate}
-\item[a)]Usaremos la entrada número 32 de la IDT para la interrupción de reloj, la número 33 para la interrupción de teclado y la número 70 para la interrupción de software {\tt 0x66}.  Las tres entradas se cargan como {\it interrupt gates}, y con los mismos atributos indicados en el apartado 2, con la diferencia de que a la 70 se le asigna el nivel de privilegio 3.
+\item[a)]Usaremos la entrada número 32 de la IDT para la interrupción de reloj, la número 33 para la interrupción de teclado y la número 70 para la interrupción de software {\tt 0x46}.  Las tres entradas se cargan como {\it interrupt gates}, y con los mismos atributos indicados en el apartado 2, con la diferencia de que a la 70 se le asigna el nivel de privilegio 3.
 
 \item[b)]Se escribe una base para la rutina de atención. En esta instancia, el único objetivo de la rutina es llamar a la función {\tt screen_actualizar_reloj_global}, la cual se encarga de mostrar la animación de reloj por cada tick de reloj.
 
