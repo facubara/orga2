@@ -1,10 +1,11 @@
 \select@language {spanish}
 \contentsline {section}{\numberline {1}Objetivos generales}{3}
 \contentsline {section}{\numberline {2}Ejercicio 1: GDT Basica}{3}
-\contentsline {section}{\numberline {3}Ejercicio 2: IDT Basica}{3}
-\contentsline {section}{\numberline {4}Ejercicio 3: Paginaci\IeC {\'o}n Basica}{3}
-\contentsline {section}{\numberline {5}Ejercicio 4: Memory Management Unit}{3}
-\contentsline {section}{\numberline {6}Ejercicio 5: Interrupciones De Teclado/Reloj}{3}
-\contentsline {section}{\numberline {7}Ejercicio 6: TSS}{3}
-\contentsline {section}{\numberline {8}Ejercicio 7: Scheduler}{3}
-\contentsline {section}{\numberline {9}Ejercicio 8: El ensamble Final}{3}
+\contentsline {subsection}{\numberline {2.1}GDT b\IeC {\'a}sica y pasaje a modo protegido}{3}
+\contentsline {section}{\numberline {3}Ejercicio 2: IDT Basica}{4}
+\contentsline {section}{\numberline {4}Ejercicio 3: Paginaci\IeC {\'o}n Basica}{4}
+\contentsline {section}{\numberline {5}Ejercicio 4: Memory Management Unit}{5}
+\contentsline {section}{\numberline {6}Ejercicio 5: Interrupciones De Teclado/Reloj}{6}
+\contentsline {section}{\numberline {7}Ejercicio 6: TSS}{6}
+\contentsline {section}{\numberline {8}Ejercicio 7: Scheduler}{9}
+\contentsline {section}{\numberline {9}Ejercicio 8: Finalizar el Juego}{11}
