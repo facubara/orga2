@@ -177,7 +177,7 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion  accesos a memoria blur colores.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion  accesos a memoria blur colores.png}
   \caption{Figura 3}
   \label{fig:graficoblur3}
 \end{figure}
@@ -629,16 +629,90 @@ $xmm4 = L0|S0|H0|A0$
 
 y esto devuelve la función.
 
+\paragraph{hago_suma:}
+
+Es exactamente lo explicado en la implementación uno.
+
+
 \paragraph*{hsltorgb_asm:}
 
+Esta función toma un hsl y lo transforma en un rgb. Su explicación se divide en varias partes:
 
+\begin{enumerate}
+	\item Cálculo de c:
+	Copiamos el hsl a otro xmm, duplicamos todos sus campos y les restamos 1.0. Luego, usamos el truco anteriormente explicado para aplicar fabs, y ubicaremos la resta entre 1.0 y este número en un xmm. Hasta el momento, este xmm debería ser algo así:
+	
+\vspace*{0.3cm}
 
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+	
+	$xmm4 = 1-fabs(2*l - 1)|irrelevante|irrelevante|irrelevante$
+		
+\vspace*{0.3cm}
+
+Luego, copio nuevamente el xmm que tiene el hsl en otro xmm, y con un shifteo posiciono la s en el campo de la parte más alta del registro. Luego de hacer esto, multiplico el registro que shiftie con el que realice operaciones anteriormente, obteniendo asi:
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+	
+	$xmm4 = s*(1-abs(2*l - 1))=c|irrelevante|irrelevante|irrelevante$
+		
+\vspace*{0.3cm}
+		
+	Y con un simple broadcasteo, consigo que en todos los campos del xmm se encuentre c.
+	
+	\item Cálculo de x:		
+		
+Tomo el xmm que tiene hsl y lo copio a otro registro(el campo que nos interesará es el de h). A este lo divido por 60 y me preparo para realizar el fmod. Demonos cuenta que $fmod(x,y) = x-redondeohaciaabajo(x/y) * y$. Por esto, guardaremos en otro xmm el resultado anterior, luego en esa copia dividiremos todos los campos por dos, redondearemos hacia abajo, multiplicar los campos por 2, y luego al resultado original lo restaremos con este, obteniendo el fmod. Por el momento los xmm deberían quedar de la siguiente manera:
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm1 -> irrelevante|irrelevante|fmod(h/60.0 , 2)|irrelevante$ 		
+		
+\vspace*{0.3cm}		
+		
+	A este xmm le resto uno en cada campo y le calculo fabs como comentamos anteriormente. Luego tomo un xmm que tenga un 1.0 en cada campo, y le resto el resultado anterior. A esto lo multiplico por la c obtenida anteriormente, teniendo como resultado lo siguiente:
+	
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+	$xmm1 -> irrelevante|irrelevante|c*(1-fabs(fmod(h/60.0 , 2) -1))=x|irrelevante$
+		
+\vspace*{0.3cm}
+	
+Luego, broadcasteo de manera tal que tenga x en todos los campos.	
+	
+	\item Cálculo de m:
+	
+Tomo el c antes obtenido, lo copio en un xmm, a esta copia la divido por 2, y luego copio otro xmm el hsl de entrada, a cuya copia le restare el resultado anterior. Como resultado de estas operaciones, obtendremos el siguiente xmm:
+
+$xmm3 -> L-(c/2)=m | c/2 | c/2 | c/2$
+	
+	Luego usando shuffle barajo los campos para obtener una m en cada uno de ellos.
+	
+	\item Cálculo de RGB:
+	
+		
+	
+\end{enumerate}
 
 \subsection{Diferencias de performance en HSL}
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/Filtro  hsl en colores 512x512.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtro  hsl en colores 512x512.png}
   \caption{Figura 7}
   \label{fig:graficohsl1}
 \end{figure}
