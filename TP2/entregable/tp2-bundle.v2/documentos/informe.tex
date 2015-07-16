@@ -83,13 +83,25 @@ FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
 \section{Preámbulo}
 
 \subsection{Calidad de las Mediciones}
-Las mediciones se realizaron corriendo los filtros 1000 veces cada uno, cuyos resultados fueron podados, eliminando 200 outliers superiores y 200 outliers inferiores. Con los restantes 600 resultados, se realizó un promedio, y estos promedios son los que se pueden apreciar en los distintos gráficos.
+Antes de medir tiempos y sacar conclusiones de los mismos, es importante tener un esquema básico de como se realizarán las mediciones en el presente Trabajo, y bajo que condiciones.
+
+Los experimentos fueron realizados en una Intel core I7 960@ 3.20GH (8 cpus, 4096 MB RAM), en Windows 7 64 bits con la máquina virtual de la materia. Para que las pruebas sean más concisas y exactas, con la instruccion sudo nice se le ha asignado al scheduler un aviso de la importancia de la tarea, con el objetivo de asignarle más recursos.
+
+Las mediciones se realizaron corriendo los filtros 1000 veces cada uno, cuyos resultados fueron podados, eliminando 200 outliers superiores y 200 outliers inferiores. Con los restantes 600 resultados, se realizó un promedio, y estos promedios son los que se pueden apreciar en los distintos gráficos. Los tiempos están medidos en ciclos de clock. Cabe destacar que las implementaciones de C se han ejecutado con optlvl O3.
 
 
 \newpage
 
 \section{Experimentación}
+ Se han realizado básicamente 3 experimentos:
+ 
+\begin{enumerate}
+	\item El primero esta orientado en medir los tiempos que tardan los distintos filtros para distintos tamaños de imágenes y para imágenes diferentes. Este experimento tiene como objetivo tener una idea del tiempo de ejecución del algoritmo en general, y comparandolo con otras implementaciones del mismo, tener una idea de cual tiene mejor tiempo de ejecución. En el filtro de merge en particular, nos dará una idea de la diferencia entre trabajar con ints o con floats.
+	\item El segundo esta orientado a observar que tanta influencia tienen tanto los accesos a memorias, como las operaciones aritméticas en el contexto de nuestros algoritmos. Con esto tendremos una idea de que factores limitan a nuestros algoritmos, y en caso de encontrar alguno, como podría resolverse. Para ello se colocarán instrucciones que provoquen accesos a memora y utilicen la ALU, y se observará como cambian los tiempos de ejecución.
+	\item El tercero es más particular del filtro hsl, que dada su particular implementación (tiene muchas llamadas a funcion dentro del ciclo), se transforma en un buen pivote para analizar cuestiones de overhead. Para ello, se removerán todos los llamados a funciones, cambiandolos por jmps, y se observarán los tiempo obtenidos.
 
+
+\end{enumerate}
 
 \newpage
 
@@ -159,7 +171,7 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/FiltrosBlurEnImagenes16x16}
+    \includegraphics[width=0.75\textwidth]{imagenes/FiltrosBlurEnImagenes16x16.png}
   \caption{Figura 1}
   \label{fig:graficoblur1}
 \end{figure}
@@ -265,7 +277,28 @@ Luego, multiplicamos los xmm correspondientes a la imágen original por value y 
 
 \subsubsection{Implementación 2}
 
+\paragraph*{Obtencion de K}
+	La resolucion del pasaje del float value a un int fue abordada intentando encontrar un K tal que el float value por $2^K$ sea un numero entero.
+	Todo float es representado como un numero que contiene 1 bit de signo, 8 bits de exp, un int en exceso 127 y una mantisa de 23 bits.
 
+	$value=0,MANTISA$ $x$ $2^K$
+
+Como value es menor a 1 y mayor a 0, su exponente es negativo.
+Una vez que tengamos el exponente del numero debemos ver cual es el $K$ que lo convierte el exponente en 23, ya que este numero representaria a la mantisa en su totalidad como int.
+	
+Al extraer el exponente del float value vemos que:
+$exp_{encomplemento}=127-exp$
+entonces:
+$150-(exp_{encomplemento}) = 150-127 + exp$
+por lo tanto obtenemos $exp + 23$. 
+Luego notamos que $2^k$ $x$ $2^{-k} == 2^0$
+por lo tanto al hacer la cuenta anterior nos queda el numero $K$
+
+Una vez que obtenemos el K si multiplicaramos nuestro float por $2^K$ terminariamos con un float que es solo la mantisa, entonces podriamos anular la parte superior del float, tanto el signo como el exponente y luego tratarlo como int.
+
+Luego podemos construir el numero $2^K$ que se utilizara para dividir, facilmente, una forma serian shiftar un uno. Este numero podria ser muy grande por lo cual en casos que el exponente supere los 8 bits se generara un value que contenga todos ceros al dividir.
+
+Luego de esta transformacion se procede a realizar la operatoria igual que merge 1.
 
 \subsection{Diferencias de performance en Merge}
 
