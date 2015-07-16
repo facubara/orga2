@@ -3,9 +3,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{charter}   % tipografia
 \usepackage{graphicx}
-\usepackage{placeins}
 %\usepackage{makeidx}
-%\usepackage{paralist} %itemize inline
+\usepackage{paralist} %itemize inline
 
 %\usepackage{float}
 %\usepackage{amsmath, amsthm, amssymb}
@@ -178,7 +177,7 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionAccesosAMemoriaBlur Colores.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion  accesos a memoria blur colores.png}
   \caption{Figura 3}
   \label{fig:graficoblur3}
 \end{figure}
@@ -186,7 +185,7 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionConOperaciones AritmeticasBlurColores.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas blur colores.png}
   \caption{Figura 4}
   \label{fig:graficoblur4}
 \end{figure}
@@ -677,7 +676,7 @@ Tomo el xmm que tiene hsl y lo copio a otro registro(el campo que nos interesar�
 	
 \vspace*{0.3cm}	
 
-$xmm1 -> irrelevante|irrelevante|fmod(h/60.0 , 2)|irrelevante$ 		
+$xmm1 = irrelevante|irrelevante|fmod(h/60.0 , 2)|irrelevante$ 		
 		
 \vspace*{0.3cm}		
 		
@@ -689,7 +688,7 @@ $xmm1 -> irrelevante|irrelevante|fmod(h/60.0 , 2)|irrelevante$
 	
 \vspace*{0.3cm}	
 
-	$xmm1 -> irrelevante|irrelevante|c*(1-fabs(fmod(h/60.0 , 2) -1))=x|irrelevante$
+	$xmm1 = irrelevante|irrelevante|c*(1-fabs(fmod(h/60.0 , 2) -1))=x|irrelevante$
 		
 \vspace*{0.3cm}
 	
@@ -699,21 +698,42 @@ Luego, broadcasteo de manera tal que tenga x en todos los campos.
 	
 Tomo el c antes obtenido, lo copio en un xmm, a esta copia la divido por 2, y luego copio otro xmm el hsl de entrada, a cuya copia le restare el resultado anterior. Como resultado de estas operaciones, obtendremos el siguiente xmm:
 
-$xmm3 -> L-(c/2)=m | c/2 | c/2 | c/2$
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
 	
+\vspace*{0.3cm}	
+
+$xmm3 = L-(c/2)=m | c/2 | c/2 | c/2$
+	
+\vspace*{0.3cm}
+
+
 	Luego usando shuffle barajo los campos para obtener una m en cada uno de ellos.
 	
 	\item Cálculo de RGB:
 	
-		
+	Usando blendps, un xmm con ceros, el xmm de las c y el de las x, obtengo el siguiente xmm:
 	
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+	
+	$xmm4 = 0|x|c|0	$
+	
+\vspace*{0.3cm}
+
+usando este xmm, y máscaras obtenidas por medio de comparaciones me fabrico cada una de las siguientes soluciones
+
 \end{enumerate}
 
 \subsection{Diferencias de performance en HSL}
 
 \begin{figure}[h]
   \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/FiltroHslEnColores512x512.png}
+    \includegraphics[width=0.75\textwidth]{imagenes/Filtro  hsl en colores 512x512.png}
   \caption{Figura 7}
   \label{fig:graficohsl1}
 \end{figure}
@@ -740,14 +760,6 @@ $xmm3 -> L-(c/2)=m | c/2 | c/2 | c/2$
     \includegraphics[width=0.75\textwidth]{imagenes/Comparacion con operaciones aritmeticas hsl colores.png}
   \caption{Figura 10}
   \label{fig:graficohsl4}
-\end{figure}
- \FloatBarrier
-
-\begin{figure}[h]
-  \centering
-    \includegraphics[width=0.75\textwidth]{imagenes/OverheadEnHSLASM2}
-  \caption{Figura 11}
-  \label{fig:Overheadhsl}
 \end{figure}
  \FloatBarrier
 
