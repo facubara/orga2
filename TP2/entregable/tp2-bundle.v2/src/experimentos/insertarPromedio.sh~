@@ -1,0 +1,6 @@
+#!/bin/bash
+for file in ./txt/*
+do 	
+	echo $file>>$prom
+	python2 algo.py $file>>$prom
+done
