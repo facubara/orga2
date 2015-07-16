@@ -19,10 +19,11 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 
 #define BOTINES_CANTIDAD 8
 
-uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS)
-                                        {30,  3, 50}, {30, 38, 50}, {15, 21, 100}, {45, 21, 100} ,
-                                        {49,  3, 50}, {49, 38, 50}, {64, 21, 100}, {34, 21, 100}
-                                    };
+uint botines[BOTINES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, MONEDAS,PEDIDOA,PEDIDOB)
+                                        {30,  3, 50}, {30, 38, 50}, {15, 21, 100}, 
+                                        {45, 21, 100}, {49,  3, 50}, {49, 38, 50}, 
+                                        {64, 21, 100}, {34, 21, 100}};
+
 
 //jugador_t jugadorA;
 //jugador_t jugadorB;
@@ -71,7 +72,10 @@ void inic_game(){
         }
 	jugadores[0] = j1;
 	jugadores[1] = j2;
-	
+	for(j=0; j<8;j++){
+               llamadasminero[j][0]=0;
+               llamadasminero[j][1]=0;
+        }
 	debug = 0;
 	
 	posicion p = (posicion){
@@ -230,7 +234,16 @@ void game_jugador_lanzar_pirata(unsigned char jug, unsigned char tipo, unsigned 
 		.y = (unsigned char) y
 	};
   if (jugadores[jug].vivos == 8){
-     return;           //NO HAY LUGAR PARA MAS TAREAS DE ESE JUGADOR
+	if (jug == 0 && pendientesA.ult < 8){
+		pendientesA.arreglo[pendientesA.ult][0] = x;
+		pendientesA.arreglo[pendientesA.ult][1] = y;
+		pendientesA.ult++;
+	}else if(jug == 1 && pendientesB.ult < 8){
+		pendientesB.arreglo[pendientesA.ult][0] = x;
+		pendientesB.arreglo[pendientesA.ult][1] = y;
+		pendientesB.ult++;
+	}	
+	return;           //NO HAY LUGAR PARA MAS TAREAS DE ESE JUGADOR
   }
    int i = 0;
   if(jug == 0){
@@ -384,7 +397,7 @@ void game_syscall_pirata_mover(direccion dir)
 	unsigned int miCr3 = pir.tss->cr3;
                         
     if(pir.tipo==1){
-    	if(revisar_mapeadas_mineros(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++) == 0){
+    	if(revisar_mapeadas_mineros(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis) == 0){
 			game_matar_pirata_interrupt();
 			return;
     	}
@@ -396,22 +409,33 @@ void game_syscall_pirata_mover(direccion dir)
 
         mapear_a_todos(virtualDst);
 
-		if (revisar_mapeadas_piratas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis++) == 0){	
+		if (revisar_mapeadas_piratas(virtualDst, visitadas, jugadores[jugadorJugando].ult_indice_vis) == 0){	
+                        
+                        
 			visitadas[jugadores[jugadorJugando].ult_indice_vis] = virtualDst;
 			jugadores[jugadorJugando].ult_indice_vis++;
+                        
+                      
+			
 		}
 		int i;
+                
 		for (i=0;i<BOTINES_CANTIDAD;i++){
 			unsigned char inRangeX = botines[i][0] > pos_dst.x-2 && botines[i][0] < pos_dst.x+2;
 			unsigned char inRangeY = botines[i][1] > pos_dst.y-2 && botines[i][1] < pos_dst.y+2;
                                   
-			if (inRangeX && inRangeY && botines[i][2] != 0){
+			if (inRangeX && inRangeY && botines[i][2] != 0 && (llamadasminero[i][jugadorJugando]==0)){
 				unsigned int x = botines[i][0];
-                unsigned int y = botines[i][1];
-
-                screen_pintar_botin(jugadorJugando,y+1,x);
+                                unsigned int y = botines[i][1];
+                                llamadasminero[i][jugadorJugando]=2;
+                		screen_pintar_botin(jugadorJugando,y+1,x);
 				game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
-			}	
+			}else if (inRangeX && inRangeY && botines[i][2] != 0){
+				unsigned int x = botines[i][0];
+                                unsigned int y = botines[i][1];
+				llamadasminero[i][jugadorJugando]=llamadasminero[i][jugadorJugando]-1;
+                                screen_pintar_botin(jugadorJugando,y+1,x);
+			}                          	
 		}
 	}
 	
@@ -547,6 +571,17 @@ void game_matar_pirata(){
 
 void game_matar_pirata_interrupt(){
 	game_matar_pirata();
+	if (jugadorJugando == 0 && pendientesA.ult>0){
+		pendientesA.ult--;
+		int x = pendientesA.arreglo[pendientesA.ult][0];
+		int y = pendientesA.arreglo[pendientesA.ult][1];
+		game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
+	}else if(jugadorJugando == 1 && pendientesB.ult > 0){
+		pendientesA.ult--;
+		int x = pendientesB.arreglo[pendientesA.ult][0];
+		int y = pendientesB.arreglo[pendientesA.ult][1];
+		game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
+	}
 	
 	mostrar_clock(actual);
 
@@ -632,21 +667,7 @@ void game_atender_teclado(unsigned char tecla)
 
 }
 
-unsigned int mi_codigo(unsigned char tipo){
-	if (jugadorJugando ==0){
-		if (tipo == 0){
-			return 0x10000;
-		}else{
-			return 0x11000;
-		}
-	}else {
-		if (tipo == 0){
-			return 0x12000;
-		}else{
-			return 0x13000;
-		}
-}
-}
+
 void mapear_a_todos(unsigned int virtualDst){
 	pirata_t * arreglo;
 	if (jugadorJugando == 0){
@@ -688,6 +709,12 @@ unsigned char revisar_mapeadas_piratas(unsigned int virtualDst, unsigned int *vi
       }
    }
    return res;
+}
+
+unsigned int dame_dir(unsigned int * visitada){
+        breakpoint();
+	return (unsigned int)visitada;
+        breakpoint();
 }
 
 #define KB_w_Aup    0x11 // 0x91

@@ -158,7 +158,7 @@ _isr0:
 
 
     ;imprimir_texto_mp int0_capturada, int0_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
 
     cmp byte [debug], 0
 	je .salir
@@ -197,7 +197,7 @@ _isr1:
     call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int1_capturada, int1_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -235,7 +235,7 @@ _isr2:
     call game_matar_pirata_interrupt 
 
     ;imprimir_texto_mp int2_capturada, int2_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -274,7 +274,7 @@ _isr3:
      call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int3_capturada, int3_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -313,7 +313,7 @@ _isr4:
      call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int4_capturada, int4_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -352,7 +352,7 @@ _isr5:;BOUND Range Exceeded Exception
      call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int5_capturada, int5_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -390,7 +390,7 @@ _isr6:
      call game_matar_pirata_interrupt
  
     ;imprimir_texto_mp int6_capturada, int6_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -429,7 +429,7 @@ _isr7:
 
 
     ;imprimir_texto_mp int7_capturada, int7_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -466,7 +466,7 @@ _isr8:;Double Fault Exception
      call game_matar_pirata_interrupt
     
     ;imprimir_texto_mp int8_capturada, int8_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -504,7 +504,7 @@ _isr9:;Coprocessor Segment Overrun
 
 
     ;imprimir_texto_mp int9_capturada, int9_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -543,7 +543,7 @@ _isr10:;invalid TSS
 
 
     ;imprimir_texto_mp int10_capturada, int10_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -581,7 +581,7 @@ _isr11:;Segment Not Present
      call game_matar_pirata_interrupt
    
     ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -619,7 +619,7 @@ _isr12:;Stack Fault Exception
     call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int12_capturada, int12_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -657,7 +657,7 @@ _isr13:
     call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int13_capturada, int13_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -697,7 +697,7 @@ _isr14:
     call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int14_capturada, int14_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -735,7 +735,7 @@ _isr15:;
      call game_matar_pirata_interrupt
    
     ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -773,7 +773,7 @@ _isr16:;
      call game_matar_pirata_interrupt
    
     ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -810,7 +810,7 @@ _isr17:
     call game_matar_pirata_interrupt
 
     ;imprimir_texto_mp int17_capturada, int17_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -848,7 +848,7 @@ _isr18:;
      call game_matar_pirata_interrupt
    
     ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -886,7 +886,7 @@ _isr19:;Segment Not Present
      call game_matar_pirata_interrupt
    
     ;imprimir_texto_mp int11_capturada, int11_capturada_len, 0x07, 20, 30
-    xchg bx,bx
+    
     cmp byte [debug], 0
 	je .salir
 	mov byte [debug], 2 ;modo mostrando
@@ -997,14 +997,10 @@ _isr70:
 
 global cambiar_tarea_ya
 cambiar_tarea_ya:
-	;~ pushad
-	;xchg bx,bx
         push ebp
         mov ebp, esp
 	mov eax, [ebp+8]
-        ;xchg bx,bx
 	mov [selector], ax
-        ;xchg bx,bx
 	jmp far [offset]
 	
         pop ebp

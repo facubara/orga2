@@ -66,10 +66,21 @@ typedef struct jugador_t
 
 unsigned int visitadasA[3520];
 unsigned int visitadasB[3520];
+
+typedef struct cola_lifo{
+	uint arreglo[8][2];
+	uint ult;
+} colaLifo;
+
+colaLifo pendientesA;
+colaLifo pendientesB;
+
 pirata_t piratasA[8];	// piratas del primer jugador
 pirata_t piratasB[8];	// piratas del segundo jugador
 
 unsigned int tiempo_sin_juego;
+
+unsigned char llamadasminero[8][2];
 
 jugador_t jugadores[2]; 
 
@@ -92,7 +103,7 @@ void game_jugador_lanzar_pirata(unsigned char, unsigned char, unsigned int, unsi
 pirata_t* game_jugador_erigir_pirata(jugador_t *j, uint tipo);
 void game_jugador_anotar_punto(jugador_t *j);
 void game_explorar_posicion(jugador_t *jugador, int x, int y);
-
+unsigned int dame_dir(unsigned int * visitada);
 uint game_valor_tesoro(uint x, uint y);
 void game_calcular_posiciones_vistas(int *vistas_x, int *vistas_y, int x, int y);
 pirata_t* game_pirata_en_posicion(uint x, uint y);
