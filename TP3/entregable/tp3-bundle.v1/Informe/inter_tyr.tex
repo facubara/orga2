@@ -1,8 +1,0 @@
-\begin{enumerate}
-\item[a)]Usaremos la entrada número 32 de la IDT para la interrupción de reloj, la número 33 para la interrupción de teclado y la número 70 para la interrupción de software {\tt 0x66}.  Las tres entradas se cargan como {\it interrupt gates}, y con los mismos atributos indicados en el apartado 2, con la diferencia de que a la 70 se le asigna el nivel de privilegio 3.
-
-\item[b)]Se escribe una base para la rutina de atención. En esta instancia, el único objetivo de la rutina es llamar a la función {\tt screen_actualizar_reloj_global}, la cual se encarga de mostrar la animación de reloj por cada tick de reloj.
-
-\item[c)]Definimos la base de la rutina de atención de teclado de manera que al presionar cualquier tecla, muestre un mensaje en la esquina superior derecha de la pantalla (llamando a {\tt imprime_tecla} definida en {\tt screen.h}). Esto se realiza para corroborar el buen funcionamiento de las interrupciones, en el futuro, alteraremos este aspecto. Luego de esto, la rutina llama a la función {\tt game_atender_teclado}, pasándole como parámetro el código de la tecla presionada. Esta se encarga de realizar la acción que corresponda dependiendo de la tecla indicada (lanzar explorador o activar debug).
-
-\item[d)]Se escribe la rutina de atención de la interrupción numero {\tt 0x46} para que mueva un {\tt 0x42} al registro EAX.

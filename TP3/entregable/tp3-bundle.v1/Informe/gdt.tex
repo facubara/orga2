@@ -6,15 +6,18 @@
 
 Los descriptores de segmento de código llevan un 8 en su campo type (EXECUTE ONLY) mientras que los de datos llevan un 2 (READ/WRITE). Para lograr direccionar los primeros 500MB de memoria, establecemos el límite en {\tt 0x1F3FF} y la granularidad en 1.
 
+\item[b)] En cuanto al pasaje a modo protegido, en primera instancia se deshabilitan las interrupciones ({\tt cli}) y se habilita el pin A20 para poder acceder a direcciones superiores al primer MB.  Luego se carga la GDT con la instrucci\'on {\tt lgdt} y la estructura {\tt gdt_descriptor} definida en {\tt gdt.h}. Lo siguiente es setear el bit PE del registro CR0 y hacer el salto mediante la instrucci\'on {\tt jmp} a la direcci\'on referenciada por la etiqueta {\tt modo_protegido} en la entrada 8 de la GDT, con nivel de privilegio 0.  Finalmente, se cargan los registros de segmento (DS, ES, GS y SS) y se establece la base de la pila de kernel en {\tt 0x27000}.
+
 \item[c)] Asignamos la entrada 12 de la GDT para el área de pantalla. Se establece la base en {\tt 0xB8000} y su límite en {\tt 0x1000}, el campo type se define como 2 (READ/WRITE) y el bit S en 1. Una vez hecho esto, movemos el selector de esta entrada al registro de segmento FS.
 
 \item[d)] Utilizamos la funcion {\tt inic_video} para limpiar la pantalla e inicializarla como muestra la figura \ref{fig:pantalla}. Hacemos uso de la estructura que se encuentra en {\tt screen.h} para ir asignando los distintos caracteres y sus atributos (color de caracter y su color de fondo). Para esto usamos la dirección física del buffer de video {\tt 0xB8000}.
 
-%\begin{figure}[h]
-%	  \centering
-%	    \includegraphics[ width=0.25\textwidth]{imagenes/pantallainicial.png}
-%	     \caption{Pantalla inicializada}
-%	  \label{fig:pantalla}
-%	  \vspace{-15pt}
-%	\end{figure}
-%	\FloatBarrier
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/pantallainicial.png}
+  \caption{Estado inicial de la pantalla}
+  \label{fig:pantalla}
+\end{figure}
+ \FloatBarrier
+
+\end{enumerate}

@@ -12,3 +12,5 @@ La segunda función, {\tt mapear\_alrededores}, toma un cr3 sobre el cual realiz
 La rutina {\tt mmu\_mapear\_pagina} toma el valor de {\tt cr3} y la direccióon virtual, sobre la cual calcula los índices correspondientes a directorio y tablas de páginas. Luego accede a la entrada del directorio y procede de la siguiente manera: si esta entrada se encuentra como {\it presente}, se accede a la entrada correspondiente de tabla y se realiza el mapeo con la dirección física indicada; en caso contrario, primero se completa dicha entrada pidiendo una página libre y luego se hace el mapeo propiamente dicho.
 
 La rutina {\tt mmu\_unmapear\_pagina} toma el valor actual de {\tt cr3} y la dirección virtual, de la cual calcula los índices correspondientes a directorio y tablas de páginas.  Luego accede a la entrada del directorio y, si estaba como {\it presente}, busca la entrada en la tabla de p\'aginas y la pone como {\it no presente}. En el caso de que ya se encontrar como {\it no presente} no hace ningún cambio.
+
+\end{enumerate}
