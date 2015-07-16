@@ -76,13 +76,9 @@ El objetivo de este Trabajo Práctico es mostrar las variaciones en la performan
 
 Para ello se realizarán distintos experimentos sobre tres filtros de foto, Blur, Merge y HSL, tanto en código assembler, que aproveche las instrucciones SSE brindadas para los procesadores de arquitectura Intel, como en código C compilado con gcc, al que se le aplicará el grado de optimización grados de optimización -O3.
 
-FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
+%FALTA PONER QUE QUIERO VER PARTICULARMENTE DE CADA UNO!!!!
 
-
-\newpage
-\section{Preámbulo}
-
-\subsection{Calidad de las Mediciones}
+\section{Calidad de las Mediciones}
 Antes de medir tiempos y sacar conclusiones de los mismos, es importante tener un esquema básico de como se realizarán las mediciones en el presente Trabajo, y bajo que condiciones.
 
 Los experimentos fueron realizados en una Intel core I7 960@ 3.20GH (8 cpus, 4096 MB RAM), en Windows 7 64 bits con la máquina virtual de la materia. Para que las pruebas sean más concisas y exactas, con la instruccion sudo nice se le ha asignado al scheduler un aviso de la importancia de la tarea, con el objetivo de asignarle más recursos.
@@ -833,7 +829,10 @@ Este experimento fue diseñado especialmente para el filtro HSL2, dado que por c
 
 \newpage
 \section{Conclusiones y trabajo futuro}
+Como primera conclusion de este trabajo práctico podemos decir la gran ventaja que reperesenta la utilizacion de operaciones vectoriales a la hora de realizar operaciones paralelizables sobre un gran volumen de datos. Sin embargo, si bien es interesante aplicarlo a imágenes, tiene una mayor utilidad en el procesamiento multimedia, en donde el tiempo que se ahorra una tarea impacta de manera muy significativa en la calidad del programa en si.
 
+Como trabajo futuro, una idea interesante a desarollar, podria ser construir o plantear un compilador de C que tome la mejor parte de los compiladores actuales, esto es, las diversas optimizaciones que
+realiza, y las integre con SIMD. De esta manera se podria, en teoria, obtener mejores resultados que los aqui mostrados.
 
 \end{document}
 
