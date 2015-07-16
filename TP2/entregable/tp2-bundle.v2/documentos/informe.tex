@@ -403,7 +403,7 @@ A la función le entra 4 píxeles por un xmm, a los cuales primero los broadcast
 
 \vspace*{0.3cm}
 
-Cálculo los máximos entre rgb de cada píxel, y los dejo en un xmm. Hago lo mismo con los mínimos, y los pongo en otro xmm. Cálculo la resta entre los máximos y los mínimos y los pongo en otro xmm. Obtendríamos lo siguiente:
+Cálculo los máximos entre rgb de cada píxel, y los dejo en un xmm. Hago lo mismo con los mínimos, y los pongo en otro xmm. Cálculo la resta entre los máximos y los mínimos y los pongo en otro xmm(a esta resta para fines prácticos la llamaremos d). Obtendríamos lo siguiente:
 
  \vspace*{0.3cm}
 
@@ -435,7 +435,7 @@ Luego de estos preparativos, la función se divide en tres partes:
 	
 	\item Cálculo de S:	
 	
-	Tomo el xmm resultado del cálculo de L, y lo copio en otro xmm. A esta copia la multiplico por dos en cada campo, y luego le resto uno a cada campo. Para calcular el fabs comparo por máximo a este xmm, y a otro xmm que sea el resultado de un xmm lleno de ceros restado verticalmente con el primer xmm. La idea de esto es que sea "e" un numero entero, entonces fabs(e) = "e" o "-e". Hasta ahora, me quedaría algo como:
+Tomo el xmm resultado del cálculo de L, y lo copio en otro xmm. A esta copia la multiplico por dos en cada campo, y luego le resto 1.0 a cada campo. Para calcular el fabs comparo por máximo a este xmm, y a otro xmm que sea el resultado de un xmm lleno de ceros restado verticalmente con el primer xmm. La idea de esto es que sea $e$ un numero entero, entonces $fabs(e) = e$ o $-e$. Hasta ahora, me quedaría algo como:
 
 \vspace*{0.3cm}
 
@@ -447,9 +447,120 @@ $xmm7$ $=$ $fabs(2*L3 - 1) |fabs(2*L2 - 1)|fabs(2*L1 - 1)| fabs( 2*L0 - 1)$
 	
 \vspace*{0.3cm}
 
-		
+Después a un xmm que tenga un 1.0 por campo con campos de 32 bits, le resto el resultado anterior y lo guardo en un xmm. Tomo el xmm que tenía los máximos - mínimos,los convierto en floats, y los divido por el xmm que me guarde anteriormente. A este resultado lo divido por un xmm que tenga en los cuatro campos el número 255.0001. Luego de esto, se obtendría lo siguiente:  
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)
+
+\vspace*{0.3cm}
+
+$xmm9 -> d3 / (1 - fabs(2*L3 - 1)) / 255.0001$ $|$ $d2 / (1 - fabs(2*L2 - 1)) / 255.0001$ $|$
+
+\hspace*{1.75cm}$d1 / (1 - fabs(2*L1 - 1)) / 255.0001$ $|$ $ d0/ (1 - fabs( 2*L0 - 1)) / 255.0001$
+
+\vspace*{0.3cm}
+	
+Luego compararé los máximo con los mínimo, y a aquellos que sean iguales, se les asignará un 0. En caso contrario se asignará el resultado anterior. Asi se encontraran los s para cada píxel
+
+	\item Cálculo de h:
+
+	Tomo los xmm que tenían los r, g y b de los distintos píxeles, y los conviero en floats. Luego dejo en otros 3 xmm las restas de los r con los g, los g con los b, y los b con los r. Como ahora tengo que dividirlo por los $d$, pero este valor podría ser cero, teniendo en cuenta que si no es 0 es positivo, hacemos lo siguiente. Tomamos a los d, les resto uno, tomo su valor absoluto y le sumo 1. Si d era un valor positivo, debería obtener el mismo número. Caso contrario, o sea, si d era 0, debo obtener el número 2, que me va a servir solo para no dividir por cero. Haciendole esta modificación al d, los transformo en float, y ahora tomo a cada uno de los 3 xmm antes mencionados(las restas) y los divido por d. Hasta acá el estado de los xmm debería ser el siguiente:
+	
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm12=(r3-g3)/d3$ $|$ $(r2-g2)/d2$ $|$ $(r1-g1)/d1$ $|$ $(r0-g0)/d0$
+
+\vspace*{0.3cm} 
+ 
+$xmm13=(g3-b3)/d3$ $|$ $(g2-b2)/d2$ $|$ $(g1-b1)/d1$ $|$ $(g0-b0)/d0$
+
+\vspace*{0.3cm}
+
+$xmm14=(b3-r3)/d3$ $|$ $(b2-r2)/d2$ $|$ $(b1-r1)/d1$ $|$ $(b0-r0)/d0$	
+	
+\vspace*{0.3cm}
+	
+	Luego, a lo que recién en el estado de los xmm llamé xmm14, debo sumarle 2, al que llamamos xmm12 hay que sumarle 4, y al que llame xmm13, hay que sumarle 6. Luego, a estos 3 hay que multiplicarlos por 60. El nuevo estado debería ser el siguiente:
+	
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm12=60*(((r3-g3)/d3)+2)$ $|$ $60*(((r2-g2)/d2)+2)$ $|$ $60*(((r1-g1)/d1)+2)$ $|$ $60*(((r0-g0)/d0)+2)$
+
+\vspace*{0.3cm} 
+ 
+$xmm13=60*(((g3-b3)/d3)+2)$ $|$ $60*(((g2-b2)/d2)+2)$ $|$ $60*(((g1-b1)/d1)+2)$ $|$ $60*(((g0-b0)/d0)+2)$
+
+\vspace*{0.3cm}
+
+$xmm14=60*(((b3-r3)/d3)+2)$ $|$ $60*(((b2-r2)/d2)+2)$ $|$ $60*(((b1-r1)/d1)+2)$ $|$ $60*(((b0-r0)/d0)+2)$	
+	
+\vspace*{0.3cm}
+	 
+	 Ahora moveremos información a un xmm de la siguiente manera: si los máximos y los mínimos de dos campos son iguales, entonces en ese campo habrá un 0. Si el máximo de un campo es igual al r del píxel correspondiente, entonces el campo tendrá a su correspondiente en xmm13. De no ser el máximo del campo igual al r del píxel, pero si a g, entonces el campo tendrá a su correspondiente en xmm14. de no ser el máximo del campo igual al r ni al g del píxel, entonces sera igual a b, y tendrá a su correspondiente en xmm12. Luego, por medio de comparaciones se observa si este xmm obtenido es mayor o igual a 360, y en caso de serlo se le resta 360.
 	
 \end{enumerate}
+
+Una vez terminado esto tenemos en 3 xmm distintos los h los s y los l de cada pixel, de la siguiente manera
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm1 = H3|H2|H1|H0$
+
+\vspace*{0.3cm}
+
+$xmm2 = S3|S2|S1|S0$
+
+\vspace*{0.3cm}
+
+$xmm3 = L3|L2|L1|L0$
+
+\vspace*{0.3cm}
+
+$xmm4 = A3|A2|A1|A0$
+
+\vspace*{0.3cm}
+
+Luego, tan solo se acomoda la información usando blendps, shuffles y shifts, hasta obtener lo siguiente:
+
+ \vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm1 = L3|S3|H3|A3$
+
+\vspace*{0.3cm}
+
+$xmm2 = L2|S2|H2|A2$
+
+\vspace*{0.3cm}
+
+$xmm3 = L1|S1|H1|A1$
+
+\vspace*{0.3cm}
+
+$xmm4 = L0|S0|H0|A0$
+
+\vspace*{0.3cm}
+
+y esto devuelve la función.
+
+\paragraph*{hsltorgb_asm:}
+
 
 
 
