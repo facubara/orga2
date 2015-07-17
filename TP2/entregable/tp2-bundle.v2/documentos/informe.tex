@@ -1012,6 +1012,59 @@ hsl2 en colores 512x512 con overhead: 43722805
 
 Este experimento fue diseñado especialmente para el filtro HSL2, dado que por como fue concebido (descompuesto en distintos modulos para hacer más fácil su lectura), contaba con una gran cantidad total de llamadas a funciones. Lo que se hizo fue, copiar el código de los distintos módulos, dentro de la función principal, eliminando la necesidad de realizar instrucciones {\tt CALL} y {\tt RET}. Estas instrucciones fueron reemplazadas por saltos {\tt JMP}, que a diferencia de los saltos condicionales, cuya cantidad permaneció intacta, resultan predictivos en su funcionamiento lo que tiene como consecuencia cierta estabilidad en la complejidad temporal de nuestras implementaciones.
 
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionConBlue.png}
+  \caption{Figura 12}
+  \label{fig:graficohsl6}
+\end{figure}
+ \FloatBarrier
+
+Promedios calculados con imagen 512x512:
+
+Hsl 1 en blue: 70529116
+
+Hsl 1 en colores: 72094082
+
+Hsl 2 en blue: 44855243
+
+Hsl 2 en colores: 44972370
+
+Hsl C en blue: 53266887
+
+Hsl C en colores: 55964800
+
+En este experimento se puede observar una mejoría al ejecutar los filtros en la imagen Blue, siendo esta más marcada en las implementaciones ASM1 y C y muy leve en ASM2. Este hecho resulta curioso dado que el experimento se planteó con la idea de buscar un caso que maximizara la cantidad de operaciones que deben hacer los ifs de las funciones de C, buscando empeorar los tiempos de ejecución. Lo que ocurrió en cambio fue una mejoría que, creemos, se debe al hecho de que, al ser una imagen completamente azul (color que elegimos debido a sus atributos rgb y hsl), siempre entraba por el último sector de los ifs que se encontraban en dichas funciones. Gracias a esta particularidad, suponemos que el predictor de saltos cumplió su tarea, y al observar que siempre se entraba por el mismo lugar del if, logró acelerar bastante el proceso.
+Es correcto notar que, en la implementación ASM2, no disponemos de saltos condicionales que se puedan ver afectados por particularidades de la imagen fuente, por lo tanto el tiempo de ejecución se mantiene relativamente estable.
+Por último, y haciendo uso de experimentos anteriores, se pone en evidencia que, cambios bruscos en imagenes (pasar de colores a una imagen de 1 solo color, por ejemplo) puede variar significativamente la eficiencia de algunos filtros.
+
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/ComparacionVersionModificadaHSL.png}
+  \caption{Figura 13}
+  \label{fig:graficohsl7}
+\end{figure}
+ \FloatBarrier
+
+Promedios en imagenes 200x200 y 512x512:
+
+Hsl 1 modificado en colores 200x200: 8294890
+
+Hsl 1 original en colores 200x200:  10698487
+
+Hsl C en colores 200x200: 8530391
+
+Hsl 1 modificado en colores 512x512: 57071615
+
+Hsl 1 original en colores 512x512: 73798573
+
+Hsl C en colores 512x512: 58492751
+
+Se puede observar que la versión modificada de la implementación ASM1 del filtro HSl mejoró considerablemente la performance de su predecesora verificando el resultado esperado de este experimento. Sin embargo, lo que se logró fue una pequeña ventaja en comparación con la implementación de C. Por ende, concluimos que el filtro ASM2 resulta victorioso.
+
+
+
 \subsubsection{Resultados}
 
 \subsubsection{Conclusiones}
