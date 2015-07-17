@@ -96,7 +96,7 @@ Las mediciones se realizaron corriendo los filtros 1000 veces cada uno, cuyos re
 	\item El segundo esta orientado a observar que tanta influencia tienen tanto los accesos a memorias, como las operaciones aritméticas en el contexto de nuestros algoritmos. Con esto tendremos una idea de que factores limitan a nuestros algoritmos, y en caso de encontrar alguno, como podría resolverse. Para ello se colocarán instrucciones que provoquen accesos a memora y utilicen la ALU, y se observará como cambian los tiempos de ejecución.
 	\item El tercero es más particular del filtro hsl, que dada su particular implementación (tiene muchas llamadas a funcion dentro del ciclo), se transforma en un buen pivote para analizar cuestiones de overhead. Para ello, se removerán todos los llamados a funciones, cambiandolos por jmps, y se observarán los tiempo obtenidos.
 	\item El cuarto aplica sobre hsl, y complementa al primer experimeto. Mirando el código de hsl, creamos una imágen que provoca siempre que los if else del código entren por el último if, con la intención de que esto alentice el tiempo de ejecución del filtro, para mostrar que algunas imágenes tienen un mayor impacto en la performance de hsl que otras.
-	\item el quinto también aplica sobre hsl, pero en particular en una de las implementaciones de este(la primera en assembler).Se cambio el código original de manera tal que pueda aprovechar mejor las ventajas de las instrucciones SSE y se comparó con otras implementaciones y con la implementación original. 
+	\item El quinto también aplica sobre hsl, pero en particular en una de las implementaciones de este(la primera en assembler).Se cambio el código original de manera tal que pueda aprovechar mejor las ventajas de las instrucciones SSE y se comparó con otras implementaciones y con la implementación original. 
 \end{enumerate}
 
 \newpage
@@ -174,14 +174,18 @@ Luego de esto, se tienen en 4 xmm los 4 píxeles procesados, se empaquetan de ma
  \FloatBarrier
 
 Promedios graficados con imagen de 16x16:
+\\
 
-blur1 colores: 6638
+Blur1 colores: 6638
+\\
 
-blur1 lena: 6810
+Blur1 lena: 6810
+\\
 
-blur2 colores: 5545
+Blur2 colores: 5545
+\\
 
-blur2 lena: 5514
+Blur2 lena: 5514
 
 
 \begin{figure}[h]
@@ -194,18 +198,25 @@ blur2 lena: 5514
 
 
 Promedios graficados con imagen de 200x200:
+\\
 
-blur 1 colores promedio: 1413634
+Blur 1 colores promedio: 1413634
+\\
 
-blur 1 lena promedio: 1426631
+Blur 1 lena promedio: 1426631
+\\
 
-blur 2 colores promedio: 1246833
+Blur 2 colores promedio: 1246833
+\\
 
-blur 2 lena promedio: 1250951
+Blur 2 lena promedio: 1250951
+\\
 
-blur c colores promedio: 10885030
+Blur c colores promedio: 10885030
+\\
 
-blur c lena promedio: 11926364
+Blur c lena promedio: 11926364
+\\
 
 De estas primeras dos figuras obtenemos que no se puede apreciar una diferencia notable entre las distintas imagenes con las que contamos para los experimentos, lo que parecería indicar que la complejidad del filtro es en cierta medida independiente a la imagen que se quiere modificar. Si bien no fue incluido en este informe, también se corrio una comparación, con una imagen de tamaño 16x16, entre las 3 implementaciones, dando una diferencia aproximada de 50.000 ciclos de clock entre C y las distintas ASM (cuyos valores no superaban los 10.000 ciclos de clock).
 
@@ -220,14 +231,19 @@ Por otro lado, notamos una diferencia de performance relativamente pequeña, a f
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
-blur 1 en colores s/accesos: 8579777
+Blur 1 en colores s/accesos: 8579777
+\\
 
-blur 1 en colores c/accesos: 8549115
+Blur 1 en colores c/accesos: 8549115
+\\
 
-blur 2 en colores s/accesos: 8139803
+Blur 2 en colores s/accesos: 8139803
+\\
 
-blur 2 en colores c/accesos: 8184807
+Blur 2 en colores c/accesos: 8184807
+\\
 
 Para esta comparación, entre el filtro normal y uno al que se le agregaron 6 accesos a memoria por ciclo de ejecución, se decidió ejecutar en el contexto de una imagen de 512x512 dado que esto nos daba como resultado una gran cantidad total de accesos a memoria. El resultado, teniendo en cuenta la cantidad de ciclos de clock totales que requirió cada filtro, no fue significativa. Esto nos lleva a pensar que tal vez, estos accesos no resultan tan relevantes para la performance. Esto se podría dar, ya que al no variar demasiado las direcciones a las accedemos, estas probablemente se encuentran en la cache para acelerar el proceso de acceso. 
 
@@ -240,14 +256,19 @@ Para esta comparación, entre el filtro normal y uno al que se le agregaron 6 ac
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
-blur 1 en colores s/operaciones: 8579777
+Blur 1 en colores s/operaciones: 8579777
+\\
 
-blur 1 en colores c/operaciones: 9555116
+Blur 1 en colores c/operaciones: 9555116
+\\
 
-blur 2 en colores s/operaciones: 8139803
+Blur 2 en colores s/operaciones: 8139803
+\\
 
-blur 2 en colores c/operaciones: 8619389
+Blur 2 en colores c/operaciones: 8619389
+\\
 
 Aquí, se introdujeron 6 operaciones aritméticas dentro del ciclo de cada implementación ASM. Así como en el experimento anterior, se corrió sobre una imagen de 512x512 por la misma razón, sólo que aplicada a las operaciones aritméticas. Se puede observar que según como se encuentre implementado el filtro, las operaciones pueden pesar más o menos en el tiempo de ejecución, dado que para la implementación 1 los cambios son más notables que para su contraparte en ASM. Teniendo en cuenta el gráfico anterior, no se pueden apreciar diferencias significativas entre aplicar operaciones aritméticas o accesos a memoria.
 
@@ -349,18 +370,25 @@ Luego de esta transformacion se procede a realizar la operatoria igual que merge
  \FloatBarrier
 
 Promedios graficados con imagenes 200x200:
+\\
 
-merge 1 en colores: 225726
+Merge 1 en colores: 225726
+\\
 
-merge 1 en lena: 237499
+Merge 1 en lena: 237499
+\\
 
-merge 2 en colores: 1450444
+Merge 2 en colores: 1450444
+\\
 
-merge 2 en lena: 1449965
+Merge 2 en lena: 1449965
+\\
 
-merge c en colores: 3438000
+Merge c en colores: 3438000
+\\
  
-merge c en lena: 3689066
+Merge c en lena: 3689066
+\\
 
 \begin{figure}[h]
   \centering
@@ -371,12 +399,16 @@ merge c en lena: 3689066
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
-merge 1 lena: 1543888
+Merge 1 lena: 1543888
+\\
 
-merge 2 lena: 10119142
+Merge 2 lena: 10119142
+\\
 
-merce c lena: 24879522
+Merce c lena: 24879522
+\\
 
 Del análisis de estas dos figuras, podemos notar que, otra vez, la versión C del filtro es claramente inferior, inferioridad que no hace más que acentuarse a medida que las imagenes crecen y por otro lado, que la diferencia de imagenes no es relevante. En este caso, si se puede hacer una diferenciación entre ASM1 y ASM2, dado que ASM1, como muestran las figuras, posee un tiempo de ejecución que es claramente mejor al de ASM2. Creemos que esto se debe, en parte, a la posibilidad de que nuestro pasaje de float a int no haya sido realizado de manera óptima (contamos con un ciclo que realiza shifteos una cantidad k de veces, siendo k una variable que podría llegar hasta 127, siendo shift una instrucción que suponemos es costosa), lo que podría desembocar en que, en los lugares donde tal vez este cambio genera cambios favorables, se compensen con el tiempo que nos lleva convertir de float a int.	Notamos también que la calidad de la imagen no mejora, lo que nos lleva a pensar que el pasaje de float a int no realizó ninguna mejora a nuestro algoritmo. 
 
@@ -389,14 +421,18 @@ Del análisis de estas dos figuras, podemos notar que, otra vez, la versión C d
  \FloatBarrier
  
 Promedios graficados con imagen 512x512:
+\\
 
-merge 1 s/accesos: 1559196
+Merge 1 s/accesos: 1559196
+\\
 
-merge 1 c/accesos: 1570018
+Merge 1 c/accesos: 1570018
+\\
 
-merge 2 s/accesos: 10184244
+Merge 2 s/accesos: 10184244
+\\
 
-merge 2 c/accesos: 10163918
+Merge 2 c/accesos: 10163918
 
 
 \begin{figure}[h]
@@ -408,15 +444,19 @@ merge 2 c/accesos: 10163918
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
-merge 1 s/operaciones: 1559196
+Merge 1 s/operaciones: 1559196
+\\
 
-merge 1 c/operaciones: 1747563
+Merge 1 c/operaciones: 1747563
+\\
 
-merge 2 s/operaciones: 10184244
+Merge 2 s/operaciones: 10184244
+\\
 
-merge 2 c/operaciones: 9833556
-
+Merge 2 c/operaciones: 9833556
+\\
 
 
 Nuevamente, no hay ninguna diferencia que sea necesario recalcar, dado que los tiempos son prácticamente iguales. Reafirmando nuestra teoría de que en ciertos casos, las operaciones que agreguemos no alteran de manera notable la eficacia de nuestros algoritmos.
@@ -424,6 +464,8 @@ Nos resulta curioso que en ciertos casos, el filtro que tiene presentes las oper
 
 
 \subsubsection{Conclusiones}
+
+Se sigue verificando nuestra teoría sobre la eficiencia de las implementaciones de ASM sobre las de C. A su vez, continuamos con la idea de que agregando operaciones de memoria y aritméticas, modifica desfavorablemente la eficiencia.
 
 
 \newpage
@@ -915,10 +957,13 @@ Esta función tan solo llama a las otras para que hagan todo. Básicamente lo qu
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
 Hsl 1 en colores: 73798573
+\\
 
 Hsl 2 en colores: 43722805
+\\
 
 Hsl C en colores: 58492751
 
@@ -931,18 +976,25 @@ Hsl C en colores: 58492751
  \FloatBarrier
 
 Promedios graficados con imagenes 200x200:
+\\
 
 Hsl 1 en colores: 10698487
+\\
 
 Hsl 1 en lena: 11123647
+\\
 
 Hsl 2 en colores: 6250614
+\\
 
 Hsl 2 en lena: 6491505
+\\
 
 Hsl C en colores: 8530391
+\\
 
 Hsl C en lena: 8897357
+\\
 
 Luego de ver estas dos figuras podemos decir que el filtro HSL es un caso particular. Sería el primer caso en el que una función de ASM resulta más ineficiente que la implementación en C. Creemos que esto sucede ya que la implementación 1 del filtro hace uso de funciones en C {\tt rgbTohsl} y {\tt hslTorgb}. En en aspecto del pasaje de rgb a hsl y viceversa, ambos filtros son iguales ya que usan C. La diferencia entre ambas implementaciones esta cuando se busca aplicar la función SUMA. Para esta función, ambas implementaciones son similares en el hecho de que procesan de a 1 pixel a la vez, la diferencia esta en que este procesamiento resulta mas engorroso al realizarse en ASM, dándole la ventaja a la implementación de C (que realiza los pasos de manera mas eficaz).
 Por otro lado, se nota que la implementación 2 del filtro resulta ser la más eficaz, ya que si bien la función SUMA resulta igual que en la implementación 1, podemos realizar las conversiones de formato de pixel usando ASM (lo que nos permite por un lado convertir de rgb a hsl procesando 4 pixels a la vez), optimizando los tiempos en ese aspecto.
@@ -957,14 +1009,19 @@ Por otro lado, se nota que la implementación 2 del filtro resulta ser la más e
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
 Hsl 1 en colores s/accesos: 73798573
+\\
 
 Hsl 1 en colores c/accesos: 73251358
+\\
 
 Hsl 2 en colores s/accesos: 43722805
+\\
 
 Hsl 2 en colores c/accesos: 43931534
+\\
 
 
 
@@ -977,14 +1034,19 @@ Hsl 2 en colores c/accesos: 43931534
  \FloatBarrier
 
 Promedios graficados con imagen 512x512:
+\\
 
 Hsl 1 en colores s/operaciones: 73798573
+\\
 
 Hsl 1 en colores c/operaciones: 75178963
+\\
 
 Hsl 2 en colores s/operaciones: 43722805
+\\
 
 Hsl 2 en colores c/operaciones: 44129529
+\\
 
 Podemos observar que tanto los accesos a memoria, como las operaciones aritméticas no produjeron un aumento significativo en la velocidad de ejecución de nuestros programas, al igual que en anteriores filtros. La conclusión sobre este tipo de experimentos se verá en el apartado Conclusiones y trabajo futuro.
 
@@ -997,14 +1059,19 @@ Podemos observar que tanto los accesos a memoria, como las operaciones aritméti
  \FloatBarrier
 
 Promedios graficados con imagenes de 200x200 y 512x512:
+\\
 
-hsl2 en colores 200x200 sin overhead: 6168787
+Hsl2 en colores 200x200 sin overhead: 6168787
+\\
 
-hsl2 en colores 200x200 con overhead: 6250614
+Hsl2 en colores 200x200 con overhead: 6250614
+\\
 
-hsl2 en colores 512x512 sin overhead: 41904317
+Hsl2 en colores 512x512 sin overhead: 41904317
+\\
 
-hsl2 en colores 512x512 con overhead: 43722805
+Hsl2 en colores 512x512 con overhead: 43722805
+\\
 
 Este experimento fue diseñado especialmente para el filtro HSL2, dado que por como fue concebido (descompuesto en distintos modulos para hacer más fácil su lectura), contaba con una gran cantidad total de llamadas a funciones. Lo que se hizo fue, copiar el código de los distintos módulos, dentro de la función principal, eliminando la necesidad de realizar instrucciones {\tt CALL} y {\tt RET}. Estas instrucciones fueron reemplazadas por saltos {\tt JMP}, que a diferencia de los saltos condicionales, cuya cantidad permaneció intacta, resultan predictivos en su funcionamiento lo que tiene como consecuencia cierta estabilidad en la complejidad temporal de nuestras implementaciones.
 
@@ -1017,18 +1084,25 @@ Este experimento fue diseñado especialmente para el filtro HSL2, dado que por c
  \FloatBarrier
 
 Promedios calculados con imagen 512x512:
+\\
 
 Hsl 1 en blue: 70529116
+\\
 
 Hsl 1 en colores: 72094082
+\\
 
 Hsl 2 en blue: 44855243
+\\
 
 Hsl 2 en colores: 44972370
+\\
 
 Hsl C en blue: 53266887
+\\
 
 Hsl C en colores: 55964800
+\\
 
 En este experimento se puede observar una mejoría al ejecutar los filtros en la imagen Blue, siendo esta más marcada en las implementaciones ASM1 y C y muy leve en ASM2. Este hecho resulta curioso dado que el experimento se planteó con la idea de buscar un caso que maximizara la cantidad de operaciones que deben hacer los ifs de las funciones de C, buscando empeorar los tiempos de ejecución. Lo que ocurrió en cambio fue una mejoría que, creemos, se debe al hecho de que, al ser una imagen completamente azul (color que elegimos debido a sus atributos rgb y hsl), siempre entraba por el último sector de los ifs que se encontraban en dichas funciones. Gracias a esta particularidad, suponemos que el predictor de saltos cumplió su tarea, y al observar que siempre se entraba por el mismo lugar del if, logró acelerar bastante el proceso.
 Es correcto notar que, en la implementación ASM2, no disponemos de saltos condicionales que se puedan ver afectados por particularidades de la imagen fuente, por lo tanto el tiempo de ejecución se mantiene relativamente estable.
@@ -1044,23 +1118,31 @@ Por último, y haciendo uso de experimentos anteriores, se pone en evidencia que
  \FloatBarrier
 
 Promedios en imagenes 200x200 y 512x512:
+\\
 
 Hsl 1 modificado en colores 200x200: 8294890
+\\
 
 Hsl 1 original en colores 200x200:  10698487
+\\
 
 Hsl C en colores 200x200: 8530391
+\\
 
 Hsl 1 modificado en colores 512x512: 57071615
+\\
 
 Hsl 1 original en colores 512x512: 73798573
+\\
 
 Hsl C en colores 512x512: 58492751
+\\
 
 Se puede observar que la versión modificada de la implementación ASM1 del filtro HSl mejoró considerablemente la performance de su predecesora verificando el resultado esperado de este experimento. Sin embargo, lo que se logró fue una pequeña ventaja en comparación con la implementación de C. Por ende, concluimos que el filtro ASM2 resulta victorioso.
 
 \subsubsection{Conclusiones}
 
+Si bien se dio el caso de que una implementación en ASM resultara mas ineficaz que una en C, esto se pudo salvar haciendo unas modificaciones al código de la función en ASM, reafirmando nuestra hipótesis. Nos queda más claro que, al momento de manejarnos con saltos condicionales, la herramienta de predicción de saltos juega un papel muy importante.
 
 \newpage
 \section{Conclusiones y trabajo futuro}
