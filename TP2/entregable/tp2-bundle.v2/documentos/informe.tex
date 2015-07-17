@@ -89,14 +89,14 @@ Las mediciones se realizaron corriendo los filtros 1000 veces cada uno, cuyos re
 \newpage
 
 \section{Experimentación}
- Se han realizado básicamente 3 experimentos:
+ Se han realizado 2 experimentos generales, y 3 particulares a un filtro, o sea 5 experimentos:
  
 \begin{enumerate}
 	\item El primero esta orientado en medir los tiempos que tardan los distintos filtros para distintos tamaños de imágenes y para imágenes diferentes. Este experimento tiene como objetivo tener una idea del tiempo de ejecución del algoritmo en general, y comparandolo con otras implementaciones del mismo, tener una idea de cual tiene mejor tiempo de ejecución. En el filtro de merge en particular, nos dará una idea de la diferencia entre trabajar con ints o con floats.
 	\item El segundo esta orientado a observar que tanta influencia tienen tanto los accesos a memorias, como las operaciones aritméticas en el contexto de nuestros algoritmos. Con esto tendremos una idea de que factores limitan a nuestros algoritmos, y en caso de encontrar alguno, como podría resolverse. Para ello se colocarán instrucciones que provoquen accesos a memora y utilicen la ALU, y se observará como cambian los tiempos de ejecución.
 	\item El tercero es más particular del filtro hsl, que dada su particular implementación (tiene muchas llamadas a funcion dentro del ciclo), se transforma en un buen pivote para analizar cuestiones de overhead. Para ello, se removerán todos los llamados a funciones, cambiandolos por jmps, y se observarán los tiempo obtenidos.
-
-
+	\item El cuarto aplica sobre hsl, y complementa al primer experimeto. Mirando el código de hsl, creamos una imágen que provoca siempre que los if else del código entren por el último if, con la intención de que esto alentice el tiempo de ejecución del filtro, para mostrar que algunas imágenes tienen un mayor impacto en la performance de hsl que otras.
+	\item el quinto también aplica sobre hsl, pero en particular en una de las implementaciones de este(la primera en assembler).Se cambio el código original de manera tal que pueda aprovechar mejor las ventajas de las instrucciones SSE y se comparó con otras implementaciones y con la implementación original. 
 \end{enumerate}
 
 \newpage
@@ -250,8 +250,6 @@ blur 2 en colores s/operaciones: 8139803
 blur 2 en colores c/operaciones: 8619389
 
 Aquí, se introdujeron 6 operaciones aritméticas dentro del ciclo de cada implementación ASM. Así como en el experimento anterior, se corrió sobre una imagen de 512x512 por la misma razón, sólo que aplicada a las operaciones aritméticas. Se puede observar que según como se encuentre implementado el filtro, las operaciones pueden pesar más o menos en el tiempo de ejecución, dado que para la implementación 1 los cambios son más notables que para su contraparte en ASM. Teniendo en cuenta el gráfico anterior, no se pueden apreciar diferencias significativas entre aplicar operaciones aritméticas o accesos a memoria.
-
-\subsubsection{Resultados}
 
 
 \subsubsection{Conclusiones}
@@ -424,8 +422,6 @@ merge 2 c/operaciones: 9833556
 Nuevamente, no hay ninguna diferencia que sea necesario recalcar, dado que los tiempos son prácticamente iguales. Reafirmando nuestra teoría de que en ciertos casos, las operaciones que agreguemos no alteran de manera notable la eficacia de nuestros algoritmos.
 Nos resulta curioso que en ciertos casos, el filtro que tiene presentes las operaciones resulte en un tiempo menor que el tiempo incurrido por el filtro sin operaciones. Sin embargo, dado que en general, el filtro que no presenta operaciones es mejor, nos inclinamos a pensar que esto se puede generalizar.
 
-
-\subsubsection{Resultados}
 
 \subsubsection{Conclusiones}
 
@@ -1062,10 +1058,6 @@ Hsl 1 original en colores 512x512: 73798573
 Hsl C en colores 512x512: 58492751
 
 Se puede observar que la versión modificada de la implementación ASM1 del filtro HSl mejoró considerablemente la performance de su predecesora verificando el resultado esperado de este experimento. Sin embargo, lo que se logró fue una pequeña ventaja en comparación con la implementación de C. Por ende, concluimos que el filtro ASM2 resulta victorioso.
-
-
-
-\subsubsection{Resultados}
 
 \subsubsection{Conclusiones}
 
