@@ -17,7 +17,7 @@ function quitarOutliers()
 		sed '1,200d' $tmp>$file
 		rm $tmp
 	done
-	exit 0
+	
 }
 
 function Promedios()
@@ -29,34 +29,34 @@ function Promedios()
 		python3 promedio.py $file>>$file.stats
 		python3 desvio.py $file>>$file.stats
 	done
-	exit 0
+	
 }
 
 #no reciben nada
 function promediarParaTodos()
 {
-	for dir in ${DIR[*]}
+	for dir in ${DIR[*]};
 	do 
 		Promedios $dir
 	done
-	exit 0
+	
 }
 
 function quitarOutliersParaTodos()
 {
-	for dir in ${DIR[*]}
+	for dir in ${DIR[*]};
 	do 
 		quitarOutliers $dir
 	done
-	exit 0
+	
 }
 
 function sacarPromediosViejos()
 {
-	for dir in ${DIR[*]}
+	for dir in ${DIR[*]};
 	do 
 		rm $dir/*promedio
 	done
-	exit 0
+	
 }
 
