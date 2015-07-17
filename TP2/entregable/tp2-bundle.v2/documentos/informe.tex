@@ -768,9 +768,59 @@ $xmm3 = L-(c/2)=m | c/2 | c/2 | c/2$
 	
 \vspace*{0.3cm}
 
-usando este xmm, y máscaras obtenidas por medio de comparaciones me fabrico cada una de las siguientes soluciones
+Usando este xmm, y máscaras obtenidas por medio de comparaciones me fabrico cada una de las siguientes soluciones, y las andeo con su comparaciòn correspondiente, luego sumo todos los casos, ya que solo uno es cierto y de esta manera obtengo lo que busco.
+
+\begin{verbatim}
+
+comparaciones:          soluciones:
+0   <= h <60            b=x| g=0 | r=c | a=0 
+60  <= h <120           b=c| g=0 | r=x | a=0 
+120 <= h <180           b=c| g=x | r=0 | a=0 
+180 <= h <240           b=x| g=c | r=0 | a=0 
+240 <= h <300           b=0| g=c | r=x | a=0 
+300 <= h <360           b=0| g=x | r=c | a=0 
+
+\end{verbatim}
+
+y asi en un xmm tengo los r,g,b,a en floats de manera correcta
+
+	\item Cálculo de escala:
+	
+	Al resultado anterior le sumo el xmm que tiene las m y los multiplico por un 255.0. Luego a esto lo convierto en int.
 
 \end{enumerate}
+
+Luego de terminar estas etapas, tengo en un xmm lo siguiente
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm7 = b|g|r|a$
+
+\vspace*{0.3cm}
+
+Entonces lo desempaqueto dos veces de manera de obtener lo siguiente
+
+\vspace*{0.3cm}
+
+(cada campo tiene 32 bits)	
+	
+\vspace*{0.3cm}	
+
+$xmm7 = irrelevante|irrelevante|irrelevante|bgra(cada uno de 8 bits)$
+
+\vspace*{0.3cm}
+
+Luego, para finalizar, movemos esto a eax con movd.
+
+\paragraph*{La Función principal:}
+
+Esta función tan solo llama a las otras para que hagan todo. Básicamente lo que hace es:toma 4 píxeles, llama a rgbtohsl_asm que deja en 4 xmm los hsl de los 4 píxeles;luego a cada píxel le aplica hago_suma y le aplica hsltorgb, y desde eax lo pone en la parte baja de un xmm al cual luego shiftea 4 bytes hacia la izquierda, llenando un xmm con 4 pìxeles filtrados, y poniendolos luego en la imágen nuevamente.
+
+
 
 \subsection{Diferencias de performance en HSL}
 
