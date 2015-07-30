@@ -426,15 +426,15 @@ void game_syscall_pirata_mover(direccion dir)
                                   
 			if (inRangeX && inRangeY && botines[i][2] != 0 && (llamadasminero[i][jugadorJugando]==0)){
 				unsigned int x = botines[i][0];
-                                unsigned int y = botines[i][1];
-                                llamadasminero[i][jugadorJugando]=2;
-                		screen_pintar_botin(jugadorJugando,y+1,x);
+                unsigned int y = botines[i][1];
+                llamadasminero[i][jugadorJugando]=2;
+                screen_pintar_botin(jugadorJugando,y+1,x);
 				game_jugador_lanzar_pirata(jugadorJugando,1,x,y);
 			}else if (inRangeX && inRangeY && botines[i][2] != 0){
 				unsigned int x = botines[i][0];
-                                unsigned int y = botines[i][1];
+                unsigned int y = botines[i][1];
 				llamadasminero[i][jugadorJugando]=llamadasminero[i][jugadorJugando]-1;
-                                screen_pintar_botin(jugadorJugando,y+1,x);
+                screen_pintar_botin(jugadorJugando,y+1,x);
 			}                          	
 		}
 	}
